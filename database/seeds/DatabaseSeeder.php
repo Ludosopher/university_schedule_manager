@@ -3281,6 +3281,7 @@ class DatabaseSeeder extends Seeder
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
+            //
         ]);
     }
 }
