@@ -1,0 +1,82 @@
+/* The alert message box */
+.alertAccess {
+    padding: 20px;
+    background-color: #008000; /* Green */
+    color: white;
+    margin-bottom: 15px;
+    
+}
+
+.alertFail {
+    padding: 20px;
+    background-color: #dd3e16; /* Red */
+    color: white;
+    margin-bottom: 15px;
+    
+}
+
+.validationErrorText {
+    color: red; 
+}
+
+/* The close button */
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+    color: black;
+}
+
+.placeForMessages {
+    height: 50px;
+}
+
+/*Get all*/
+.getAllContainer {
+    display: flex;
+}
+
+.getAllLeft {
+   width: 20%;
+}
+
+.getAllRight {
+    width: 80%;
+}
+
+#full_name {
+    width: 90%;
+}
+
+.departmentId, .facultyId {
+    width: 90%;
+}
+
+.birthYear {
+    display: flex; 
+}
+
+.nav-pagination {
+    float: right;
+}
+
+/*add/update form*/
+
+.external-form-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.internal-form-container {
+    width: 30%;
+}
