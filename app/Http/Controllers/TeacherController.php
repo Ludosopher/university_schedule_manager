@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\ClassPeriod;
 use App\Helpers\ModelHelpers;
+use App\Lesson;
+use App\WeekDay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,7 +22,7 @@ class TeacherController extends ModelController
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), $this->model_name::filterRules());
             if ($validator->fails()) {
-                return redirect()->route("tables.{$this->instance_plural_name}")->withErrors($validator)->withInput();
+                return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator)->withInput();
             }
         }
         
@@ -64,5 +67,35 @@ class TeacherController extends ModelController
         } else {
             return redirect()->route("{$this->instance_plural_name}", ['deleting_instance_not_found' => true]);
         }
+    }
+
+    public function getSchedule (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'schedule_teacher_id' => 'required|integer|exists:App\Teacher,id'
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator); 
+        }
+
+        $class_periods = ClassPeriod::get();
+        $data['class_periods'] = array_combine(range(1, count($class_periods)), array_values($class_periods));
+        
+        $lessons = Lesson::with(['week_day', 'weekly_period', 'class_period', 'group', 'teacher'])
+                                    //->join('class_periods', 'lessons.class_period_id', '=', 'class_periods.id')
+                                    // ->orderBy('week_day_id')
+                                    // ->orderBy('class_periods.number')                          
+                                    ->where('teacher_id', $request->schedule_teacher_id)
+                                    ->get();
+        
+        foreach ($lessons as $lesson) {
+            $data['lessons'][$lesson->class_period_id][$lesson->week_day_id] = [
+                'weekly_period' => $lesson->weekly_period_id, 
+                'name' => $lesson->name,
+                'group' => $lesson->group->name
+            ]; 
+        }
+
+        return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
     }
 }

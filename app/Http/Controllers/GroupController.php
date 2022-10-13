@@ -20,7 +20,7 @@ class GroupController extends ModelController
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), $this->model_name::filterRules());
             if ($validator->fails()) {
-                return redirect()->route("tables.{$this->instance_plural_name}")->withErrors($validator)->withInput();
+                return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator)->withInput();
             }
         }
         

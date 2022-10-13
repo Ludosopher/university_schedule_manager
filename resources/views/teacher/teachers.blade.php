@@ -19,6 +19,12 @@
                 Данные преподавателя {{ $data['updated_instance_name'] }} обновлены.
             </div>
         @endif
+        @if ($errors !== null && $errors->has('schedule_teacher_id'))
+            <div class="alertFail">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                Такой преподаватель не найден.
+            </div>
+        @endif
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>
