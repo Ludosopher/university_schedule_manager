@@ -73,6 +73,17 @@
     margin-top: 30px;
 }
 
+.sorting-header {
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+}
+
+.header-name {
+    margin-right: 3px;
+}
+
+
 /*add/update form*/
 
 .external-form-container {
