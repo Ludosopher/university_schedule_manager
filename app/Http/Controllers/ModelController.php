@@ -32,7 +32,7 @@ class ModelController extends Controller
         $instances = FilterHelpers::getFilteredQuery($this->model_name::with($this->eager_loading_fields), $request->all(), $this->model_name);
         $appends = ModelHelpers::getAppends($request);
 
-        $data['instances'] = $instances->orderBy('birth_year', 'desc')->paginate($rows_per_page)->appends($appends);//$instances->sortable()->paginate($rows_per_page)->appends($appends);
+        $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
 
         return array_merge($data, $properties);
     }

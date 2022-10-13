@@ -100,9 +100,9 @@
                                         @php
                                             $full_field = implode('.', $property['field']);
                                         @endphp
-                                        <th class="th-sm text-center align-top">@sortablelink($full_field, $property['header'])</th>
+                                        <th class="th-sm text-center align-top">{{ $property['header'] }} @sortablelink($full_field, '▼')</th>
                                     @else
-                                        <th class="th-sm text-center align-top">@sortablelink($property['field'], $property['header'])</th>   
+                                        <th class="th-sm text-center align-top">{{ $property['header'] }} @sortablelink($property['field'], '▼')</th>   
                                     @endif
                                 @else
                                     <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
