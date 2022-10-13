@@ -69,6 +69,10 @@
     float: right;
 }
 
+.form-button {
+    margin-top: 30px;
+}
+
 /*add/update form*/
 
 .external-form-container {

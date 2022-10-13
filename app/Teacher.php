@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Teacher extends Model
 {
@@ -16,6 +17,9 @@ class Teacher extends Model
         return "{$this->last_name} {$this->first_name} {$patronymic}";
     }
 
+    use Sortable;
+    public $sortable = ['last_name', 'gender', 'birth_year','faculty_id', 'department_id', 'professional_level_id', 'position_id'];
+    
     public function faculty()
     {
         return $this->belongsTo(Faculty::class);
@@ -59,7 +63,6 @@ class Teacher extends Model
             'professional_level_id' => 'required|integer|exists:App\ProfessionalLevel,id',
             'position_id' => 'required|integer|exists:App\Position,id',
             'updating_id' => 'nullable|integer|exists:App\Teacher,id',
-            'page_number' => 'nullable|integer'
         ];
     }
 
@@ -255,6 +258,16 @@ class Teacher extends Model
                 'name' => 'position',
                 'header' => 'Должность',
             ]
+        ];
+    }
+
+    public static function getProperties() {
+        return [
+            'faculties' => Faculty::select('id', 'name')->get(),
+            'departments' => Department::select('id', 'name')->get(),
+            'professional_levels' => ProfessionalLevel::select('id', 'name')->get(),
+            'positions' => Position::select('id', 'name')->get(),
+            'genders' => config('enum.genders')
         ];
     }
 

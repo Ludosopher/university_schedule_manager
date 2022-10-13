@@ -37,4 +37,20 @@ class ModelHelpers
 
         return false;
     }
+
+    public static function getAppends($request) {
+        $appends = [];
+        foreach ($request->all() as $key => $value) {
+            if ($key != '_token' 
+                && $key != 'deleted_instance_name'
+                && $key != 'deleting_instance_not_found'
+                && $key != 'updated_instance_name' 
+                && $value != null) 
+            {
+                $appends[$key] = $value;
+            }
+        }
+
+        return $appends;
+    }
 }

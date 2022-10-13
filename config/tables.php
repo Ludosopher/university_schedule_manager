@@ -4,96 +4,112 @@ return [
    'teachers' => [
       [
          'field' => 'teacher_full_name',
-         'header' => 'Ф.И.О'
+         'header' => 'Ф.И.О',
+         'sorting' => false
       ],
       [
          'field' => 'birth_year',
-         'header' => 'Год рождения'
+         'header' => 'Год рождения',
+         'sorting' => true
       ],
       [
          'field' => 'phone',
-         'header' => 'Телефон'
+         'header' => 'Телефон',
+         'sorting' => false
       ],
       [
          'field' => 'email',
-         'header' => 'Электронная почта'
+         'header' => 'Электронная почта',
+         'sorting' => false
       ],
       [
          'field' => [
             'faculty',
             'name'
          ],
-         'header' => 'Факультет'
+         'header' => 'Факультет',
+         'sorting' => true
       ],
       [
          'field' => [
             'department',
             'name'
          ],
-         'header' => 'Кафедра'
+         'header' => 'Кафедра',
+         'sorting' => true
       ],
       [
          'field' => [
             'professional_level',
             'name'
          ],
-         'header' => 'Профессиональный уровень'
+         'header' => 'Профессиональный уровень',
+         'sorting' => true
       ],
       [
          'field' => [
             'position',
             'name'
          ],
-         'header' => 'Должность'
+         'header' => 'Должность',
+         'sorting' => true
       ],
    ],
    'groups' => [
       [
          'field' => 'name',
-         'header' => 'Название'
+         'header' => 'Название',
+         'sorting' => true
       ],
       [
          'field' => [
             'faculty',
             'name'
          ],
-         'header' => 'Факультет'
+         'header' => 'Факультет',
+         'sorting' => true
       ],
       [
          'field' => [
             'study_program',
             'name'
          ],
-         'header' => 'Учебная программа'
+         'header' => 'Учебная программа',
+         'sorting' => true
       ],
       [
          'field' => [
             'study_orientation',
             'name'
          ],
-         'header' => 'Специальность'
+         'header' => 'Специальность',
+         'sorting' => true
       ],
       [
          'field' => [
             'study_degree',
             'name'
          ],
-         'header' => 'Уровень образования'
+         'header' => 'Уровень образования',
+         'sorting' => true
       ],
       [
          'field' => [
             'study_form',
             'name'
          ],
-         'header' => 'Форма образования'
+         'header' => 'Форма образования',
+         'sorting' => true
       ],
       [
          'field' => 'course',
-         'header' => 'Курс'
+         'header' => 'Курс',
+         'sorting' => true
       ],
       [
          'field' => 'size',
-         'header' => 'Численность'
+         'header' => 'Численность',
+         'sorting' => true
       ],
    ]
 ];

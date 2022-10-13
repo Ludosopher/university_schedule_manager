@@ -7,10 +7,10 @@ use App\Teacher;
 class FilterHelpers
 {
     public static function getPaginationData($rows_per_page, $query, $page) {
-
+        
         return [
             'pages_number' => ceil($query->count() / $rows_per_page),
-            'instances' => $query->limit($rows_per_page)->offset(($page - 1) * $rows_per_page)->get()
+            'instances' => $query->paginate(7)->withQueryString()// $query->limit($rows_per_page)->offset(($page - 1) * $rows_per_page)->get()
         ];
     }
 

@@ -2,112 +2,67 @@
 
 namespace App\Http\Controllers;
 
-use App\Department;
-use App\Faculty;
-use App\Helpers\DictionaryHelpers;
-use App\Helpers\FilterHelpers;
 use App\Helpers\ModelHelpers;
-use App\Teacher;
-use App\Helpers\TeacherHelpers;
-use App\Position;
-use App\ProfessionalLevel;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class TeacherController extends ModelController
 {
     protected $model_name = 'App\Teacher';
+    protected $instance_name = 'teacher';
+    protected $instance_plural_name = 'teachers';
     protected $instance_name_field = 'teacher_full_name';
-    protected $instance_deleted_message = 'Данные о преподавателе {name} удалены.';
-    protected $instance_not_found_message = 'Такой преподаватель не найден!';
     protected $eager_loading_fields = ['faculty', 'department', 'professional_level', 'position'];
-    protected $get_properties_function_name = 'getTeacherProperties';
     
     public function getTeachers (Request $request)
     {
-        $data = [
-            'model_name' => $this->model_name,
-            'messages' => [
-                'instance_name_field' => $this->instance_name_field,
-                'instance_deleted' => $this->instance_deleted_message,
-                'instance_not_found' => $this->instance_not_found_message,
-            ],
-            'eager_loading_fields' => $this->eager_loading_fields,
-            'get_properties_function_name' => $this->get_properties_function_name,
-        ];
-
-        $data = $this->getInstances($request, $data);
-
-        if (isset($data['validator'])) {
-            return redirect()->route('teachers-filter')->withErrors($data['validator'])->withInput();   
+        if ($request->isMethod('post')) {
+            $validator = Validator::make($request->all(), $this->model_name::filterRules());
+            if ($validator->fails()) {
+                return redirect()->route("tables.{$this->instance_plural_name}")->withErrors($validator)->withInput();
+            }
         }
         
-        return view('teacher.teachers')->with('data', $data);
+        $data = $this->getInstances($request);
+
+        return view("{$this->instance_name}.{$this->instance_plural_name}")->with('data', $data);
     }
-    
+
     public function addTeacherForm (Request $request)
     {
-        $data = [
-            'model_name' => $this->model_name,
-            'get_properties_function_name' => $this->get_properties_function_name,
-        ];
+        $data = $this->getInstanceFormData($request);
         
-        $data = $this->getInstanceFormData($request, $data);
-        
-        return view('teacher.add_teacher_form')->with('data', $data);
+        return view("{$this->instance_name}.add_{$this->instance_name}_form")->with('data', $data);
     }
 
     public function addOrUpdateTeacher (Request $request)
     {
-        $data = [
-            'model_name' => $this->model_name,
-            'instance_name_field' => $this->instance_name_field,
-            'eager_loading_fields' => $this->eager_loading_fields,
-            'get_properties_function_name' => $this->get_properties_function_name,
-        ];
+        $validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames());
+        if ($validator->fails()) {
+            if (isset($request->updating_id)) {
+                return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();    
+            }
+            return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput(); 
+        }
         
-        $data = $this->addOrUpdateInstance($request, $data);
+        $data = $this->addOrUpdateInstance($request);
                 
-        if ($data['is_validation_errors'] && isset($data['validator'])) {
-            return redirect()->route('teacher-form')->withErrors($data['validator'])->withInput();
-        } elseif ($data['is_updating']) {
-            return view('teacher.teachers')->with('data', $data['data']);
-        } else {
-            return view('teacher.add_teacher_form')->with('data', $data['data']);
+        if (isset($data['updated_instance_name'])) {
+            return redirect()->route("{$this->instance_plural_name}", ['updated_instance_name' => $data['updated_instance_name']]);
+        } elseif (isset($data['new_instance_name'])) {
+            return redirect()->route("{$this->instance_name}-form", ['new_instance_name' => $data['new_instance_name']]);
         }
     }
 
-    // public function addOrUpdateTeacher (Request $request)
-    // {
-    //     $data = [
-    //         'model_name' => 'App\Teacher',
-    //         'instance_name_field' => 'teacher_full_name',
-    //         'eager_loading_fields' => ['faculty', 'department', 'professional_level', 'position'],
-    //         'get_properties_function_name' => 'getTeacherProperties'
-    //     ];
-        
-    //     $validator = Validator::make($request->all(), Teacher::rules(), [], Teacher::attrNames());
-        
-    //     $data = DictionaryHelpers::getTeacherProperties();
-
-    //     if ($validator->fails()) {
-    //         $data['errors'] = $validator->errors();
-    //         $data['old_data'] = $request->all();
-    //     } elseif (isset($request->updating_id)) {
-    //         $rows_per_page = config('site.rows_per_page');
+    public function deleteTeacher (Request $request)
+    {
+        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name); 
             
-    //         $teacher = ModelHelpers::addOrUpdateInstance($request->all(), 'App\Teacher');
-    //         $data['updated_teacher_name'] = "{$teacher->last_name} {$teacher->first_name} ".(isset($teacher->patronymic) ? $teacher->patronymic : '');
-    //         $data_based_on_page = FilterHelpers::actionsBasedOnPage($request, Teacher::with(['faculty', 'department', 'professional_level', 'position']));
-    //         $data = FilterHelpers::getInstancesData($data, $rows_per_page, $data_based_on_page);
-            
-    //         return view('teacher.teachers')->with('data', array_merge($data, DictionaryHelpers::getTeacherProperties()));
-    //     } else {
-    //         $teacher = ModelHelpers::addOrUpdateInstance($request->all(), 'App\Teacher');
-    //         $data['new_teacher_name'] = "{$teacher->last_name} {$teacher->first_name} ".(isset($teacher->patronymic) ? $teacher->patronymic : '');
-            
-    //         return view('teacher.add_teacher_form')->with('data', $data);
-    //     };
-    // }  
+        if ($deleted_instance) {
+            $instance_name_field = $this->instance_name_field;
+            return redirect()->route("{$this->instance_plural_name}", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+        } else {
+            return redirect()->route("{$this->instance_plural_name}", ['deleting_instance_not_found' => true]);
+        }
+    }
 }

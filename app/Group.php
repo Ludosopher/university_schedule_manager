@@ -3,9 +3,13 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Group extends Model
 {
+    use Sortable;
+    public $sortable = ['name', 'faculty_id', 'study_program_id', 'study_orientation_id', 'study_degree_id', 'study_form_id', 'course', 'size'];
+    
     public function lessons()
     {
         return $this->hasMany('App\Lesson');
@@ -57,7 +61,6 @@ class Group extends Model
             'course' => 'required|integer',
             'size' => 'required|integer', 
             'updating_id' => 'nullable|integer|exists:App\Group,id',
-            'page_number' => 'nullable|integer'
         ];
     }
 
@@ -240,6 +243,16 @@ class Group extends Model
                 'max_value' => '50',
                 'step' => '1'
             ],
+        ];
+    }
+
+    public static function getProperties() {
+        return [
+            'faculties' => Faculty::select('id', 'name')->get(),
+            'study_programs' => StudyProgram::select('id', 'name')->get(),
+            'study_orientations' => StudyOrientation::select('id', 'name')->get(),
+            'study_degrees' => StudyDegree::select('id', 'name')->get(),
+            'study_forms' => StudyForm::select('id', 'name')->get(),
         ];
     }
 }
