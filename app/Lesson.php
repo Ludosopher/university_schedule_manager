@@ -30,4 +30,9 @@ class Lesson extends Model
     {
         return $this->belongsTo(WeeklyPeriod::class);
     }
+
+    public function lesson_type()
+    {
+        return $this->belongsTo(LessonType::class);
+    }
 }

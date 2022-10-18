@@ -3,7 +3,7 @@
 return [
    'teachers' => [
       [
-         'field' => 'teacher_full_name',
+         'field' => 'full_name',
          'header' => 'Ф.И.О',
          'sorting' => false
       ],
@@ -52,6 +52,14 @@ return [
             'name'
          ],
          'header' => 'Должность',
+         'sorting' => true
+      ],
+      [
+         'field' => [
+            'academic_degree',
+            'name'
+         ],
+         'header' => 'Учёная степень',
          'sorting' => true
       ],
    ],

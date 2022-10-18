@@ -51,7 +51,7 @@ return [
 
    'weekly_period_colors' => [
       1 => 'White',
-      2 => 'DarkSalmon',
-      3 => 'PowderBlue'
+      2 => '#ffb3b9',
+      3 => '#ace7f2'
    ]
 ];

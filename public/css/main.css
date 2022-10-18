@@ -95,3 +95,73 @@
 .internal-form-container {
     width: 30%;
 }
+
+/*/teacher/schedule*/
+
+.schedule-period-name {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.schedule-subject {
+    font-size: 22px;
+    line-height: 100%;
+    margin-top: 4px;
+}
+.schedule-subject-half {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 80%;
+}
+
+.schedule-type {
+    font-size: 15px;
+    line-height: 150%;
+}
+.schedule-type-half {
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    line-height: 110%;
+}
+
+.schedule-group {
+    font-size: 15px;
+    line-height: 150%;
+}
+.schedule-group-half {
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    line-height: 110%;
+}
+
+.schedule-period {
+    width: 10%; 
+}
+
+.schedule-cell {
+    position:relative;
+    padding: 0rem !important;
+    width: 15%;
+    height: 130px;
+}
+.schedule-cell-top {
+    margin: 0px !important;
+    padding-top: 7px;
+    height: 50%;
+    width: 100%;
+    position:absolute;
+    top: 0;
+    /* vertical-align: top; */
+}
+.schedule-cell-bottom {
+    margin: 0px !important;
+    padding-top: 7px;
+    height: 50%;
+    width: 100%;
+    position:absolute;
+    bottom: 0;
+    /* vertical-align: bottom; */
+}
+

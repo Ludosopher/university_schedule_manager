@@ -24,13 +24,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/teacher/add', 'TeacherController@addOrUpdateTeacher')->name('teacher-add');
     Route::get('/teacher/update', 'TeacherController@addTeacherForm')->name('teacher-update');
     Route::get('/teacher/delete', 'TeacherController@deleteTeacher')->name('teacher-delete');
-    Route::get('/teacher/schedule', 'TeacherController@getSchedule')->name('teacher-schedule');
+    Route::get('/teacher/schedule', 'TeacherController@getTeacherSchedule')->name('teacher-schedule');
+    Route::get('/teacher/replacement', 'TeacherController@getTeachersForReplacement')->name('teacher-replacement'); 
     
     Route::match(['get', 'post'],'/group/get-all', 'GroupController@getGroups')->name('groups');
     Route::get('/group/add-form', 'GroupController@addGroupForm')->name('group-form');
     Route::post('/group/add', 'GroupController@addOrUpdateGroup')->name('group-add');
     Route::get('/group/update', 'GroupController@addGroupForm')->name('group-update');
     Route::get('/group/delete', 'GroupController@deleteGroup')->name('group-delete');
+    Route::get('/group/schedule', 'GroupController@getGroupSchedule')->name('group-schedule');
     
 });
 

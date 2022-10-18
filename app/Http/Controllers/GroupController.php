@@ -10,10 +10,13 @@ use Illuminate\Support\Facades\Validator;
 class GroupController extends ModelController
 {
     protected $model_name = 'App\Group';
-    protected $instance_name_field = 'name';
     protected $instance_name = 'group';
     protected $instance_plural_name = 'groups';
+    protected $instance_name_field = 'name';
+    protected $profession_level_name_field = null;
     protected $eager_loading_fields = ['faculty', 'study_program', 'study_orientation', 'study_degree', 'study_form'];
+    protected $other_lesson_participant = 'teacher';
+    protected $other_lesson_participant_name = 'profession_level_name';
             
     public function getGroups (Request $request)
     {
@@ -68,5 +71,23 @@ class GroupController extends ModelController
         } else {
             return redirect()->route("{$this->instance_plural_name}", ['deleting_instance_not_found' => true]);
         }
-    }  
+    }
+    
+    public function getGroupSchedule (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id"
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator); 
+        }
+
+        $data = $this->getSchedule($request);
+
+        if (isset($data['duplicated_lesson'])) {
+            return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}", ['data' => $data]);
+        }
+        
+        return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
+    }
 }

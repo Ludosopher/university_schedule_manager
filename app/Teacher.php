@@ -7,16 +7,6 @@ use Kyslik\ColumnSortable\Sortable;
 
 class Teacher extends Model
 {
-    public $additional_attributes = ['teacher_full_name'];
-    public function getTeacherFullNameAttribute()
-    {
-        $patronymic = '';
-        if (isset($this->patronymic)) {
-            $patronymic = $this->patronymic;
-        }
-        return "{$this->last_name} {$this->first_name} {$patronymic}";
-    }
-
     use Sortable;
     public $sortable = ['last_name', 'gender', 'birth_year','faculty_id', 'department_id', 'professional_level_id', 'position_id'];
     
@@ -40,9 +30,35 @@ class Teacher extends Model
         return $this->belongsTo(Position::class);
     }
 
+    public function academic_degree()
+    {
+        return $this->belongsTo(AcademicDegree::class);
+    }
+
     public function lessons()
     {
         return $this->hasMany('App\Lesson');
+    }
+    
+    public $additional_attributes = ['full_name', 'profession_level_name'];
+    public function getFullNameAttribute()
+    {
+        $patronymic = '';
+        if (isset($this->patronymic)) {
+            $patronymic = $this->patronymic;
+        }
+        return "{$this->last_name} {$this->first_name} {$patronymic}";
+    }
+
+    public function getProfessionLevelNameAttribute()
+    {
+        $professional_level = $this->professional_level->short_name;
+        // $academic_degree = isset($this->academic_degree_id) ? ', '.$this->academic_degree->short_name : '';
+        $last_name = $this->last_name;
+        $first_name_abbr = mb_substr($this->first_name, 0, 1).'.';
+        $patronymic_abbr = isset($this->patronymic) ? mb_substr($this->patronymic, 0, 1).'.' : '';
+        
+        return "{$professional_level} {$last_name} {$first_name_abbr}{$patronymic_abbr}";
     }
     
     public static function rules($request)
@@ -62,6 +78,7 @@ class Teacher extends Model
             },
             'professional_level_id' => 'required|integer|exists:App\ProfessionalLevel,id',
             'position_id' => 'required|integer|exists:App\Position,id',
+            'academic_degree_id' => 'nullable|integer|exists:App\AcademicDegree,id',
             'updating_id' => 'nullable|integer|exists:App\Teacher,id',
         ];
     }
@@ -76,6 +93,7 @@ class Teacher extends Model
             'department_id' => 'nullable|integer|exists:App\Department,id',
             'professional_level_id' => 'nullable|integer|exists:App\ProfessionalLevel,id',
             'position_id' => 'nullable|integer|exists:App\Position,id',
+            'academic_degree_id' => 'nullable|integer|exists:App\AcademicDegree,id',
         ];
     }
 
@@ -93,6 +111,7 @@ class Teacher extends Model
             'department_id' => 'department',
             'professional_level_id' => 'professional level',
             'position_id' => 'position',
+            'academic_degree_id' => 'academic degree',
         ];
     }
 
@@ -139,6 +158,10 @@ class Teacher extends Model
                 'operator' => '='
             ],
             'position_id' => [
+                'method' => 'where',
+                'operator' => '='
+            ],
+            'academic_degree_id' => [
                 'method' => 'where',
                 'operator' => '='
             ],
@@ -213,6 +236,12 @@ class Teacher extends Model
                 'plural_name' => 'positions',
                 'name' => 'position',
                 'header' => 'Должность',
+            ],
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'academic_degrees',
+                'name' => 'academic_degree',
+                'header' => 'Учёная степень',
             ]
         ];
     }
@@ -257,6 +286,12 @@ class Teacher extends Model
                 'plural_name' => 'positions',
                 'name' => 'position',
                 'header' => 'Должность',
+            ],
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'academic_degrees',
+                'name' => 'academic_degree',
+                'header' => 'Учёная степень',
             ]
         ];
     }
@@ -267,6 +302,7 @@ class Teacher extends Model
             'departments' => Department::select('id', 'name')->get(),
             'professional_levels' => ProfessionalLevel::select('id', 'name')->get(),
             'positions' => Position::select('id', 'name')->get(),
+            'academic_degrees' => AcademicDegree::select('id', 'name')->get(),
             'genders' => config('enum.genders')
         ];
     }

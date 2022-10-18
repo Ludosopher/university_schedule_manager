@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\ClassPeriod;
+use App\Group;
 use App\Helpers\ModelHelpers;
 use App\Lesson;
+use App\Teacher;
 use App\WeekDay;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,8 +16,11 @@ class TeacherController extends ModelController
     protected $model_name = 'App\Teacher';
     protected $instance_name = 'teacher';
     protected $instance_plural_name = 'teachers';
-    protected $instance_name_field = 'teacher_full_name';
+    protected $instance_name_field = 'full_name';
+    protected $profession_level_name_field = 'profession_level_name';
     protected $eager_loading_fields = ['faculty', 'department', 'professional_level', 'position'];
+    protected $other_lesson_participant = 'group';
+    protected $other_lesson_participant_name = 'name';
     
     public function getTeachers (Request $request)
     {
@@ -69,33 +74,57 @@ class TeacherController extends ModelController
         }
     }
 
-    public function getSchedule (Request $request)
+    public function getTeacherSchedule (Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'schedule_teacher_id' => 'required|integer|exists:App\Teacher,id'
+            "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id"
         ]);
         if ($validator->fails()) {
             return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator); 
         }
 
-        $class_periods = ClassPeriod::get();
-        $data['class_periods'] = array_combine(range(1, count($class_periods)), array_values($class_periods));
+        $data = $this->getSchedule($request);
+
+        if (isset($data['duplicated_lesson'])) {
+            return redirect()->route("{$this->instance_plural_name}", ['duplicated_lesson' => $data['duplicated_lesson']]);
+        }
         
-        $lessons = Lesson::with(['week_day', 'weekly_period', 'class_period', 'group', 'teacher'])
-                                    //->join('class_periods', 'lessons.class_period_id', '=', 'class_periods.id')
-                                    // ->orderBy('week_day_id')
-                                    // ->orderBy('class_periods.number')                          
-                                    ->where('teacher_id', $request->schedule_teacher_id)
-                                    ->get();
+        return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
+    }
+
+    public function getTeachersForReplacement (Request $request)
+    {
+        $replacement_lessons = [];
+        $group = Group::where('id', $request->group_id)->with('lessons.teacher.lessons')->first();
+        $seeking_teacher = Teacher::where('id', $request->teacher_id)->with('lessons')->first();
         
-        foreach ($lessons as $lesson) {
-            $data['lessons'][$lesson->class_period_id][$lesson->week_day_id] = [
-                'weekly_period' => $lesson->weekly_period_id, 
-                'name' => $lesson->name,
-                'group' => $lesson->group->name
-            ]; 
+        foreach ($group->lessons as $group_lesson) {
+            foreach ($group_lesson->teacher->lessons as $teacher_lesson) {
+                if ($teacher_lesson->week_day_id == $request->week_day_id
+                    && $teacher_lesson->weekly_period_id == $request->weekly_period_id
+                    && $teacher_lesson->class_period_id == $request->class_period_id)
+                {
+                    unset($replacement_lessons[$group_lesson->teacher->id]);
+                    break;
+                }
+
+                if ($teacher_lesson->group_id == $request->group_id) {
+                    foreach ($seeking_teacher->lessons as $seeking_teacher_lesson) {
+                        if ($teacher_lesson->week_day_id != $seeking_teacher_lesson->week_day_id
+                            || $teacher_lesson->weekly_period_id != $seeking_teacher_lesson->weekly_period_id
+                            || $teacher_lesson->class_period_id != $seeking_teacher_lesson->class_period_id)
+                        {
+                            $replacement_lessons[$group_lesson->teacher->id] = [
+                                'teacher' => $group_lesson->teacher,
+                                'lesson' => $teacher_lesson
+                            ];
+                        }
+                    }
+                }
+            }
         }
 
-        return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
+        dd($replacement_lessons);
+                                        
     }
 }
