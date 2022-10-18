@@ -45,7 +45,7 @@
                                     <td class="schedule-cell" style="background-color: {{ $weekly_period_color[$weekly_period_id['every_week']] }}">
                                         <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }}</div>
                                         <div class="font-size13 text-light-gray schedule-type">( {{ $lesson['type'] }} )</div>
-                                        <div class="font-size13 text-light-gray schedule-group">{{ $lesson['group'] }}</div>    
+                                        <div class="font-size13 text-light-gray schedule-group">{{ $lesson['teacher'] }}</div>    
                                     </td>
                                     @elseif(isset($lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['blue_week']]))
                                         @php 
@@ -57,14 +57,14 @@
                                                 <div class="schedule-cell-top" style="background-color: {{ $weekly_period_color[$weekly_period_id['red_week']] }}">
                                                     <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }}</div>
                                                     <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_red['type'] }} )</div>
-                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['group'] }}</div>
+                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['teacher'] }}</div>
                                                 </div>
                                             @endif
                                             @if($lesson_blue)
                                                 <div class="schedule-cell-bottom" style="background-color: {{ $weekly_period_color[$weekly_period_id['blue_week']] }}">
                                                     <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }}</div>
                                                     <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_blue['type'] }} )</div>
-                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['group'] }}</div>
+                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['teacher'] }}</div>
                                                 </div>    
                                             @endif
                                         </td>

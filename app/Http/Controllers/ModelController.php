@@ -111,6 +111,11 @@ class ModelController extends Controller
                 return $data;    
             } else {
                 $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id] = [
+                    'week_day_id' => $lesson->week_day_id,
+                    'weekly_period_id' => $lesson->weekly_period_id,
+                    'class_period_id' => $lesson->class_period_id,
+                    'group_id' => $lesson->group_id,
+                    'teacher_id' => $lesson->teacher_id,
                     'type' => $lesson->lesson_type->name,
                     'name' => $lesson->name,
                     $other_lesson_participant => $lesson->$other_lesson_participant->$other_lesson_participant_name

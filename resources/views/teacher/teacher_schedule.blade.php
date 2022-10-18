@@ -29,7 +29,6 @@
                             $class_periods = $data['class_periods'];
                             $lessons = $data['lessons'];
                         @endphp
-
                         @foreach($class_period as $lesson_name => $value)
                             <tr>
                                 <td class="align-middle schedule-period">
@@ -43,9 +42,11 @@
                                     @if(isset($lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['every_week']]))
                                     @php $lesson = $lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['every_week']]; @endphp
                                     <td class="schedule-cell" style="background-color: {{ $weekly_period_color[$weekly_period_id['every_week']] }}">
-                                        <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }}</div>
-                                        <div class="font-size13 text-light-gray schedule-type">( {{ $lesson['type'] }} )</div>
-                                        <div class="font-size13 text-light-gray schedule-group">{{ $lesson['group'] }}</div>    
+                                        <a class="replace-link" target="_blank" href="{{ route('teacher-replacement', ['group_id' => $lesson['group_id'], 'teacher_id' => $lesson['teacher_id'], 'class_period_id' => $lesson['class_period_id'], 'weekly_period_id' => $lesson['weekly_period_id'], 'week_day_id' => $lesson['week_day_id']]) }}">
+                                            <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }}</div>
+                                            <div class="font-size13 text-light-gray schedule-type">( {{ $lesson['type'] }} )</div>
+                                            <div class="font-size13 text-light-gray schedule-group">{{ $lesson['group'] }}</div>
+                                        </a>   
                                     </td>
                                     @elseif(isset($lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['blue_week']]))
                                         @php 
@@ -54,18 +55,22 @@
                                         @endphp
                                         <td class="schedule-cell">
                                             @if($lesson_red)
-                                                <div class="schedule-cell-top" style="background-color: {{ $weekly_period_color[$weekly_period_id['red_week']] }}">
-                                                    <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }}</div>
-                                                    <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_red['type'] }} )</div>
-                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['group'] }}</div>
-                                                </div>
+                                                <a class="replace-link" target="_blank" href="{{ route('teacher-replacement', ['group_id' => $lesson_red['group_id'], 'teacher_id' => $lesson_red['teacher_id'], 'class_period_id' => $lesson_red['class_period_id'], 'weekly_period_id' => $lesson_red['weekly_period_id'], 'week_day_id' => $lesson_red['week_day_id']]) }}">
+                                                    <div class="schedule-cell-top" style="background-color: {{ $weekly_period_color[$weekly_period_id['red_week']] }}">
+                                                        <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }}</div>
+                                                        <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_red['type'] }} )</div>
+                                                        <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['group'] }}</div>
+                                                    </div>
+                                                </a>
                                             @endif
                                             @if($lesson_blue)
-                                                <div class="schedule-cell-bottom" style="background-color: {{ $weekly_period_color[$weekly_period_id['blue_week']] }}">
-                                                    <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }}</div>
-                                                    <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_blue['type'] }} )</div>
-                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['group'] }}</div>
-                                                </div>    
+                                                <a class="replace-link" target="_blank" href="{{ route('teacher-replacement', ['group_id' => $lesson_blue['group_id'], 'teacher_id' => $lesson_blue['teacher_id'], 'class_period_id' => $lesson_blue['class_period_id'], 'weekly_period_id' => $lesson_blue['weekly_period_id'], 'week_day_id' => $lesson_blue['week_day_id']]) }}">
+                                                    <div class="schedule-cell-bottom" style="background-color: {{ $weekly_period_color[$weekly_period_id['blue_week']] }}">
+                                                        <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }}</div>
+                                                        <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_blue['type'] }} )</div>
+                                                        <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['group'] }}</div>
+                                                    </div>
+                                                </a>   
                                             @endif
                                         </td>
                                     @else

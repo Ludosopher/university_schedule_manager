@@ -154,11 +154,11 @@
                                                 }
                                             }
                                         @endphp
-                                        <td>{{ $value }}</td>  
+                                        <td class="regular-cell">{{ $value }}</td>  
                                     @elseif($field == 'full_name')
-                                        <td><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}">{{ $instance->$field }}</a></td>
+                                        <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}">{{ $instance->$field }}</a></td>
                                     @else
-                                        <td>{{ $instance->$field }}</td>    
+                                        <td class="regular-cell">{{ $instance->$field }}</td>    
                                     @endif
                                 @endforeach
                             </tr>

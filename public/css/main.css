@@ -83,6 +83,14 @@
     margin-right: 3px;
 }
 
+.regular-cell {
+    line-height: 120%;    
+}
+
+.replace-link {
+    color: Black;
+    text-decoration: none !important;;
+}
 
 /*add/update form*/
 
