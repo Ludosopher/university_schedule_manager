@@ -257,7 +257,7 @@ class DatabaseSeeder extends Seeder
         \DB::table('class_periods')->insert([
             [
                 'id' => 1,
-                'number' => 1,
+                'name' => 'Первая',
                 'start' => '08:00:00',
                 'end' => '09:35:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -265,7 +265,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'number' => 2,
+                'name' => 'Вторая',
                 'start' => '09:45:00',
                 'end' => '11:20:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -273,7 +273,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'number' => 3,
+                'name' => 'Третья',
                 'start' => '12:00:00',
                 'end' => '13:35:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -281,7 +281,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 4,
-                'number' => 4,
+                'name' => 'Четвёртая',
                 'start' => '13:45:00',
                 'end' => '15:20:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -289,7 +289,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'number' => 5,
+                'name' => 'Пятая',
                 'start' => '15:30:00',
                 'end' => '17:05:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -297,7 +297,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 6,
-                'number' => 6,
+                'name' => 'Шестая',
                 'start' => '17:15:00',
                 'end' => '18:50:00',
                 'created_at' => '2022-08-22 00:00:00',

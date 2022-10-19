@@ -119,5 +119,60 @@ return [
          'header' => 'Численность',
          'sorting' => true
       ],
+   ],
+   'lessons' => [
+      [
+         'field' => 'name',
+         'header' => 'Предмет',
+         'sorting' => true
+      ],
+      [
+         'field' => [
+            'lesson_type',
+            'name'
+         ],
+         'header' => 'Вид',
+         'sorting' => true
+      ],
+      [
+         'field' => [
+            'week_day',
+            'name'
+         ],
+         'header' => 'День недели',
+         'sorting' => true
+      ],
+      [
+         'field' => [
+            'weekly_period',
+            'name'
+         ],
+         'header' => 'Недельная периодичность',
+         'sorting' => true
+      ],
+      [
+         'field' => [
+            'class_period',
+            'name'
+         ],
+         'header' => 'Пара',
+         'sorting' => true
+      ],
+      [
+         'field' => [
+            'group',
+            'name'
+         ],
+         'header' => 'Группа',
+         'sorting' => true
+      ],
+      [
+         'field' => [
+            'teacher',
+            'profession_level_name'
+         ],
+         'header' => 'Преподаватель',
+         'sorting' => false
+      ],
    ]
 ];

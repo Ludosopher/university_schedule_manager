@@ -65,7 +65,7 @@ class CreateTeachersTable extends Migration
 
         Schema::create('class_periods', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('number');
+            $table->string('name');
             $table->time('start');
             $table->time('end');
             $table->timestamps();

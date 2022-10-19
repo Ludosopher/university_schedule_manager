@@ -21,51 +21,56 @@
                 <tbody>
                     @if(isset($data) && isset($data['class_periods']) && isset($data['lessons']))
                         @php
-                            $week_day = config('enum.week_day_ids');
+                            $week_day_ids = config('enum.week_day_ids');
                             $weekly_period = config('enum.weekly_periods');
                             $weekly_period_id = config('enum.weekly_period_ids');
                             $weekly_period_color = config('enum.weekly_period_colors');
-                            $class_period = config('enum.class_period_ids');
+                            $class_period_ids = config('enum.class_period_ids');
                             $class_periods = $data['class_periods'];
                             $lessons = $data['lessons'];
                         @endphp
-
-                        @foreach($class_period as $lesson_name => $value)
+                        @foreach($class_period_ids as $lesson_name => $class_period_id)
                             <tr>
                                 <td class="align-middle schedule-period">
-                                    <div class="schedule-period-name">Первая</div>
+                                    <div class="schedule-period-name">{{ $class_period_id }}</div>
                                     <div class="schedule-period-time">
-                                        {{ date('H:i', strtotime($class_periods[$class_period[$lesson_name]]['start'])) }} - {{ date('H:i', strtotime($class_periods[$class_period[$lesson_name]]['end'])) }}
+                                        {{ date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])) }} - {{ date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])) }}
                                     </div>
                                 </td>
                                 
-                                @foreach($week_day as $wd_name => $value)
-                                    @if(isset($lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['every_week']]))
-                                    @php $lesson = $lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['every_week']]; @endphp
+                                @foreach($week_day_ids as $wd_name => $week_day_id)
+                                    @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
+                                    @php $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]; @endphp
                                     <td class="schedule-cell" style="background-color: {{ $weekly_period_color[$weekly_period_id['every_week']] }}">
-                                        <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }}</div>
-                                        <div class="font-size13 text-light-gray schedule-type">( {{ $lesson['type'] }} )</div>
-                                        <div class="font-size13 text-light-gray schedule-group">{{ $lesson['teacher'] }}</div>    
+                                        <a class="replace-link" target="_blank" href="{{ route('teacher-replacement', ['group_id' => $lesson['group_id'], 'teacher_id' => $lesson['teacher_id'], 'class_period_id' => $lesson['class_period_id'], 'weekly_period_id' => $lesson['weekly_period_id'], 'week_day_id' => $lesson['week_day_id']]) }}">
+                                            <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }}</div>
+                                            <div class="font-size13 text-light-gray schedule-type">( {{ $lesson['type'] }} )</div>
+                                            <div class="font-size13 text-light-gray schedule-group">{{ $lesson['teacher'] }}</div>
+                                        </a>   
                                     </td>
-                                    @elseif(isset($lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['blue_week']]))
+                                    @elseif(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']]))
                                         @php 
-                                            $lesson_red = $lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['red_week']] ?? false;
-                                            $lesson_blue = $lessons[$class_period[$lesson_name]][$week_day[$wd_name]][$weekly_period_id['blue_week']] ?? false; 
+                                            $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
+                                            $lesson_blue = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']] ?? false; 
                                         @endphp
                                         <td class="schedule-cell">
                                             @if($lesson_red)
-                                                <div class="schedule-cell-top" style="background-color: {{ $weekly_period_color[$weekly_period_id['red_week']] }}">
-                                                    <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }}</div>
-                                                    <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_red['type'] }} )</div>
-                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['teacher'] }}</div>
-                                                </div>
+                                                <a class="replace-link" target="_blank" href="{{ route('teacher-replacement', ['group_id' => $lesson_red['group_id'], 'teacher_id' => $lesson_red['teacher_id'], 'class_period_id' => $lesson_red['class_period_id'], 'weekly_period_id' => $lesson_red['weekly_period_id'], 'week_day_id' => $lesson_red['week_day_id']]) }}">
+                                                    <div class="schedule-cell-top" style="background-color: {{ $weekly_period_color[$weekly_period_id['red_week']] }}">
+                                                        <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }}</div>
+                                                        <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_red['type'] }} )</div>
+                                                        <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['teacher'] }}</div>
+                                                    </div>
+                                                </a>
                                             @endif
                                             @if($lesson_blue)
-                                                <div class="schedule-cell-bottom" style="background-color: {{ $weekly_period_color[$weekly_period_id['blue_week']] }}">
-                                                    <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }}</div>
-                                                    <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_blue['type'] }} )</div>
-                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['teacher'] }}</div>
-                                                </div>    
+                                                <a class="replace-link" target="_blank" href="{{ route('teacher-replacement', ['group_id' => $lesson_blue['group_id'], 'teacher_id' => $lesson_blue['teacher_id'], 'class_period_id' => $lesson_blue['class_period_id'], 'weekly_period_id' => $lesson_blue['weekly_period_id'], 'week_day_id' => $lesson_blue['week_day_id']]) }}">
+                                                    <div class="schedule-cell-bottom" style="background-color: {{ $weekly_period_color[$weekly_period_id['blue_week']] }}">
+                                                        <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }}</div>
+                                                        <div class="font-size13 text-light-gray schedule-type-half">( {{ $lesson_blue['type'] }} )</div>
+                                                        <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['teacher'] }}</div>
+                                                    </div>
+                                                </a>   
                                             @endif
                                         </td>
                                     @else

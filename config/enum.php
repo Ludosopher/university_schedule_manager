@@ -28,6 +28,14 @@ return [
       'fifth' => 5
    ],
 
+   'class_periods' => [
+      1 => 'first',
+      2 => 'second',
+      3 => 'third',
+      4 => 'fourth',
+      5 => 'fifth'
+   ],
+
    'week_day_ids' => [
       'monday' => 1,
       'tuesday' => 2,

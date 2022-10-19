@@ -58,6 +58,15 @@
                                 <a class="nav-link" href="{{ route('group-form') }}">Добавить</a>
                             </div>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Пары
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="nav-link" href="{{ route('lessons') }}">Список</a>
+                                <a class="nav-link" href="{{ route('lesson-form') }}">Добавить</a>
+                            </div>
+                        </li>
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">

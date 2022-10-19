@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'HomeController@index')->name('home');
 
 Route::middleware(['auth'])->group(function () {
+    
     Route::match(['get', 'post'],'/teacher/get-all', 'TeacherController@getTeachers')->name('teachers');
     Route::get('/teacher/add-form', 'TeacherController@addTeacherForm')->name('teacher-form');
     Route::post('/teacher/add', 'TeacherController@addOrUpdateTeacher')->name('teacher-add');
@@ -33,6 +34,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/group/update', 'GroupController@addGroupForm')->name('group-update');
     Route::get('/group/delete', 'GroupController@deleteGroup')->name('group-delete');
     Route::get('/group/schedule', 'GroupController@getGroupSchedule')->name('group-schedule');
+
+    Route::match(['get', 'post'],'/lesson/get-all', 'LessonController@getLessons')->name('lessons');
+    Route::get('/lesson/add-form', 'LessonController@addLessonForm')->name('lesson-form');
+    Route::post('/lesson/add', 'LessonController@addOrUpdateLesson')->name('lesson-add');
+    Route::get('/lesson/update', 'LessonController@addLessonForm')->name('lesson-update');
+    Route::get('/lesson/delete', 'LessonController@deleteLesson')->name('lesson-delete');
+    
     
 });
 
