@@ -8,6 +8,7 @@ use App\Helpers\ModelHelpers;
 use App\Lesson;
 use App\Teacher;
 use App\WeekDay;
+use App\WeeklyPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -94,12 +95,148 @@ class TeacherController extends ModelController
 
     public function getTeachersForReplacement (Request $request)
     {
-        $replacement_lessons = [];
-        $group = Group::where('id', $request->group_id)->with('lessons.teacher.lessons')->first();
-        $seeking_teacher = Teacher::where('id', $request->teacher_id)->with(['lessons' => function ($query) use ($request) {
-            $query->where('group_id', $request->group_id);    
+        $weekly_period_ids = config('enum.weekly_period_ids');
+        $replace_lessons = [];
+        
+        $seeking_teacher = Teacher::where('id', $request->teacher_id)->with(['lessons'])->first();
+
+        $group = Group::where('id', $request->group_id)->with(['lessons.teacher.lessons'])->first();
+        
+        $is_suitable_teacher = true;
+        $is_suitable_lesson = true;
+        
+        $looked_teachers = [$seeking_teacher->id];
+        foreach ($group->lessons as $g_lesson) {
+            if (!in_array($g_lesson->teacher->id, $looked_teachers)) {
+                foreach ($g_lesson->teacher->lessons as $dt_lesson) {
+                    if ($dt_lesson->week_day_id == $request->week_day_id
+                        && ($dt_lesson->weekly_period_id == $request->weekly_period_id || $dt_lesson->weekly_period_id == $weekly_period_ids['every_week'])
+                        && $dt_lesson->class_period_id == $request->class_period_id)
+                    {
+                        $is_suitable_teacher = false;
+                        break;
+                    }
+                }
+                $looked_teachers[] = $g_lesson->teacher->id;
+                if ($is_suitable_teacher) {
+                    
+                    foreach ($g_lesson->teacher->lessons as $dt_lesson) {
+                        if ($dt_lesson->group_id == $request->group_id) {
+                            foreach ($seeking_teacher->lessons as $st_lesson) {
+                                if ($st_lesson->week_day_id == $dt_lesson->week_day_id
+                                    && ($st_lesson->weekly_period_id == $dt_lesson->weekly_period_id || $st_lesson->weekly_period_id == $weekly_period_ids['every_week'])
+                                    && $st_lesson->class_period_id == $dt_lesson->class_period_id)
+                                {
+                                    $is_suitable_lesson = false;
+                                    break;
+                                }
+                            }
+                            if ($is_suitable_lesson) {
+                                
+                                $replace_lessons[] = [
+                                    'teacher_id' => $dt_lesson->teacher_id,
+                                    'group_id' => $dt_lesson->group_id,
+                                    'week_day_id' => $dt_lesson->week_day_id,
+                                    'weekly_period_id' => $dt_lesson->weekly_period_id,
+                                    'class_period_id' => $dt_lesson->class_period_id
+                                ];
+                            }
+                            $is_suitable_lesson = true;
+                        }
+                    }
+                }
+                $is_suitable_teacher = true;
+            }
+        }
+
+dd(['replace_lessons'=>$replace_lessons]);
+
+        $group = Group::where('id', $request->group_id)->with(['lessons.teacher.lessons' => function ($query) use ($request, $weekly_period_ids) {
+            $conditions = [
+                ['group_id', '=', $request->group_id],
+                ['teacher_id', '!=', $request->teacher_id],
+                ['week_day_id', '!=', $request->week_day_id],
+                ['class_period_id', '!=', $request->class_period_id],
+            ];
+
+            if ($request->weekly_period_id != $weekly_period_ids['every_week']) {
+                $conditions = array_merge($conditions, [['weekly_period_id', '!=', $request->weekly_period_id], ['weekly_period_id', '!=', $weekly_period_ids['every_week']]]); 
+            }
+            $query = $query->where($conditions);
         }])->first();
-dd($seeking_teacher->lessons);        
+
+        foreach ($group->lessons as $g_lesson) {
+            
+            foreach ($g_lesson->teacher->lessons as $dt_lesson) {
+                echo '<pre>';
+                echo print_r(['teacher_id'=>$dt_lesson->teacher_id, 'group_id'=>$dt_lesson->group_id, 'week_day_id'=>$dt_lesson->week_day_id, 'weekly_period_id'=>$dt_lesson->weekly_period_id, 'class_period_id'=>$dt_lesson->class_period_id]);
+                echo '</pre>';
+            }
+        }
+dd();
+        $is_suitable = true;
+        foreach ($group->lessons as $g_lesson) {
+            foreach ($g_lesson->teacher->lessons as $dt_lesson) {
+                // if ($dt_lesson->group_id == $request->group_id) {
+                    foreach ($seeking_teacher->lessons as $st_lesson) {
+                        if ($st_lesson->week_day_id == $dt_lesson->week_day_id
+                            && $st_lesson->weekly_period_id == $dt_lesson->weekly_period_id
+                            && $st_lesson->class_period_id == $dt_lesson->class_period_id)
+                        {
+                            $is_suitable = false;
+                            break;
+                        }
+                    }
+                    if ($is_suitable) {
+                        
+                        $replace_lessons[] = [
+                            'teacher_id' => $dt_lesson->teacher_id,
+                            'group_id' => $dt_lesson->group_id,
+                            'week_day_id' => $dt_lesson->week_day_id,
+                            'weekly_period_id' => $dt_lesson->weekly_period_id,
+                            'class_period_id' => $dt_lesson->class_period_id
+                        ];
+                    }
+                    $is_suitable = true;
+                // }
+            }   
+        }
+$replace_lessons = array_map("unserialize", array_unique(array_map("serialize", $replace_lessons)));
+dd($replace_lessons);
+        // $week_days = WeekDay::get();
+        // $weekly_periods = WeeklyPeriod::get();
+        // $class_periods = ClassPeriod::get();
+        // $seeking_teacher = Teacher::where('id', $request->teacher_id)->with(['lessons'])->first();
+        // $free_periods = [];
+        // $is_free = true;
+        // foreach ($week_days as $week_day) {
+        //     foreach ($weekly_periods as $weekly_period) {
+        //         foreach ($class_periods as $class_period) {
+        //             foreach ($seeking_teacher->lessons as $lesson) {
+        //                 if ($lesson->week_day_id == $week_day->id
+        //                     && $lesson->weekly_period_id == $weekly_period->id
+        //                     && $lesson->class_period_id == $class_period->id)
+        //                 {
+        //                     $is_free = false;
+        //                     break;
+        //                 }
+        //             }
+        //             if ($is_free) {
+        //                 $free_periods[] = [
+        //                     'week_day_id' => $week_day->id,
+        //                     'weekly_period_id' => $weekly_period->id,
+        //                     'class_period_id' => $class_period->id
+        //                 ];
+        //             }
+        //             $is_free = true;
+                    
+        //         }
+        //     }
+        // }
+
+// dd($free_periods);
+
+        ////////////////
         $lesson_teachers = [$seeking_teacher->id];
 echo '<pre>';
 print_r(['request' => $request->all()]);
