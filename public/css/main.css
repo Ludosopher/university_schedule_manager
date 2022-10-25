@@ -47,6 +47,7 @@
 
 .getAllLeft {
    width: 20%;
+   padding-right: 1%;
 }
 
 .getAllRight {
@@ -57,12 +58,13 @@
     width: 90%;
 }
 
-.departmentId, .facultyId {
+.departmentId {
     width: 90%;
 }
 
 .birthYear {
-    display: flex; 
+    display: flex;
+    width: 50%;
 }
 
 .nav-pagination {
@@ -89,8 +91,24 @@
 
 .replace-link {
     color: Black;
-    text-decoration: none !important;;
+    text-decoration: none !important;
 }
+
+.filter-select {
+    width: 100%;
+}
+
+.filter-input {
+    width: 100% !important;  
+}
+
+/* .integer-input-div {
+    
+} */
+
+/* .integer-input {
+    
+} */
 
 /*add/update form*/
 

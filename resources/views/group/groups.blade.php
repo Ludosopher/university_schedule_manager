@@ -60,7 +60,7 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
-                                    <select name="{{ $field_name }}" class="form-select facultyId" aria-label="Default select example">
+                                    <select name="{{ $field_name }}" class="form-select filter-select" aria-label="Default select example">
                                                 <option selected value=""></option>
                                         @foreach($data[$field['plural_name']] as $value)
                                             @if(old($field_name) !== null && old($field_name) == $value->id)
@@ -81,7 +81,7 @@
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
-                                    <input style="width: 90%;" name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm" id="{{ $field_name }}" value="{{ old($field_name) !== null ? old($field_name) : '' }}">
+                                    <input style="width: 90%;" name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm filter-input" id="{{ $field_name }}" value="{{ old($field_name) !== null ? old($field_name) : '' }}">
                                     @if ($errors !== null && $errors->has($field_name))
                                         @foreach($errors->get($field_name) as $error)
                                             <div class="validationErrorText">{{ $error }}</div>

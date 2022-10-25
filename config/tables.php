@@ -8,9 +8,9 @@ return [
          'sorting' => false
       ],
       [
-         'field' => 'birth_year',
-         'header' => 'Год рождения',
-         'sorting' => true
+         'field' => 'age',
+         'header' => 'Возраст',
+         'sorting' => false
       ],
       [
          'field' => 'phone',
@@ -174,5 +174,58 @@ return [
          'header' => 'Преподаватель',
          'sorting' => false
       ],
+   ],
+   'replacement_variants' => [
+      [
+         'field' => 'subject',
+         'header' => 'Предмет',
+         'sorting' => null
+      ],
+      [
+         'field' => 'week_day_id',
+         'header' => 'День недели',
+         'sorting' => null
+      ],
+      [
+         'field' => 'weekly_period_id',
+         'header' => 'Недельная периодичность',
+         'sorting' => null
+      ],
+      [
+         'field' => 'class_period_id',
+         'header' => 'Пара',
+         'sorting' => null
+      ],
+      [
+         'field' => 'profession_level_name',
+         'header' => 'Заменяющий преподаватель',
+         'sorting' => null
+      ],
+      [
+         'field' => 'phone',
+         'header' => 'Телефон',
+         'sorting' => null
+      ],
+      [
+         'field' => 'age',
+         'header' => 'Возраст',
+         'sorting' => null
+      ],
+      [
+         'field' => 'department_id',
+         'header' => 'Кафедра',
+         'sorting' => null
+      ],
+      [
+         'field' => 'position_id',
+         'header' => 'Должность',
+         'sorting' => null
+      ],
+      [
+         'field' => 'schedule_position_id',
+         'header' => 'Встроенность в расписание заменяющего преподавателя',
+         'sorting' => null
+      ],
+
    ]
 ];

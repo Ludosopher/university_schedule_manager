@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\ClassPeriod;
 use App\Group;
+use App\Helpers\FilterHelpers;
 use App\Helpers\ModelHelpers;
+use App\Helpers\TeacherHelpers;
 use App\Lesson;
 use App\Teacher;
 use App\WeekDay;
@@ -28,7 +30,7 @@ class TeacherController extends ModelController
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), $this->model_name::filterRules());
             if ($validator->fails()) {
-                return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator)->withInput();
+                return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
             }
         }
         
@@ -81,7 +83,7 @@ class TeacherController extends ModelController
             "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id"
         ]);
         if ($validator->fails()) {
-            return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator); 
+            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
         }
 
         $data = $this->getSchedule($request);
@@ -93,54 +95,4 @@ class TeacherController extends ModelController
         return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
     }
 
-    public function getTeachersForReplacement (Request $request)
-    {
-        $weekly_period_ids = config('enum.weekly_period_ids');
-        $replace_lessons = [];
-        
-        $seeking_teacher = Teacher::where('id', $request->teacher_id)->with(['lessons'])->first();
-        $group = Group::where('id', $request->group_id)->with(['lessons.teacher.lessons'])->first();
-        
-        $is_suitable_teacher = true;
-        $is_suitable_lesson = true;
-        $looked_teachers = [$seeking_teacher->id];
-
-        foreach ($group->lessons as $g_lesson) {
-            if (!in_array($g_lesson->teacher->id, $looked_teachers)) {
-                foreach ($g_lesson->teacher->lessons as $dt_lesson) {
-                    if ($dt_lesson->week_day_id == $request->week_day_id
-                        && ($dt_lesson->weekly_period_id == $request->weekly_period_id || $dt_lesson->weekly_period_id == $weekly_period_ids['every_week'])
-                        && $dt_lesson->class_period_id == $request->class_period_id)
-                    {
-                        $is_suitable_teacher = false;
-                        break;
-                    }
-                }
-                $looked_teachers[] = $g_lesson->teacher->id;
-                if ($is_suitable_teacher) {
-                    foreach ($g_lesson->teacher->lessons as $dt_lesson) {
-                        if ($dt_lesson->group_id == $request->group_id) {
-                            foreach ($seeking_teacher->lessons as $st_lesson) {
-                                if ($st_lesson->week_day_id == $dt_lesson->week_day_id
-                                    && ($st_lesson->weekly_period_id == $dt_lesson->weekly_period_id || $st_lesson->weekly_period_id == $weekly_period_ids['every_week'])
-                                    && $st_lesson->class_period_id == $dt_lesson->class_period_id)
-                                {
-                                    $is_suitable_lesson = false;
-                                    break;
-                                }
-                            }
-                            if ($is_suitable_lesson) {
-                                
-                                $replace_lessons[] = $dt_lesson;
-                            }
-                            $is_suitable_lesson = true;
-                        }
-                    }
-                }
-                $is_suitable_teacher = true;
-            }
-        }
-
-        return $replace_lessons;
-    }
 }

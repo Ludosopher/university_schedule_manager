@@ -23,7 +23,7 @@ class GroupController extends ModelController
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), $this->model_name::filterRules());
             if ($validator->fails()) {
-                return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator)->withInput();
+                return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
             }
         }
         
@@ -79,7 +79,7 @@ class GroupController extends ModelController
             "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id"
         ]);
         if ($validator->fails()) {
-            return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator); 
+            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
         }
 
         $data = $this->getSchedule($request);

@@ -61,5 +61,20 @@ return [
       1 => 'White',
       2 => '#ffb3b9',
       3 => '#ace7f2'
+   ],
+
+   'schedule_positions' => [
+      ['id' => 1,
+      'name' => 'Между двумя имеющимися парами'],
+      ['id' => 2,
+      'name' => 'Рядом с одной из имеющихся пар'],
+      ['id' => 3,
+      'name' => 'Нет рядом имеющихся пар'],
+   ],
+
+   'schedule_position_ids' => [
+      'between_available_lessons' => 1,
+      'is_one_lesson_available' => 2,
+      'no_lessons_available' => 3
    ]
 ];

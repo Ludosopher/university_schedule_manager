@@ -20,14 +20,13 @@ Route::get('/', 'HomeController@index')->name('home');
 
 Route::middleware(['auth'])->group(function () {
     
-    Route::match(['get', 'post'],'/teacher/get-all', 'TeacherController@getTeachers')->name('teachers');
+    Route::match(['get', 'post'], '/teacher/get-all', 'TeacherController@getTeachers')->name('teachers');
     Route::get('/teacher/add-form', 'TeacherController@addTeacherForm')->name('teacher-form');
     Route::post('/teacher/add', 'TeacherController@addOrUpdateTeacher')->name('teacher-add');
     Route::get('/teacher/update', 'TeacherController@addTeacherForm')->name('teacher-update');
     Route::get('/teacher/delete', 'TeacherController@deleteTeacher')->name('teacher-delete');
     Route::get('/teacher/schedule', 'TeacherController@getTeacherSchedule')->name('teacher-schedule');
-    Route::get('/teacher/replacement', 'TeacherController@getTeachersForReplacement')->name('teacher-replacement'); 
-    
+        
     Route::match(['get', 'post'],'/group/get-all', 'GroupController@getGroups')->name('groups');
     Route::get('/group/add-form', 'GroupController@addGroupForm')->name('group-form');
     Route::post('/group/add', 'GroupController@addOrUpdateGroup')->name('group-add');
@@ -40,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/lesson/add', 'LessonController@addOrUpdateLesson')->name('lesson-add');
     Route::get('/lesson/update', 'LessonController@addLessonForm')->name('lesson-update');
     Route::get('/lesson/delete', 'LessonController@deleteLesson')->name('lesson-delete');
+    Route::match(['get', 'post'], '/lesson/replacement', 'LessonController@getLessonsForReplacement')->name('lesson-replacement');
     
     
 });
@@ -47,5 +47,3 @@ Route::middleware(['auth'])->group(function () {
 
 
 Auth::routes();
-
-

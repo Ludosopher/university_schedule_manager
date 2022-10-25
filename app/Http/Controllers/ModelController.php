@@ -111,6 +111,7 @@ class ModelController extends Controller
                 return $data;    
             } else {
                 $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id] = [
+                    'id' => $lesson->id,
                     'week_day_id' => $lesson->week_day_id,
                     'weekly_period_id' => $lesson->weekly_period_id,
                     'class_period_id' => $lesson->class_period_id,
@@ -125,4 +126,32 @@ class ModelController extends Controller
 
         return $data;
     }
+
+    public function getReplacementData($request)
+    {
+        $request->flash();
+        $data = $request->all();
+        $replacement_lessons = [];
+        $helper = 'App\Helpers\\'.ucfirst($this->instance_name).'Helpers';
+        if (!isset($data['replace_rules'])) {
+            if (isset($data['prev_replace_rules'])) {
+                $replacement_lessons = $helper::getLessonsForReplacement(json_decode($data['prev_replace_rules'], true));
+                unset($data['prev_replace_rules']);
+            }
+        } else {
+            $replacement_lessons = $helper::getLessonsForReplacement($data['replace_rules']);
+        }
+        
+        $filtered_replacement_lessons = FilterHelpers::getFilteredArrayOfArrays($replacement_lessons, $data);
+        
+        $data = [
+            'replacement_lessons' => $filtered_replacement_lessons,
+            'table_properties' => config("tables.replacement_variants"),
+            'filter_form_fields' => $this->model_name::getReplacementFilterFormFields(),
+            'prev_replace_rules' => $data['replace_rules'] ?? ''
+        ];
+
+        return array_merge($data, $this->model_name::getReplacementProperties());
+    } 
+    
 }

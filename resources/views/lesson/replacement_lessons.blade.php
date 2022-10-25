@@ -1,35 +1,12 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if (isset($data['deleted_instance_name']))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные пары {{ $data['deleted_instance_name'] }} удалены.
-            </div>
-        @endif
-        @if (isset($data['deleting_instance_not_found']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Такая пара не найдена.
-            </div>
-        @endif
-        @if (isset($data['updated_instance_name']))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные пары {{ $data['updated_instance_name'] }} обновлены.
-            </div>
-        @endif
-        @if (isset($data['duplicated_lesson']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                На указанное время ({{ $data['duplicated_lesson']['week_day'] }}, {{ lcfirst($data['duplicated_lesson']['class_period']) }} пара {{ lcfirst($data['duplicated_lesson']['weekly_period']) }}) для группы {{ $data['duplicated_lesson']['teacher'] }} назначено несколько занятий.
-            </div>
-        @endif
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>
-                <form method="POST" action="{{ route('lessons') }}">
+                <form method="POST" action="{{ route('lesson-replacement') }}">
                 @csrf
+                    <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
                     @if(isset($data['filter_form_fields']))
                         @foreach($data['filter_form_fields'] as $field)
                             @if($field['type'] == 'between')
@@ -63,10 +40,10 @@
                                     <select name="{{ $field_name }}" class="form-select filter-select" aria-label="Default select example">
                                                 <option selected value=""></option>
                                         @foreach($data[$field['plural_name']] as $value)
-                                            @if(old($field_name) !== null && old($field_name) == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                            @if(old($field_name) !== null && old($field_name) == (is_object($value) ? $value->id : $value['id']))
+                                                <option selected value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ is_object($value) ? $value->name : $value['name'] }}</option>
                                             @else
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ is_object($value) ? $value->name : $value['name'] }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -94,65 +71,25 @@
                     <button type="submit" class="btn btn-primary form-button">Показать</button>
                 </form>
             </div>
-            <div class="getAllRight">          
-                <h1>Пары</h1>
+            <div class="getAllRight">              
+                <h1>Варианты замены</h1>
                 <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            <th class="th-sm text-center align-top"></th>
                             @foreach($data['table_properties'] as $property)
-                                @if($property['sorting'])
-                                    @if(is_array($property['field']))
-                                        @php
-                                            $full_field = implode('.', $property['field']);
-                                        @endphp
-                                        <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name">{{ $property['header'] }}</div><div>@sortablelink($full_field, '▼')</div></div>
-                                        </th>
-                                    @else
-                                        <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name">{{ $property['header'] }}</div><div>@sortablelink($property['field'], '▼')</div></div>
-                                        </th>   
-                                    @endif
-                                @else
-                                    <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
-                                @endif
+                                <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
                             @endforeach
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($data['instances'] as $instance)
+                        @foreach($data['replacement_lessons'] as $lesson)
                             <tr>
-                                <td>
-                                    <a class="" href="{{ route('lesson-update', ['updating_id' => $instance->id]) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                                        </svg>
-                                    </a>
-                                    <a class="" href="{{ route('lesson-delete', ['deleting_id' => $instance->id]) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
-                                        </svg>
-                                    </a>
-                                </td>
                                 @foreach($data['table_properties'] as $property)
                                     @php $field = $property['field'] @endphp
-                                    @if(is_array($field) && count($field) > 1)
-                                        @php
-                                            $value = $instance;
-                                            foreach ($field as $part) {
-                                                $value = $value->$part;
-                                                if (!is_object($value)) {
-                                                    break;
-                                                }
-                                            }
-                                        @endphp
-                                        <td>{{ $value }}</td>  
-                                    {{-- @elseif($field == 'name')
-                                        <td><a href="{{ route('group-schedule', ['schedule_group_id' => $instance->id]) }}">{{ $instance->$field }}</a></td> --}}
+                                    @if($field == 'profession_level_name')
+                                        <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $lesson['teacher_id']]) }}">{{ is_array($lesson[$field]) ? $lesson[$field]['name'] : $lesson[$field] }}</a></td>
                                     @else
-                                        <td>{{ $instance->$field }}</td>    
+                                        <td class="regular-cell">{{ is_array($lesson[$field]) ? $lesson[$field]['name'] : $lesson[$field] }}</td>    
                                     @endif
                                 @endforeach
                             </tr>
@@ -160,16 +97,12 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th class="th-sm text-center align-top"></th>
                             @foreach($data['table_properties'] as $property)
                                 <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
                             @endforeach
                         </tr>
                     </tfoot>
                 </table>
-                <div class="nav-pagination">
-                    {{ $data['instances']->links('pagination::bootstrap-4') }}
-                </div>
             </div>
         </div>
     </div> 

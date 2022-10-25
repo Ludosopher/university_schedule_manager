@@ -42,18 +42,18 @@
                                 @php $field_name = $field['name']; @endphp
                                 <h6>{{ $field['header'] }}</h6>
                                 <div class="birthYear">
-                                    <div>
+                                    <div class="integer-input-div">
                                         <label for="{{$field_name}}_from" class="form-label">От</label>
-                                        <input name="{{$field_name}}_from" type="number" min="{{ $field['min_value'] }}" max="{{ $field['max_value'] }}" step="{{ $field['step'] }}" class="form-control form-control-sm" id="{{$field_name}}_from" value="{{ old($field_name.'_from') !== null ? old($field_name.'_from') : '' }}">
+                                        <input name="{{$field_name}}_from" type="number" min="{{ $field['min_value'] }}" max="{{ $field['max_value'] }}" step="{{ $field['step'] }}" class="form-control form-control-sm integer-input" id="{{$field_name}}_from" value="{{ old($field_name.'_from') !== null ? old($field_name.'_from') : '' }}">
                                         @if ($errors !== null && $errors->has($field_name.'_from'))
                                             @foreach($errors->get($field_name.'_from') as $error)
                                                 <div class="validationErrorText">{{ $error }}</div>
                                             @endforeach
                                         @endif
                                     </div>
-                                    <div>
+                                    <div class="integer-input-div">
                                         <label for="{{$field_name}}_to" class="form-label">До</label>
-                                        <input name="{{$field_name}}_to" type="number" min="{{ $field['min_value'] }}" max="{{ $field['max_value'] }}" step="{{ $field['step'] }}" class="form-control form-control-sm" id="{{$field_name}}_to" value="{{ old($field_name.'_to') !== null ? old($field_name.'_to') : '' }}">
+                                        <input name="{{$field_name}}_to" type="number" min="{{ $field['min_value'] }}" max="{{ $field['max_value'] }}" step="{{ $field['step'] }}" class="form-control form-control-sm integer-input" id="{{$field_name}}_to" value="{{ old($field_name.'_to') !== null ? old($field_name.'_to') : '' }}">
                                         @if ($errors !== null && $errors->has($field_name.'_to'))
                                             @foreach($errors->get($field_name.'_to') as $error)
                                                 <div class="validationErrorText">{{ $error }}</div>
@@ -66,7 +66,7 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
-                                    <select name="{{ $field_name }}" class="form-select facultyId" aria-label="Default select example">
+                                    <select name="{{ $field_name }}" class="form-select filter-select" aria-label="Default select example">
                                                 <option selected value=""></option>
                                         @foreach($data[$field['plural_name']] as $value)
                                             @if(old($field_name) !== null && old($field_name) == $value->id)
@@ -87,7 +87,7 @@
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
-                                    <input style="width: 90%;" name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm" id="{{ $field_name }}" value="{{ old($field_name) !== null ? old($field_name) : '' }}">
+                                    <input name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm filter-input" id="{{ $field_name }}" value="{{ old($field_name) !== null ? old($field_name) : '' }}">
                                     @if ($errors !== null && $errors->has($field_name))
                                         @foreach($errors->get($field_name) as $error)
                                             <div class="validationErrorText">{{ $error }}</div>

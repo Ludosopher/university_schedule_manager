@@ -2,18 +2,11 @@
 
 namespace App\Helpers;
 
+use App\Lesson;
 use App\Teacher;
 
 class FilterHelpers
 {
-    public static function getPaginationData($rows_per_page, $query, $page) {
-        
-        return [
-            'pages_number' => ceil($query->count() / $rows_per_page),
-            'instances' => $query->paginate(7)->withQueryString()// $query->limit($rows_per_page)->offset(($page - 1) * $rows_per_page)->get()
-        ];
-    }
-
     public static function getFilteredQuery($query, $data, $model_name) {
         
         $filter_conditions = $model_name::filterConditions();
@@ -36,11 +29,21 @@ class FilterHelpers
                         $q;
                     });
                 }
+            } elseif (isset($conditions['calculated value'])) {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    if (isset($conditions['db_field'])) {
+                        $db_field = $conditions['db_field'];
+                        $query = $query->$method($db_field, $conditions['operator'], $conditions['calculated value']($data[$field]));    
+                    } else {
+                        $query = $query->$method($field, $conditions['operator'], $conditions['calculated value']($data[$field]));
+                    }
+                }
             } else {
                 if (isset($data[$field])) {
                     $method = $conditions['method'];
                     $is_like = $conditions['operator'] == 'like';
-                     if (isset($conditions['db_field'])) {
+                    if (isset($conditions['db_field'])) {
                         $db_field = $conditions['db_field'];
                         $query = $query->$method($db_field, $conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));    
                     } else {
@@ -52,17 +55,57 @@ class FilterHelpers
 
         return $query;
     }
-    
-    public static function getInstancesData($data, $rows_per_page, $query, $page, $model_name) {
+
+    public static function getFilteredArrayOfArrays($array_arrays, $data) {
+
+        $filterReplacementConditions = Lesson::filterReplacementConditions();
+        $filtered_array_arrays = [];
+        $is_suitable_element = true;
+
+        foreach ($array_arrays as $array) {
+            foreach ($filterReplacementConditions as $key => $condition) {
+                if (isset($data[$key]) && isset($array[$key])) {
+                    if ($condition['operator'] == 'not_equal') {
+                        if (is_array($array[$key])) {
+                            if ($array[$key]['id'] != $data[$key]) {
+                                $is_suitable_element = false;
+                                break;    
+                            }
+                        } else {
+                            if ($array[$key] != $data[$key]) {
+                                $is_suitable_element = false;
+                                break;    
+                            }
+                        }
+                    }
+                    if ($condition['operator'] == 'not_like') {
+                        if (strpos($array[$key], $data[$key]) === false) {
+                            $is_suitable_element = false;
+                            break;    
+                        }
+                    }
+                    if ($condition['operator'] == 'less_then') {
+                        if ($array[$key] < $data[$key]) {
+                            $is_suitable_element = false;
+                            break;    
+                        }
+                    }
+                    if ($condition['operator'] == 'more_then') {
+                        if ($array[$key] > $data[$key]) {
+                            $is_suitable_element = false;
+                            break;    
+                        }
+                    }
+                }
+            }
+            if ($is_suitable_element) {
+                $filtered_array_arrays[] = $array;
+            }
+            $is_suitable_element = true;
+        }
         
-        $pagination_data = FilterHelpers::getPaginationData($rows_per_page, $query, $page);
-        $model = new $model_name;
-        $instances_table_data = config('tables.'.$model->getTable());
-        return array_merge($data, [
-            'headers' => array_column($instances_table_data, 'header'),
-            'fields' => array_column($instances_table_data, 'field'),
-            'instances' => $pagination_data['instances'],
-            'pages_number' => $pagination_data['pages_number'],
-        ]);
+        return $filtered_array_arrays;
     }
+    
+
 }

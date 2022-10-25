@@ -40,7 +40,7 @@ class Teacher extends Model
         return $this->hasMany('App\Lesson');
     }
     
-    public $additional_attributes = ['full_name', 'profession_level_name'];
+    public $additional_attributes = ['full_name', 'profession_level_name', 'age'];
     public function getFullNameAttribute()
     {
         $patronymic = '';
@@ -60,7 +60,16 @@ class Teacher extends Model
         
         return "{$professional_level} {$last_name} {$first_name_abbr}{$patronymic_abbr}";
     }
-    
+
+    public function getAgeAttribute()
+    {
+        $birth_year = new \DateTime($this->birth_year);
+        $carrent_date = new \DateTime();
+        $diff = $carrent_date->diff($birth_year);
+
+        return $diff->y;
+    }
+
     public static function rules($request)
     {
         return [
@@ -87,8 +96,8 @@ class Teacher extends Model
     {
         return [
             'full_name' => 'nullable|string',
-            'birth_year_from' => 'nullable|integer|min:1900|max:2099',
-            'birth_year_to' => 'nullable|integer|min:1900|max:2099',
+            'age_from' => 'nullable|integer',
+            'age_to' => 'nullable|integer',
             'faculty_id' => 'nullable|integer|exists:App\Faculty,id',
             'department_id' => 'nullable|integer|exists:App\Department,id',
             'professional_level_id' => 'nullable|integer|exists:App\ProfessionalLevel,id',
@@ -135,15 +144,21 @@ class Teacher extends Model
                     ],
                 ]
             ],
-            'birth_year_from' => [
+            'age_from' => [
                 'db_field' => 'birth_year',
                 'method' => 'where',
-                'operator' => '>='
+                'operator' => '<',
+                'calculated value' => function ($age) {
+                    return now()->subYear($age);
+                } 
             ],
-            'birth_year_to' => [
+            'age_to' => [
                 'db_field' => 'birth_year',
                 'method' => 'where',
-                'operator' => '<='
+                'operator' => '>',
+                'calculated value' => function ($age) {
+                    return now()->subYear($age);
+                }
             ],
             'faculty_id' => [
                 'method' => 'where',
@@ -257,10 +272,10 @@ class Teacher extends Model
             ],
             [
                 'type' => 'between',
-                'name' => 'birth_year',
-                'header' => 'Год рождения',
-                'min_value' => '1900',
-                'max_value' => '2099',
+                'name' => 'age',
+                'header' => 'Возраст',
+                'min_value' => '',
+                'max_value' => '',
                 'step' => '1'
             ],
             [

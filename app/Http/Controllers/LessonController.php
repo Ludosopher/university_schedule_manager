@@ -41,7 +41,6 @@ class LessonController extends ModelController
 
     public function addOrUpdateLesson (Request $request)
     {
-        
         $validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames());
         if ($validator->fails()) {
             if (isset($request->updating_id)) {
@@ -63,7 +62,7 @@ class LessonController extends ModelController
 
     public function deleteLesson (Request $request)
     {
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name); 
+        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name);
             
         if ($deleted_instance) {
             $instance_name_field = $this->instance_name_field;
@@ -71,6 +70,25 @@ class LessonController extends ModelController
         } else {
             return redirect()->route("{$this->instance_plural_name}", ['deleting_instance_not_found' => true]);
         }
+    }
+
+    public function getLessonsForReplacement (Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $validator = Validator::make($request->all(), $this->model_name::filterReplacementRules());
+            if ($validator->fails()) {
+                return redirect()->route("{$this->instance_name}-replacement", ['replace_rules' => json_decode($request->all()['prev_replace_rules'], true)])->withErrors($validator)->withInput();
+            }
+        }
+        
+        $data = $this->getReplacementData($request);
+       
+        return view("{$this->instance_name}.replacement_lessons")->with('data', $data);
+    }
+
+    public function getPeriodsForLessonRescheduling (Request $request)
+    {
+          
     }
     
 }
