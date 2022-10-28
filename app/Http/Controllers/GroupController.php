@@ -85,7 +85,7 @@ class GroupController extends ModelController
         $data = $this->getSchedule($request);
 
         if (isset($data['duplicated_lesson'])) {
-            return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}", ['data' => $data]);
+            return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
         
         return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);

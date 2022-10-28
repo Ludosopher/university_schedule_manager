@@ -19,12 +19,6 @@
                 Данные группы {{ $data['updated_instance_name'] }} обновлены.
             </div>
         @endif
-        @if (isset($data['duplicated_lesson']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                На указанное время ({{ $data['duplicated_lesson']['week_day'] }}, {{ lcfirst($data['duplicated_lesson']['class_period']) }} пара {{ lcfirst($data['duplicated_lesson']['weekly_period']) }}) для группы {{ $data['duplicated_lesson']['teacher'] }} назначено несколько занятий.
-            </div>
-        @endif
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>

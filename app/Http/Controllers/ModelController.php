@@ -104,7 +104,7 @@ class ModelController extends Controller
             {
                 $data['duplicated_lesson'] = [
                     $this->instance_name => $instance->$instance_name_field,
-                    'class_period' => $lesson->class_period->number,
+                    'class_period' => $lesson->class_period->name,
                     'week_day' => $lesson->week_day->name,
                     'weekly_period' => $lesson->weekly_period->name
                 ];
@@ -127,31 +127,4 @@ class ModelController extends Controller
         return $data;
     }
 
-    public function getReplacementData($request)
-    {
-        $request->flash();
-        $data = $request->all();
-        $replacement_lessons = [];
-        $helper = 'App\Helpers\\'.ucfirst($this->instance_name).'Helpers';
-        if (!isset($data['replace_rules'])) {
-            if (isset($data['prev_replace_rules'])) {
-                $replacement_lessons = $helper::getLessonsForReplacement(json_decode($data['prev_replace_rules'], true));
-                unset($data['prev_replace_rules']);
-            }
-        } else {
-            $replacement_lessons = $helper::getLessonsForReplacement($data['replace_rules']);
-        }
-        
-        $filtered_replacement_lessons = FilterHelpers::getFilteredArrayOfArrays($replacement_lessons, $data);
-        
-        $data = [
-            'replacement_lessons' => $filtered_replacement_lessons,
-            'table_properties' => config("tables.replacement_variants"),
-            'filter_form_fields' => $this->model_name::getReplacementFilterFormFields(),
-            'prev_replace_rules' => $data['replace_rules'] ?? ''
-        ];
-
-        return array_merge($data, $this->model_name::getReplacementProperties());
-    } 
-    
 }

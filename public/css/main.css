@@ -124,6 +124,10 @@
 
 /*/teacher/schedule*/
 
+.schedule-table {
+    width: 100% !important;
+}
+
 .schedule-period-name {
     font-size: 17px;
     font-weight: bold;
@@ -167,9 +171,9 @@
 }
 
 .schedule-cell {
-    position:relative;
+    position: relative;
     padding: 0rem !important;
-    width: 15%;
+    width: 15% !important;
     height: 130px;
 }
 .schedule-cell-top {
@@ -177,9 +181,8 @@
     padding-top: 7px;
     height: 50%;
     width: 100%;
-    position:absolute;
+    position: absolute;
     top: 0;
-    /* vertical-align: top; */
 }
 .schedule-cell-bottom {
     margin: 0px !important;
@@ -188,6 +191,14 @@
     width: 100%;
     position:absolute;
     bottom: 0;
-    /* vertical-align: bottom; */
+}
+
+.schedule-actions-div {
+    padding: 0px 5px 0px 5px;
+}
+
+.schedule-actions-button {
+    text-decoration: none !important;
+    color: black;
 }
 

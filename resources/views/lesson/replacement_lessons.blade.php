@@ -71,8 +71,11 @@
                     <button type="submit" class="btn btn-primary form-button">Показать</button>
                 </form>
             </div>
-            <div class="getAllRight">              
+            <div class="getAllRight">
                 <h1>Варианты замены</h1>
+                <h5>Заменяемое занятие: {{ $data['header_data']['class_period'] }} пара, {{ $data['header_data']['week_day'] }}, {{ $data['header_data']['weekly_period'] }}</h5>
+                <h5>Преподавателя: {{ $data['header_data']['teacher'] }}</h5>
+                <h5>Группы: {{ $data['header_data']['group'] }}</h5>
                 <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                     <thead>
                         <tr>

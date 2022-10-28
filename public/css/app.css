@@ -3401,7 +3401,7 @@ input[type=button].btn-block {
 }
 
 .dropdown-toggle {
-  white-space: nowrap;
+  /* white-space: nowrap; */
 }
 
 .dropdown-toggle::after {

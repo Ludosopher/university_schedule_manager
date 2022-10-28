@@ -63,6 +63,12 @@ return [
       3 => '#ace7f2'
    ],
 
+   'free_weekly_period_colors' => [
+      1 => '#bcf5bc',
+      2 => '#ffb3b9',
+      3 => '#ace7f2'
+   ],
+
    'schedule_positions' => [
       ['id' => 1,
       'name' => 'Между двумя имеющимися парами'],

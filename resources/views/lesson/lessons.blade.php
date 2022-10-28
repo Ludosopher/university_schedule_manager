@@ -19,10 +19,16 @@
                 Данные пары {{ $data['updated_instance_name'] }} обновлены.
             </div>
         @endif
-        @if (isset($data['duplicated_lesson']))
+        @if (isset($data['duplicated_lesson']) && isset($data['duplicated_lesson']['teacher']))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                На указанное время ({{ $data['duplicated_lesson']['week_day'] }}, {{ lcfirst($data['duplicated_lesson']['class_period']) }} пара {{ lcfirst($data['duplicated_lesson']['weekly_period']) }}) для группы {{ $data['duplicated_lesson']['teacher'] }} назначено несколько занятий.
+                На указанное время ({{ $data['duplicated_lesson']['week_day'] }}, {{ mb_strtolower($data['duplicated_lesson']['class_period']) }} пара {{ mb_strtolower($data['duplicated_lesson']['weekly_period']) }}) для преподавателя {{ $data['duplicated_lesson']['teacher'] }} назначено несколько занятий.
+            </div>
+        @endif
+        @if (isset($data['duplicated_lesson']) && isset($data['duplicated_lesson']['group']))
+            <div class="alertFail">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                На указанное время ({{ $data['duplicated_lesson']['week_day'] }}, {{ mb_strtolower($data['duplicated_lesson']['class_period']) }} пара {{ mb_strtolower($data['duplicated_lesson']['weekly_period']) }}) для группы {{ $data['duplicated_lesson']['group'] }} назначено несколько занятий.
             </div>
         @endif
         <div class="getAllContainer">

@@ -39,7 +39,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/lesson/add', 'LessonController@addOrUpdateLesson')->name('lesson-add');
     Route::get('/lesson/update', 'LessonController@addLessonForm')->name('lesson-update');
     Route::get('/lesson/delete', 'LessonController@deleteLesson')->name('lesson-delete');
-    Route::match(['get', 'post'], '/lesson/replacement', 'LessonController@getLessonsForReplacement')->name('lesson-replacement');
+    Route::match(['get', 'post'], '/lesson/replacement', 'LessonController@getReplacementVariants')->name('lesson-replacement');
+    Route::get('/lesson/rescheduling', 'LessonController@getReschedulingVariants')->name('lesson-rescheduling');
     
     
 });

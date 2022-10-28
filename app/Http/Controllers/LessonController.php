@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers;
 
-
+use App\ClassPeriod;
+use App\Group;
+use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
+use App\Lesson;
+use App\Teacher;
+use App\WeekDay;
+use App\WeeklyPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -72,8 +78,9 @@ class LessonController extends ModelController
         }
     }
 
-    public function getLessonsForReplacement (Request $request)
+    public function getReplacementVariants (Request $request)
     {
+        $request->flash();
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), $this->model_name::filterReplacementRules());
             if ($validator->fails()) {
@@ -81,14 +88,25 @@ class LessonController extends ModelController
             }
         }
         
-        $data = $this->getReplacementData($request);
-       
+        $data = LessonHelpers::getReplacementData($request->all());
+      
         return view("{$this->instance_name}.replacement_lessons")->with('data', $data);
     }
 
-    public function getPeriodsForLessonRescheduling (Request $request)
+    public function getReschedulingVariants (Request $request)
     {
-          
+        $validator = Validator::make($request->all(), [
+            'teacher_id' => 'required|integer|exists:App\Teacher,id',
+            'group_id' => 'required|integer|exists:App\Group,id',
+            'lesson_id' => 'required|integer|exists:App\Lesson,id',
+        ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator);
+            }
+        
+        $data = LessonHelpers::getReschedulingData($request->all());
+
+        return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
     }
     
 }
