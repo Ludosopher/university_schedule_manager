@@ -8,11 +8,10 @@ use App\Teacher;
 class FilterHelpers
 {
     public static function getFilteredQuery($query, $data, $model_name) {
-        
+       
         $filter_conditions = $model_name::filterConditions();
-
         foreach ($filter_conditions as $field => $conditions) {
-            if (is_array($conditions['operator'])) {
+            if ($conditions['method'] == 'where' && is_array($conditions['operator'])) {
                 if (isset($data[$field])) {
                     $method = $conditions['method'];
                     $query = $query->$method(function($q) use ($data, $conditions, $field) {
@@ -39,6 +38,16 @@ class FilterHelpers
                         $query = $query->$method($field, $conditions['operator'], $conditions['calculated value']($data[$field]));
                     }
                 }
+            } elseif ($conditions['method'] == 'whereHas' && is_array($conditions['operator'])) {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    $query = $query->$method($conditions['eager_field'], function($q) use ($conditions, $data, $field) {
+                        foreach ($conditions['operator'] as $sub_field => $sub_conditions) {
+                            $sub_method = $sub_conditions['method'];
+                            $q = $q->$sub_method($sub_field, $sub_conditions['operator'], $data[$field]);
+                        }
+                    });
+                }    
             } else {
                 if (isset($data[$field])) {
                     $method = $conditions['method'];

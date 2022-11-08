@@ -51,6 +51,18 @@ return [
       3 => 'blue_week'
    ],
 
+   'lesson_type_ids' => [
+      'lecture' => 1,
+      'practical' => 2,
+      'laboratory' => 3
+   ],
+
+   'lesson_types' => [
+      1 => 'lecture',
+      2 => 'practical',
+      3 => 'laboratory'
+   ],
+
    'weekly_period_ids' => [
       'every_week' => 1,
       'red_week' => 2,

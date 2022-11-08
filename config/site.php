@@ -2,7 +2,7 @@
 
 return [
    
-   'rows_per_page' => 10,
+   'rows_per_page' => 15,
 
    'rescheduling_week_days_limit' => 5,
 

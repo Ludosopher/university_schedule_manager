@@ -12,7 +12,7 @@ class Group extends Model
     
     public function lessons()
     {
-        return $this->hasMany('App\Lesson');
+        return $this->belongsToMany(Lesson::class);
     }
 
     public function faculty()
@@ -40,10 +40,29 @@ class Group extends Model
         return $this->belongsTo(StudyForm::class);
     }
 
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public $additional_attributes = ['name'];
+    
+    public function getNameAttribute()
+    {
+        $study_degree = $this->study_degree->abbreviation;
+        $study_form = $this->study_form->abbreviation;
+        $faculty = $this->faculty->abbreviation;
+        $cours = $this->course->number;
+        $study_program = $this->study_program->abbreviation;
+        $study_orientation = mb_strtolower($this->study_orientation->abbreviation);
+        $additional_id = isset($this->additional_id) ? "/$this->additional_id" : "";
+        
+        return "{$study_degree}.{$study_form}.{$faculty}-{$cours}-{$study_program}({$study_orientation}){$additional_id}";
+    }
+
     public static function rules($request)
     {
         return [
-            'name' => 'required|string',
             'faculty_id' => 'required|integer|exists:App\Faculty,id',
             'study_program_id' => 'required|integer|exists:App\StudyProgram,id',
             'study_program_id' => function ($attribute, $value, $fail) use ($request) {
@@ -58,7 +77,7 @@ class Group extends Model
             },
             'study_degree_id' => 'required|integer|exists:App\StudyDegree,id',
             'study_form_id' => 'required|integer|exists:App\StudyForm,id',
-            'course' => 'required|integer',
+            'course_id' => 'required|integer|exists:App\Course,id',
             'size' => 'required|integer', 
             'updating_id' => 'nullable|integer|exists:App\Group,id',
         ];
@@ -67,13 +86,13 @@ class Group extends Model
     public static function filterRules()
     {
         return [
-            'name' => 'nullable|string',
+            'group_id' => 'nullable|integer|exists:App\Group,id',
             'faculty_id' => 'nullable|integer|exists:App\Faculty,id',
             'study_program_id' => 'nullable|integer|exists:App\StudyProgram,id',
             'study_orientation_id' => 'nullable|integer|exists:App\StudyOrientation,id',
             'study_degree_id' => 'nullable|integer|exists:App\StudyDegree,id',
             'study_form_id' => 'nullable|integer|exists:App\StudyForm,id',
-            'course' => 'nullable|integer',
+            'course_id' => 'nullable|integer|exists:App\Course,id',
             'size' => 'nullable|integer',
         ];
     }
@@ -87,7 +106,7 @@ class Group extends Model
             'study_orientation_id' => 'study orientation',
             'study_degree_id' => 'study degree',
             'study_form_id' => 'study form',
-            'course' => 'course',
+            'course_id' => 'course',
             'size' => 'size',
         ];
     }
@@ -95,9 +114,9 @@ class Group extends Model
     public static function filterConditions()
     {
         return [
-            'name' => [
+            'id' => [
                 'method' => 'where',
-                'operator' => 'like'
+                'operator' => '='
             ], 
             'faculty_id' => [
                 'method' => 'where',
@@ -119,7 +138,7 @@ class Group extends Model
                 'method' => 'where',
                 'operator' => '='
             ],
-            'course' => [
+            'course_id' => [
                 'method' => 'where',
                 'operator' => '='
             ],
@@ -140,9 +159,57 @@ class Group extends Model
     {
         return [
             [
+                'type' => 'objects-select',
+                'plural_name' => 'faculties',
+                'name' => 'faculty',
+                'header' => 'Факультет',
+            ],
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'study_programs',
+                'name' => 'study_program',
+                'header' => 'Учебная программа',
+            ],
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'study_orientations',
+                'name' => 'study_orientation',
+                'header' => 'Специальность',
+            ],
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'study_degrees',
+                'name' => 'study_degree',
+                'header' => 'Уровень образования',
+            ],
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'study_forms',
+                'name' => 'study_form',
+                'header' => 'Форма образования',
+            ],
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'courses',
+                'name' => 'course',
+                'header' => 'Курс',
+            ],
+            [
                 'type' => 'input',
-                'input_type' => 'text',
-                'name' => 'name',
+                'input_type' => 'number',
+                'name' => 'size',
+                'header' => 'Численность',
+            ],
+        ];
+    }
+
+    public static function getFilterFormFields()
+    {
+        return [
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'groups',
+                'name' => '',
                 'header' => 'Группа',
             ],
             [
@@ -176,62 +243,8 @@ class Group extends Model
                 'header' => 'Форма образования',
             ],
             [
-                'type' => 'input',
-                'input_type' => 'number',
-                'name' => 'course',
-                'header' => 'Курс',
-            ],
-            [
-                'type' => 'input',
-                'input_type' => 'number',
-                'name' => 'size',
-                'header' => 'Численность',
-            ],
-        ];
-    }
-
-    public static function getFilterFormFields()
-    {
-        return [
-            [
-                'type' => 'input',
-                'input_type' => 'text',
-                'name' => 'name',
-                'header' => 'Название группы'
-            ],
-            [
                 'type' => 'objects-select',
-                'plural_name' => 'faculties',
-                'name' => 'faculty',
-                'header' => 'Факультет',
-            ],
-            [
-                'type' => 'objects-select',
-                'plural_name' => 'study_programs',
-                'name' => 'study_program',
-                'header' => 'Учебная программа',
-            ],
-            [
-                'type' => 'objects-select',
-                'plural_name' => 'study_orientations',
-                'name' => 'study_orientation',
-                'header' => 'Специальность',
-            ],
-            [
-                'type' => 'objects-select',
-                'plural_name' => 'study_degrees',
-                'name' => 'study_degree',
-                'header' => 'Уровень образования',
-            ],
-            [
-                'type' => 'objects-select',
-                'plural_name' => 'study_forms',
-                'name' => 'study_form',
-                'header' => 'Форма образования',
-            ],
-            [
-                'type' => 'input',
-                'input_type' => 'number',
+                'plural_name' => 'courses',
                 'name' => 'course',
                 'header' => 'Курс',
             ],
@@ -248,11 +261,13 @@ class Group extends Model
 
     public static function getProperties() {
         return [
+            'groups' => Group::get(),
             'faculties' => Faculty::select('id', 'name')->get(),
             'study_programs' => StudyProgram::select('id', 'name')->get(),
             'study_orientations' => StudyOrientation::select('id', 'name')->get(),
             'study_degrees' => StudyDegree::select('id', 'name')->get(),
             'study_forms' => StudyForm::select('id', 'name')->get(),
+            'courses' => Course::select('id', 'name')->get(),
         ];
     }
 }

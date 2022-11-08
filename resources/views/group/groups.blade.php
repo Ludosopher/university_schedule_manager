@@ -19,6 +19,12 @@
                 Данные группы {{ $data['updated_instance_name'] }} обновлены.
             </div>
         @endif
+        @if (isset($data['there_are_lessons_only_with_this_group']))
+            <div class="alertFail">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                Группу нельзя удалить, так как есть занятия, где она единственный участник.
+            </div>
+        @endif
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>
@@ -51,7 +57,7 @@
                                 </div>    
                             @endif
                             @if($field['type'] == 'objects-select')
-                                @php $field_name = $field['name'].'_id'; @endphp
+                                @php $field_name = !empty($field['name']) ? $field['name'].'_id' : 'id'; @endphp
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
                                     <select name="{{ $field_name }}" class="form-select filter-select" aria-label="Default select example">
@@ -96,16 +102,20 @@
                             <th class="th-sm text-center align-top"></th>
                             @foreach($data['table_properties'] as $property)
                                 @if($property['sorting'])
-                                    @if(is_array($property['field']))
+                                    @if(is_array($property['field']) && isset($property['sort_name']))
+                                        <th class="th-sm text-center align-top">
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                        </th>    
+                                    @elseif(is_array($property['field']))
                                         @php
                                             $full_field = implode('.', $property['field']);
                                         @endphp
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name">{{ $property['header'] }}</div><div>@sortablelink($full_field, '▼')</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($full_field, $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @else
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name">{{ $property['header'] }}</div><div>@sortablelink($property['field'], '▼')</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['field'], $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
                                         </th>   
                                     @endif
                                 @else

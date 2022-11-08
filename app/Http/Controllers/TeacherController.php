@@ -23,7 +23,7 @@ class TeacherController extends ModelController
     protected $profession_level_name_field = 'profession_level_name';
     protected $eager_loading_fields = ['faculty', 'department', 'professional_level', 'position'];
     protected $other_lesson_participant = 'group';
-    protected $other_lesson_participant_name = 'name';
+    protected $other_lesson_participant_name = 'groups_name';
     
     public function getTeachers (Request $request)
     {
@@ -91,7 +91,7 @@ class TeacherController extends ModelController
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
-        
+    dd($data);    
         return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
     }
 

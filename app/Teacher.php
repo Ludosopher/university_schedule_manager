@@ -8,8 +8,18 @@ use Kyslik\ColumnSortable\Sortable;
 class Teacher extends Model
 {
     use Sortable;
-    public $sortable = ['last_name', 'gender', 'birth_year','faculty_id', 'department_id', 'professional_level_id', 'position_id'];
+    public $sortable = ['last_name', 'gender', 'birth_year','faculty_id', 'department_id', 'professional_level_id', 'position_id', 'full_name'];
     
+    public function fullNameSortable($query, $direction)
+    {
+        return  $query->orderBy('last_name', $direction);
+    }
+
+    public function ageSortable($query, $direction)
+    {
+        return  $query->orderBy('birth_year', $direction);
+    }
+
     public function faculty()
     {
         return $this->belongsTo(Faculty::class);
@@ -268,7 +278,7 @@ class Teacher extends Model
                 'type' => 'input',
                 'input_type' => 'text',
                 'name' => 'full_name',
-                'header' => 'Ф.И.О.'
+                'header' => 'Фамилия, Имя или Отчество'
             ],
             [
                 'type' => 'between',

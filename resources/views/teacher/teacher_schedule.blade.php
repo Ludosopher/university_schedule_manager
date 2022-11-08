@@ -57,8 +57,8 @@
                                                 <div class="font-size13 text-light-gray schedule-group">{{ $lesson['group'] }}</div>
                                             </a>
                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-replacement', ['replace_rules' => ['lesson_id' => $lesson['id'], 'group_id' => $lesson['group_id'], 'teacher_id' => $lesson['teacher_id'], 'class_period_id' => $lesson['class_period_id'], 'weekly_period_id' => $lesson['weekly_period_id'], 'week_day_id' => $lesson['week_day_id']]]) }}">Варианты замены</a></li>
-                                                <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-rescheduling', ['lesson_id' => $lesson['id'], 'group_id' => $lesson['group_id'], 'teacher_id' => $lesson['teacher_id']]) }}">Варианты переноса</a></li>
+                                                <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-replacement', ['replace_rules' => ['lesson_id' => $lesson['id'], 'teacher_id' => $lesson['teacher_id'], 'class_period_id' => $lesson['class_period_id'], 'weekly_period_id' => $lesson['weekly_period_id'], 'week_day_id' => $lesson['week_day_id']]]) }}">Варианты замены</a></li>
+                                                <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-rescheduling', ['lesson_id' => $lesson['id'], 'teacher_id' => $lesson['teacher_id']]) }}">Варианты переноса</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -76,8 +76,8 @@
                                                         <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['group'] }}</div>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                        <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-replacement', ['replace_rules' => ['lesson_id' => $lesson_red['id'], 'group_id' => $lesson_red['group_id'], 'teacher_id' => $lesson_red['teacher_id'], 'class_period_id' => $lesson_red['class_period_id'], 'weekly_period_id' => $lesson_red['weekly_period_id'], 'week_day_id' => $lesson_red['week_day_id']]]) }}">Варианты замены</a></li>
-                                                        <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-rescheduling', ['lesson_id' => $lesson_red['id'], 'group_id' => $lesson_red['group_id'], 'teacher_id' => $lesson_red['teacher_id']]) }}">Варианты переноса</a></li>
+                                                        <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-replacement', ['replace_rules' => ['lesson_id' => $lesson_red['id'], 'teacher_id' => $lesson_red['teacher_id'], 'class_period_id' => $lesson_red['class_period_id'], 'weekly_period_id' => $lesson_red['weekly_period_id'], 'week_day_id' => $lesson_red['week_day_id']]]) }}">Варианты замены</a></li>
+                                                        <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-rescheduling', ['lesson_id' => $lesson_red['id'], 'teacher_id' => $lesson_red['teacher_id']]) }}">Варианты переноса</a></li>
                                                     </ul>
                                                 </div>
                                             @endif
@@ -89,8 +89,8 @@
                                                         <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['group'] }}</div>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                        <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-replacement', ['replace_rules' => ['lesson_id' => $lesson_blue['id'], 'group_id' => $lesson_blue['group_id'], 'teacher_id' => $lesson_blue['teacher_id'], 'class_period_id' => $lesson_blue['class_period_id'], 'weekly_period_id' => $lesson_blue['weekly_period_id'], 'week_day_id' => $lesson_blue['week_day_id']]]) }}">Варианты замены</a></li>
-                                                        <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-rescheduling', ['lesson_id' => $lesson_blue['id'], 'group_id' => $lesson_blue['group_id'], 'teacher_id' => $lesson_blue['teacher_id']]) }}">Варианты переноса</a></li>
+                                                        <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-replacement', ['replace_rules' => ['lesson_id' => $lesson_blue['id'], 'teacher_id' => $lesson_blue['teacher_id'], 'class_period_id' => $lesson_blue['class_period_id'], 'weekly_period_id' => $lesson_blue['weekly_period_id'], 'week_day_id' => $lesson_blue['week_day_id']]]) }}">Варианты замены</a></li>
+                                                        <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-rescheduling', ['lesson_id' => $lesson_blue['id'], 'teacher_id' => $lesson_blue['teacher_id']]) }}">Варианты переноса</a></li>
                                                     </ul>
                                                 </div>
                                             @endif

@@ -4,13 +4,13 @@ return [
    'teachers' => [
       [
          'field' => 'full_name',
-         'header' => 'Ф.И.О',
-         'sorting' => false
+         'header' => 'Ф.И.О.',
+         'sorting' => true
       ],
       [
          'field' => 'age',
          'header' => 'Возраст',
-         'sorting' => false
+         'sorting' => true
       ],
       [
          'field' => 'phone',
@@ -67,7 +67,7 @@ return [
       [
          'field' => 'name',
          'header' => 'Название',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -110,7 +110,10 @@ return [
          'sorting' => true
       ],
       [
-         'field' => 'course',
+         'field' => [
+            'course',
+            'number'
+         ],
          'header' => 'Курс',
          'sorting' => true
       ],
@@ -121,6 +124,14 @@ return [
       ],
    ],
    'lessons' => [
+      [
+         'field' => [
+            'class_period',
+            'id'
+         ],
+         'header' => 'Пара',
+         'sorting' => true
+      ],
       [
          'field' => 'name',
          'header' => 'Предмет',
@@ -151,28 +162,18 @@ return [
          'sorting' => true
       ],
       [
-         'field' => [
-            'class_period',
-            'name'
-         ],
-         'header' => 'Пара',
-         'sorting' => true
-      ],
-      [
-         'field' => [
-            'group',
-            'name'
-         ],
-         'header' => 'Группа',
-         'sorting' => true
+         'field' => 'groups_name',
+         'header' => 'Группа(ы)',
+         'sorting' => false
       ],
       [
          'field' => [
             'teacher',
             'profession_level_name'
          ],
+         'sort_name' => 'profession_level_name',
          'header' => 'Преподаватель',
-         'sorting' => false
+         'sorting' => true
       ],
    ],
    'replacement_variants' => [

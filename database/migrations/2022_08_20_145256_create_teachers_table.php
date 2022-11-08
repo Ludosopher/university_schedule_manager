@@ -100,15 +100,18 @@ class CreateTeachersTable extends Migration
             $table->unsignedBigInteger('week_day_id');
             $table->unsignedBigInteger('weekly_period_id');
             $table->unsignedBigInteger('class_period_id');
-            $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('teacher_id');
             $table->foreign('lesson_type_id')->references('id')->on('lesson_types')->onDelete('cascade');
             $table->foreign('week_day_id')->references('id')->on('week_days')->onDelete('cascade');
             $table->foreign('weekly_period_id')->references('id')->on('weekly_periods')->onDelete('cascade');
             $table->foreign('class_period_id')->references('id')->on('class_periods')->onDelete('cascade');
-            $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
             $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('cascade');
             $table->timestamps();
+        });
+
+        Schema::create('group_lesson', function (Blueprint $table) {
+            $table->unsignedBigInteger('group_id');
+            $table->unsignedBigInteger('lesson_id');
         });
     }
 
@@ -129,5 +132,6 @@ class CreateTeachersTable extends Migration
         Schema::dropIfExists('class_periods');
         Schema::dropIfExists('teachers');
         Schema::dropIfExists('lessons');
+        Schema::dropIfExists('group_lesson');
     }
 }

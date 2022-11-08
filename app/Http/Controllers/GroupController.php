@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Helpers\GroupHelpers;
 use App\Helpers\ModelHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,9 +14,9 @@ class GroupController extends ModelController
     protected $instance_plural_name = 'groups';
     protected $instance_name_field = 'name';
     protected $profession_level_name_field = null;
-    protected $eager_loading_fields = ['faculty', 'study_program', 'study_orientation', 'study_degree', 'study_form'];
+    protected $eager_loading_fields = ['faculty', 'study_program', 'study_orientation', 'study_degree', 'study_form', 'course'];
     protected $other_lesson_participant = 'teacher';
-    protected $other_lesson_participant_name = 'profession_level_name';
+    protected $other_lesson_participant_name = ['teacher', 'profession_level_name'];
             
     public function getGroups (Request $request)
     {
@@ -63,14 +63,17 @@ class GroupController extends ModelController
 
     public function deleteGroup (Request $request)
     {
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name); 
-            
-        if ($deleted_instance) {
-            $instance_name_field = $this->instance_name_field;
-            return redirect()->route("{$this->instance_plural_name}", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
-        } else {
+        $relation_delited_result = GroupHelpers::deleteGroupLessonRelation($request->deleting_id);
+        if (!$relation_delited_result) {
             return redirect()->route("{$this->instance_plural_name}", ['deleting_instance_not_found' => true]);
         }
+        if ($relation_delited_result === 'there_are_lessons_only_with_this_group') {
+            return redirect()->route("{$this->instance_plural_name}", [$relation_delited_result => true]);
+        }
+
+        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name); 
+        $instance_name_field = $this->instance_name_field;
+        return redirect()->route("{$this->instance_plural_name}", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
     }
     
     public function getGroupSchedule (Request $request)

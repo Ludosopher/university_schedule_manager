@@ -102,16 +102,20 @@
                             <th class="th-sm text-center align-top"></th>
                             @foreach($data['table_properties'] as $property)
                                 @if($property['sorting'])
-                                    @if(is_array($property['field']))
+                                    @if(is_array($property['field']) && isset($property['sort_name']))
+                                        <th class="th-sm text-center align-top">
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                        </th>    
+                                    @elseif(is_array($property['field']))
                                         @php
                                             $full_field = implode('.', $property['field']);
                                         @endphp
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name">{{ $property['header'] }}</div><div>@sortablelink($full_field, '▼')</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @else
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name">{{ $property['header'] }}</div><div>@sortablelink($property['field'], '▼')</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
                                         </th>   
                                     @endif
                                 @else

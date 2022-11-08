@@ -7,6 +7,7 @@ use App\Helpers\FilterHelpers;
 use App\Helpers\ModelHelpers;
 use App\Lesson;
 use App\Teacher;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,21 +30,25 @@ class ModelController extends Controller
                 $data['deleting_instance_not_found'] = true;   
             }
             if (isset($request->updated_instance_name)) {
-                $data['updated_instance_name'] = $request->updated_instance_name;    
+                $data['updated_instance_name'] = $request->updated_instance_name;   
             }
             if (isset($request->duplicated_lesson)) {
                 $data['duplicated_lesson'] = $request->duplicated_lesson;    
             }
+            if (isset($request->there_are_lessons_only_with_this_group)) {
+                $data['there_are_lessons_only_with_this_group'] = $request->there_are_lessons_only_with_this_group;    
+            }
         }
         
         $instances = FilterHelpers::getFilteredQuery($this->model_name::with($this->eager_loading_fields), $request->all(), $this->model_name);
+        
         $appends = ModelHelpers::getAppends($request);
 
         $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
 
         return array_merge($data, $properties);
     }
-    
+
     public function getInstanceFormData (Request $request)
     {
         $data = $this->model_name::getProperties();
@@ -71,9 +76,9 @@ class ModelController extends Controller
         
         $instance = ModelHelpers::addOrUpdateInstance($request->all(), $this->model_name);
         if (isset($request->updating_id)) {
-            return ['updated_instance_name' => $instance->$instance_name_field];
+            return ['id' => $instance->id, 'updated_instance_name' => $instance->$instance_name_field];
         } else {
-            return ['new_instance_name' => $instance->$instance_name_field];
+            return ['id' => $instance->id, 'new_instance_name' => $instance->$instance_name_field];
         }
     }
 
@@ -94,9 +99,15 @@ class ModelController extends Controller
             $data['instance_name'] = $profession_level_name_field !== null ? $instance->$profession_level_name_field : $instance->$instance_name_field;    
         }
        
-        $lessons = Lesson::with(['lesson_type', $this->instance_name, 'week_day', 'weekly_period', 'class_period'])
-                        ->where("{$this->instance_name}_id", $request->$schedule_instance_id)
-                        ->get();
+        if ($this->instance_name == 'group') {
+            $lessons = Lesson::with(['week_day', 'weekly_period', 'class_period', 'groups'])->whereHas('groups', function (Builder $query) use ($request, $schedule_instance_id) {
+                $query->where('id', $request->$schedule_instance_id);
+            })->get();
+        } else {
+            $lessons = Lesson::with(['lesson_type', $this->instance_name, 'week_day', 'weekly_period', 'class_period'])
+                             ->where("{$this->instance_name}_id", $request->$schedule_instance_id)
+                             ->get();
+        }
         
         foreach ($lessons as $lesson) {
             if (isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id])
@@ -110,16 +121,28 @@ class ModelController extends Controller
                 ];
                 return $data;    
             } else {
+                
+                if (is_array($other_lesson_participant_name)) {
+                    $value = $lesson;
+                    foreach ($other_lesson_participant_name as $part) {
+                        $value = $value->$part;
+                        if (!is_object($value)) {
+                            break;
+                        }
+                    }
+                } else {
+                    $value = $lesson->$other_lesson_participant_name;
+                }
+                
                 $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id] = [
                     'id' => $lesson->id,
                     'week_day_id' => $lesson->week_day_id,
                     'weekly_period_id' => $lesson->weekly_period_id,
                     'class_period_id' => $lesson->class_period_id,
-                    'group_id' => $lesson->group_id,
                     'teacher_id' => $lesson->teacher_id,
                     'type' => $lesson->lesson_type->name,
                     'name' => $lesson->name,
-                    $other_lesson_participant => $lesson->$other_lesson_participant->$other_lesson_participant_name
+                    $other_lesson_participant => $value
                 ];
             }
         }

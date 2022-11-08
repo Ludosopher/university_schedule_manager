@@ -16,12 +16,14 @@ class CreateGroupsTable extends Migration
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('abbreviation');
             $table->timestamps();
         });
 
         Schema::create('study_degrees', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('abbreviation');
             $table->timestamps();
         });
 
@@ -29,6 +31,7 @@ class CreateGroupsTable extends Migration
             $table->id();
             $table->string('code');
             $table->string('name');
+            $table->string('abbreviation');
             $table->unsignedBigInteger('faculty_id');
             $table->unsignedBigInteger('study_degree_id');
             $table->foreign('faculty_id')->references('id')->on('faculties')->onDelete('cascade');
@@ -39,6 +42,7 @@ class CreateGroupsTable extends Migration
         Schema::create('study_orientations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('abbreviation');
             $table->unsignedBigInteger('study_program_id');
             $table->foreign('study_program_id')->references('id')->on('study_programs')->onDelete('cascade');
             $table->timestamps();
@@ -47,24 +51,33 @@ class CreateGroupsTable extends Migration
         Schema::create('study_forms', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('abbreviation');
+            $table->timestamps();
+        });
+
+        Schema::create('courses', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedInteger('number');
+            $table->string('name');
             $table->timestamps();
         });
 
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->unsignedBigInteger('faculty_id');
             $table->unsignedBigInteger('study_program_id');
             $table->unsignedBigInteger('study_orientation_id');
             $table->unsignedBigInteger('study_degree_id');
             $table->unsignedBigInteger('study_form_id');
-            $table->unsignedBigInteger('course');
+            $table->unsignedBigInteger('course_id');
+            $table->unsignedInteger('additional_id')->nullable();
             $table->unsignedBigInteger('size')->nullable();
             $table->foreign('faculty_id')->references('id')->on('faculties')->onDelete('cascade');
             $table->foreign('study_program_id')->references('id')->on('study_programs')->onDelete('cascade');
             $table->foreign('study_orientation_id')->references('id')->on('study_orientations')->onDelete('cascade');
             $table->foreign('study_degree_id')->references('id')->on('study_degrees')->onDelete('cascade');
             $table->foreign('study_form_id')->references('id')->on('study_forms')->onDelete('cascade');
+            $table->foreign('course_id')->references('id')->on('courses')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -82,6 +95,7 @@ class CreateGroupsTable extends Migration
         Schema::dropIfExists('study_programs');
         Schema::dropIfExists('study_orientations');
         Schema::dropIfExists('study_forms');
+        Schema::dropIfExists('courses');
         Schema::dropIfExists('groups');
     }
 }

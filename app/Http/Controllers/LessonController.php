@@ -20,7 +20,7 @@ class LessonController extends ModelController
     protected $instance_plural_name = 'lessons';
     protected $instance_name_field = 'name';
     protected $profession_level_name_field = null;
-    protected $eager_loading_fields = ['lesson_type', 'week_day', 'weekly_period', 'class_period', 'teacher', 'group'];
+    protected $eager_loading_fields = ['lesson_type', 'week_day', 'weekly_period', 'class_period', 'teacher', 'groups'];
     protected $other_lesson_participant = null;
     protected $other_lesson_participant_name = null;
             
@@ -29,7 +29,7 @@ class LessonController extends ModelController
         if ($request->isMethod('post')) {
             $validator = Validator::make($request->all(), $this->model_name::filterRules());
             if ($validator->fails()) {
-                return redirect()->route("{$this->instance_name}.{$this->instance_plural_name}")->withErrors($validator)->withInput();
+                return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
             }
         }
         
@@ -42,6 +42,10 @@ class LessonController extends ModelController
     {
         $data = $this->getInstanceFormData($request);
         
+        if (isset($data['updating_instance'])) {
+            $data = LessonHelpers::getGroupsData($data);    
+        }
+         
         return view("{$this->instance_name}.add_{$this->instance_name}_form")->with('data', $data);
     }
 
@@ -56,6 +60,7 @@ class LessonController extends ModelController
         }
 
         $data = $this->addOrUpdateInstance($request);
+        LessonHelpers::addOrUpdateLessonGroups($request->group_id, $data['id']);
                 
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
@@ -68,14 +73,13 @@ class LessonController extends ModelController
 
     public function deleteLesson (Request $request)
     {
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name);
-            
-        if ($deleted_instance) {
-            $instance_name_field = $this->instance_name_field;
-            return redirect()->route("{$this->instance_plural_name}", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
-        } else {
+        $relations_deleted_result = LessonHelpers::deleteLessonGroupsRelation($request->deleting_id);
+        if (!$relations_deleted_result) {
             return redirect()->route("{$this->instance_plural_name}", ['deleting_instance_not_found' => true]);
         }
+        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name);
+        $instance_name_field = $this->instance_name_field;
+        return redirect()->route("{$this->instance_plural_name}", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
     }
 
     public function getReplacementVariants (Request $request)
@@ -90,14 +94,13 @@ class LessonController extends ModelController
         
         $data = LessonHelpers::getReplacementData($request->all());
       
-        return view("{$this->instance_name}.replacement_lessons")->with('data', $data);
+        return view("lesson.replacement_lessons")->with('data', $data);
     }
 
     public function getReschedulingVariants (Request $request)
     {
         $validator = Validator::make($request->all(), [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
-            'group_id' => 'required|integer|exists:App\Group,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
         ]);
             if ($validator->fails()) {

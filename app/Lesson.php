@@ -8,17 +8,23 @@ use Kyslik\ColumnSortable\Sortable;
 class Lesson extends Model
 {
     use Sortable;
-    public $sortable = ['name', 'lesson_type_id', 'week_day_id','weekly_period_id', 'class_period_id', 'group_id', 'teacher_id'];
+    public $sortable = ['name', 'lesson_type_id', 'week_day_id','weekly_period_id', 'class_period_id', 'group_id', 'teacher_id', 'profession_level_name'];
 
-       
+    public function professionLevelNameSortable($query, $direction)
+    {
+        return $query->join('teachers', 'lessons.teacher_id', '=', 'teachers.id')
+                    ->orderBy('last_name', $direction)
+                    ->select('lessons.*');
+    }
+           
     public function class_period()
     {
         return $this->belongsTo(ClassPeriod::class);
     }
 
-    public function group()
+    public function groups()
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsToMany(Group::class);
     }
 
     public function teacher()
@@ -41,6 +47,33 @@ class Lesson extends Model
         return $this->belongsTo(LessonType::class);
     }
 
+    public $additional_attributes = ['groups_name'];
+    
+    public function getGroupsNameAttribute()
+    {
+        $study_degree = $this->groups[0]->study_degree->abbreviation;
+        $study_form = $this->groups[0]->study_form->abbreviation;
+        $faculty = $this->groups[0]->faculty->abbreviation;
+        $cours = $this->groups[0]->course->number;
+
+        $groups_name = "{$study_degree}.{$study_form}.{$faculty}-{$cours}-";
+        
+        if (count($this->groups) > 1) {
+            $variative_part_arr = [];
+            foreach ($this->groups as $group) {
+                $study_program = $group->study_program->abbreviation;
+                $variative_part_arr[] = $study_program;
+            }
+            return $groups_name.'['.implode('; ', $variative_part_arr).']';
+        }
+
+        $study_program = $this->groups[0]->study_program->abbreviation;
+        $study_orientation = mb_strtolower($this->groups[0]->study_orientation->abbreviation);
+        $additional_id = isset($this->groups[0]->additional_id) ? "/$this->additional_id" : "";
+        
+        return "{$groups_name}{$study_program}({$study_orientation}){$additional_id}";
+    }
+
     public static function rules($request)
     {
         return [
@@ -49,7 +82,7 @@ class Lesson extends Model
             'week_day_id' => 'required|integer|exists:App\WeekDay,id',
             'weekly_period_id' => 'required|integer|exists:App\WeeklyPeriod,id',
             'class_period_id' => 'required|integer|exists:App\ClassPeriod,id',
-            'group_id' => 'required|integer|exists:App\Group,id',
+            'group_id' => 'required|array',
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
         ];
     }
@@ -82,7 +115,6 @@ class Lesson extends Model
             'replace_rules.*.week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
             'replace_rules.*.weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
             'replace_rules.*.class_period_id' => 'nullable|integer|exists:App\ClassPeriod,id',
-            'replace_rules.*.group_id' => 'nullable|integer|exists:App\Group,id',
             'replace_rules.*.teacher_id' => 'nullable|integer|exists:App\Teacher,id',
         ];
     }
@@ -124,8 +156,14 @@ class Lesson extends Model
                 'operator' => '='
             ],
             'group_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereHas',
+                'operator' => [
+                    'id' => [
+                        'method' => 'where',
+                        'operator' => '='
+                    ],
+                ],
+                'eager_field' => 'groups',
             ],
             'teacher_id' => [
                 'method' => 'where',
@@ -199,6 +237,11 @@ class Lesson extends Model
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 5,
+                    'explanation' => "Для выбора нескольких групп нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'groups',
                 'name' => 'group',
                 'header' => 'Группа',
@@ -317,18 +360,24 @@ class Lesson extends Model
 
     public static function getProperties() {
         
-        $teachers = Teacher::get();
-        foreach ($teachers as &$teacher) {
-            $teacher->name = $teacher->profession_level_name;
-        }
+        $groups = Group::orderBy('study_form_id')
+                        ->orderBy('study_degree_id')
+                        ->orderBy('faculty_id')
+                        ->orderBy('course_id')
+                        ->get();
         
+        $teachers = Teacher::orderBy('last_name')->get();
+        foreach ($teachers as &$teacher) {
+            $teacher->name = $teacher->profession_level_name; 
+        }
+
         return [
             'lesson_types' => LessonType::select('id', 'name')->get(),
             'week_days' => WeekDay::select('id', 'name')->get(),
             'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),
             'class_periods' => ClassPeriod::select('id', 'name')->get(),
-            'groups' => Group::select('id', 'name')->get(),
-            'teachers' => $teachers,
+            'groups' => $groups,
+            'teachers' => $teachers
         ];
     }
 

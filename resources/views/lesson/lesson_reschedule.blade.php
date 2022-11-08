@@ -4,7 +4,7 @@
     <h1>Варианты переноса занятия</h1>
     <h3>Переносимое занятие: {{ $data['lesson_name'] }} - {{ $data['lesson_week_day'] }} - {{ $data['lesson_weekly_period'] }} - {{ $data['lesson_class_period'] }} пара</h3>
     <h3>Преподаватель: {{ $data['teacher_name'] ?? ''}}</h3>
-    <h3>Группа: {{ $data['group_name'] ?? ''}}</h3>
+    <h3>Группа(ы): {{ $data['groups_name'] ?? ''}}</h3>
     <div class="timetable-img text-center">
         <div class="table-responsive">
             <table class="table table-bordered text-center">
