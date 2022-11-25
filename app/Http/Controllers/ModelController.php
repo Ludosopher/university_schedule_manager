@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\ClassPeriod;
+use App\Group;
 use App\Helpers\FilterHelpers;
 use App\Helpers\ModelHelpers;
+use App\Helpers\UniversalHelpers;
 use App\Lesson;
 use App\Teacher;
+use App\WeekDay;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -41,9 +44,7 @@ class ModelController extends Controller
         }
         
         $instances = FilterHelpers::getFilteredQuery($this->model_name::with($this->eager_loading_fields), $request->all(), $this->model_name);
-        
         $appends = ModelHelpers::getAppends($request);
-
         $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
 
         return array_merge($data, $properties);
@@ -84,69 +85,95 @@ class ModelController extends Controller
 
     public function getSchedule (Request $request)
     {
-        $weekly_period_ids = config('enum.weekly_period_ids');
-        $schedule_instance_id = "schedule_{$this->instance_name}_id";
-        $instance_name_field = $this->instance_name_field;
-        $profession_level_name_field = $this->profession_level_name_field;
-        $other_lesson_participant = $this->other_lesson_participant;
-        $other_lesson_participant_name = $this->other_lesson_participant_name;
+        $schedule_instance_id_field = "schedule_{$this->instance_name}_id";
+        $data = [
+            'model_name' => $this->model_name,
+            'instance_name' => $this->instance_name,
+            'schedule_instance_id' => $request->$schedule_instance_id_field,
+            'instance_name_field' => $this->instance_name_field,
+            'profession_level_name_field' => $this->profession_level_name_field,
+            'other_lesson_participant' => $this->other_lesson_participant,
+            'other_lesson_participant_name' => $this->other_lesson_participant_name,
+            'week_number' => $request->week_number ?? null
+        ];
+
+        return ModelHelpers::getSchedule($data);
         
+    }
+
+    public function getModelRechedulingData(Request $request, $reschedule_periods) {
+
         $class_periods = ClassPeriod::get();
-        $data['class_periods'] = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
-
-        $instance = $this->model_name::where('id', $request->$schedule_instance_id)->first();
-        if ($instance) {
-            $data['instance_name'] = $profession_level_name_field !== null ? $instance->$profession_level_name_field : $instance->$instance_name_field;    
-        }
-       
-        if ($this->instance_name == 'group') {
-            $lessons = Lesson::with(['week_day', 'weekly_period', 'class_period', 'groups'])->whereHas('groups', function (Builder $query) use ($request, $schedule_instance_id) {
-                $query->where('id', $request->$schedule_instance_id);
-            })->get();
-        } else {
-            $lessons = Lesson::with(['lesson_type', $this->instance_name, 'week_day', 'weekly_period', 'class_period'])
-                             ->where("{$this->instance_name}_id", $request->$schedule_instance_id)
-                             ->get();
-        }
+        $week_days = WeekDay::get();
+        $rescheduling_lesson = Lesson::where('id', $request->lesson_id)->first();
         
-        foreach ($lessons as $lesson) {
-            if (isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id])
-                || (isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$weekly_period_ids['every_week']]))) 
-            {
-                $data['duplicated_lesson'] = [
-                    $this->instance_name => $instance->$instance_name_field,
-                    'class_period' => $lesson->class_period->name,
-                    'week_day' => $lesson->week_day->name,
-                    'weekly_period' => $lesson->weekly_period->name
-                ];
-                return $data;    
-            } else {
-                
-                if (is_array($other_lesson_participant_name)) {
-                    $value = $lesson;
-                    foreach ($other_lesson_participant_name as $part) {
-                        $value = $value->$part;
-                        if (!is_object($value)) {
-                            break;
-                        }
-                    }
-                } else {
-                    $value = $lesson->$other_lesson_participant_name;
-                }
-                
-                $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id] = [
-                    'id' => $lesson->id,
-                    'week_day_id' => $lesson->week_day_id,
-                    'weekly_period_id' => $lesson->weekly_period_id,
-                    'class_period_id' => $lesson->class_period_id,
-                    'teacher_id' => $lesson->teacher_id,
-                    'type' => $lesson->lesson_type->name,
-                    'name' => $lesson->name,
-                    $other_lesson_participant => $value
-                ];
-            }
+        $schedule_instance_id_field = "{$this->instance_name}_id";
+        $incom_data = [
+            'model_name' => $this->model_name,
+            'instance_name' => $this->instance_name,
+            'schedule_instance_id' => $request->$schedule_instance_id_field,
+            'instance_name_field' => $this->instance_name_field,
+            'profession_level_name_field' => $this->profession_level_name_field,
+            'other_lesson_participant' => $this->other_lesson_participant,
+            'other_lesson_participant_name' => $this->other_lesson_participant_name,
+            'week_number' => $request->week_number ?? null
+        ];
+        $schedule_data = ModelHelpers::getSchedule($incom_data);
+        if (isset($schedule_data['duplicated_lesson'])) {
+            return $schedule_data;
+        }
+        $schedule_lessons = $schedule_data['lessons'] ?? [];
+        
+        $data = [
+            'rescheduling_lesson_id' => $rescheduling_lesson->id,
+            'class_periods' => $class_periods,
+            'other_lesson_participant_name' => $this->other_lesson_participant,
+            // 'lesson_name' => $rescheduling_lesson->name,
+            // 'lesson_week_day' => $rescheduling_lesson->week_day->name,
+            // 'lesson_weekly_period' => $rescheduling_lesson->weekly_period->name,
+            // 'lesson_class_period' => $rescheduling_lesson->class_period->name,
+            'teacher_name' => $rescheduling_lesson->teacher->profession_level_name,
+            'teacher_id' => $rescheduling_lesson->teacher->id,
+            'group_id' => $request->group_id ?? null
+            // 'groups_name' => $rescheduling_lesson->groups_name
+        ];
+
+        $week_dates = UniversalHelpers::weekDates($incom_data['week_number']);
+        if ($week_dates) {
+            $data['week_data'] = [
+                'week_number' => $incom_data['week_number'],
+                'start_date' => UniversalHelpers::weekDates($incom_data['week_number'])['start_date'],
+                'end_date' => UniversalHelpers::weekDates($incom_data['week_number'])['end_date'],
+            ];
+        } else {
+            $data['week_data'] = [
+                'week_number' => $incom_data['week_number'],
+                'start_date' => null,
+                'end_date' => null,
+            ];
         }
 
+        if (isset($request->group_id)) {
+            $data['group_name'] = Group::find($request->group_id)->name;
+        }
+
+        foreach ($class_periods as $class_period) {
+            foreach ($week_days as $week_day) {
+                if (isset($schedule_lessons[$class_period->id][$week_day->id])) {
+                    $this_lessons = $schedule_lessons[$class_period->id][$week_day->id];
+                    foreach ($this_lessons as $weekly_period_id => $this_lesson) {
+                        $data['periods'][$class_period->id][$week_day->id][$weekly_period_id] = $this_lesson;
+                    }
+                }
+                if (isset($reschedule_periods[$class_period->id][$week_day->id])) {
+                    $this_periods = $reschedule_periods[$class_period->id][$week_day->id];
+                    foreach ($this_periods as $weekly_period_id => $this_period) {
+                        $data['periods'][$class_period->id][$week_day->id][$weekly_period_id] = $this_period;
+                    }
+                }
+            }    
+        }
+    
         return $data;
     }
 

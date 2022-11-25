@@ -86,13 +86,13 @@ class Group extends Model
     public static function filterRules()
     {
         return [
-            'group_id' => 'nullable|integer|exists:App\Group,id',
-            'faculty_id' => 'nullable|integer|exists:App\Faculty,id',
-            'study_program_id' => 'nullable|integer|exists:App\StudyProgram,id',
-            'study_orientation_id' => 'nullable|integer|exists:App\StudyOrientation,id',
-            'study_degree_id' => 'nullable|integer|exists:App\StudyDegree,id',
-            'study_form_id' => 'nullable|integer|exists:App\StudyForm,id',
-            'course_id' => 'nullable|integer|exists:App\Course,id',
+            'group_id' => 'nullable|array',
+            'faculty_id' => 'nullable|array',
+            'study_program_id' => 'nullable|array',
+            'study_orientation_id' => 'nullable|array',
+            'study_degree_id' => 'nullable|array',
+            'study_form_id' => 'nullable|array',
+            'course_id' => 'nullable|array',
             'size' => 'nullable|integer',
         ];
     }
@@ -115,32 +115,25 @@ class Group extends Model
     {
         return [
             'id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ], 
             'faculty_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'study_program_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'study_orientation_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'study_degree_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'study_form_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'course_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'size_from' => [
                 'db_field' => 'size',
@@ -208,42 +201,70 @@ class Group extends Model
         return [
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                ],
                 'plural_name' => 'groups',
                 'name' => '',
                 'header' => 'Группа',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                ],
                 'plural_name' => 'faculties',
                 'name' => 'faculty',
                 'header' => 'Факультет',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                ],
                 'plural_name' => 'study_programs',
                 'name' => 'study_program',
                 'header' => 'Учебная программа',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                ],
                 'plural_name' => 'study_orientations',
                 'name' => 'study_orientation',
                 'header' => 'Специальность',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                ],
                 'plural_name' => 'study_degrees',
                 'name' => 'study_degree',
                 'header' => 'Уровень образования',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                ],
                 'plural_name' => 'study_forms',
                 'name' => 'study_form',
                 'header' => 'Форма образования',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                ],
                 'plural_name' => 'courses',
                 'name' => 'course',
                 'header' => 'Курс',
@@ -261,7 +282,7 @@ class Group extends Model
 
     public static function getProperties() {
         return [
-            'groups' => Group::get(),
+            'groups' => Group::orderBy('study_degree_id')->orderBy('study_form_id')->orderBy('faculty_id')->orderBy('course_id')->get(),
             'faculties' => Faculty::select('id', 'name')->get(),
             'study_programs' => StudyProgram::select('id', 'name')->get(),
             'study_orientations' => StudyOrientation::select('id', 'name')->get(),

@@ -4,9 +4,15 @@ return [
    
    'rows_per_page' => 15,
 
-   'rescheduling_week_days_limit' => 5,
+   'week_days_limits' => [
+      'full_time' => 5,
+      'distance' => 6
+   ],
 
-   'rescheduling_class_periods_limit' => 5,
+   'class_periods_limits' => [
+      'full_time' => 5,
+      'distance' => 5
+   ],
 
    
 ];

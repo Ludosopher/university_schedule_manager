@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\DocExportHelpers;
 use App\Helpers\GroupHelpers;
+use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +19,7 @@ class GroupController extends ModelController
     protected $eager_loading_fields = ['faculty', 'study_program', 'study_orientation', 'study_degree', 'study_form', 'course'];
     protected $other_lesson_participant = 'teacher';
     protected $other_lesson_participant_name = ['teacher', 'profession_level_name'];
-            
+
     public function getGroups (Request $request)
     {
         if ($request->isMethod('post')) {
@@ -26,7 +28,6 @@ class GroupController extends ModelController
                 return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
             }
         }
-        
         $data = $this->getInstances($request);
 
         return view("{$this->instance_name}.{$this->instance_plural_name}")->with('data', $data);
@@ -35,23 +36,23 @@ class GroupController extends ModelController
     public function addGroupForm (Request $request)
     {
         $data = $this->getInstanceFormData($request);
-        
+
         return view("{$this->instance_name}.add_{$this->instance_name}_form")->with('data', $data);
     }
 
     public function addOrUpdateGroup (Request $request)
     {
-        
+
         $validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames());
         if ($validator->fails()) {
             if (isset($request->updating_id)) {
-                return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();    
+                return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();
             }
-            return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput(); 
+            return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput();
         }
 
         $data = $this->addOrUpdateInstance($request);
-                
+
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
                 return redirect()->route("{$this->instance_plural_name}", ['updated_instance_name' => $data['updated_instance_name']]);
@@ -71,18 +72,19 @@ class GroupController extends ModelController
             return redirect()->route("{$this->instance_plural_name}", [$relation_delited_result => true]);
         }
 
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name); 
+        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name);
         $instance_name_field = $this->instance_name_field;
         return redirect()->route("{$this->instance_plural_name}", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
     }
-    
+
     public function getGroupSchedule (Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id"
+            "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id",
+            'week_number' => 'nullable|string'
         ]);
         if ($validator->fails()) {
-            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator);
         }
 
         $data = $this->getSchedule($request);
@@ -90,7 +92,70 @@ class GroupController extends ModelController
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
-        
+
         return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
+    }
+
+    public function getGroupReschedule (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'group_id' => 'required|integer|exists:App\Group,id',
+            'teacher_id' => 'required|integer|exists:App\Teacher,id',
+            'lesson_id' => 'required|integer|exists:App\Lesson,id'
+        ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator);
+            }
+
+        $reschedule_data = LessonHelpers::getReschedulingData($request->all());
+        $data = $this->getModelRechedulingData($request, $reschedule_data['free_periods']);
+
+        if (isset($data['duplicated_lesson'])) {
+            return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+        }
+        
+        return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
+    }
+
+    public function exportScheduleToDoc (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lessons' => 'required|string',
+            'group_name' => 'required|string',
+            'week_data' => 'nullable|string',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+        }
+
+        $data = $request->all();
+        $data['other_participant'] = $this->other_lesson_participant;
+        
+        $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter->save('group_schedule.docx');
+        
+        return response()->download(public_path('group_schedule.docx'));
+    }
+
+    public function exportRescheduleToDoc (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lessons' => 'required|string',
+            'group_name' => 'required|string',
+            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator); 
+        }
+
+        $data = $request->all();
+        $data['participant'] = $request->group_name;
+        $data['other_participant'] = $this->other_lesson_participant;
+        $data['is_reschedule_for'] = 'group';
+        
+        $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter->save('group_reschedule.docx');
+        
+        return response()->download(public_path('group_reschedule.docx'));
     }
 }

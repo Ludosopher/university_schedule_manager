@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\ClassPeriod;
 use App\Group;
+use App\Helpers\DocExportHelpers;
 use App\Helpers\FilterHelpers;
+use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
 use App\Lesson;
@@ -79,9 +81,12 @@ class TeacherController extends ModelController
 
     public function getTeacherSchedule (Request $request)
     {
+        
         $validator = Validator::make($request->all(), [
-            "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id"
+            "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id",
+            'week_number' => 'nullable|string'
         ]);
+        
         if ($validator->fails()) {
             return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
         }
@@ -91,8 +96,67 @@ class TeacherController extends ModelController
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
-    dd($data);    
+        
         return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
+    }
+
+    public function getTeacherReschedule (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'teacher_id' => 'required|integer|exists:App\Teacher,id',
+            'lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'week_number' => 'nullable|string'
+        ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator);
+            }
+        
+        $reschedule_data = LessonHelpers::getReschedulingData($request->all());
+        $data = $this->getModelRechedulingData($request, $reschedule_data['free_periods']);
+
+        return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
+    }
+
+    public function exportScheduleToDoc (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lessons' => 'required|string',
+            'teacher_name' => 'required|string',
+            'week_data' => 'nullable|string',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+        }
+
+        $data = $request->all();
+        $data['other_participant'] = $this->other_lesson_participant;
+        
+        $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter->save('teacher_schedule.docx');
+        
+        return response()->download(public_path('teacher_schedule.docx'));
+    }
+
+    public function exportRescheduleToDoc (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lessons' => 'required|string',
+            'teacher_name' => 'required|string',
+            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $data = $request->all();
+        $data['participant'] = $request->teacher_name;
+        $data['other_participant'] = $this->other_lesson_participant;
+        $data['is_reschedule_for'] = 'teacher';
+        
+        $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter->save('teacher_reschedule.docx');
+        
+        return response()->download(public_path('teacher_reschedule.docx'));
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Helpers\LessonHelpers;
 use Illuminate\Database\Eloquent\Model;
 use Kyslik\ColumnSortable\Sortable;
 
@@ -16,10 +17,15 @@ class Lesson extends Model
                     ->orderBy('last_name', $direction)
                     ->select('lessons.*');
     }
-           
+
     public function class_period()
     {
         return $this->belongsTo(ClassPeriod::class);
+    }
+
+    public function lesson_room()
+    {
+        return $this->belongsTo(LessonRoom::class);
     }
 
     public function groups()
@@ -48,7 +54,7 @@ class Lesson extends Model
     }
 
     public $additional_attributes = ['groups_name'];
-    
+
     public function getGroupsNameAttribute()
     {
         $study_degree = $this->groups[0]->study_degree->abbreviation;
@@ -57,7 +63,7 @@ class Lesson extends Model
         $cours = $this->groups[0]->course->number;
 
         $groups_name = "{$study_degree}.{$study_form}.{$faculty}-{$cours}-";
-        
+
         if (count($this->groups) > 1) {
             $variative_part_arr = [];
             foreach ($this->groups as $group) {
@@ -70,7 +76,7 @@ class Lesson extends Model
         $study_program = $this->groups[0]->study_program->abbreviation;
         $study_orientation = mb_strtolower($this->groups[0]->study_orientation->abbreviation);
         $additional_id = isset($this->groups[0]->additional_id) ? "/$this->additional_id" : "";
-        
+
         return "{$groups_name}{$study_program}({$study_orientation}){$additional_id}";
     }
 
@@ -84,6 +90,10 @@ class Lesson extends Model
             'class_period_id' => 'required|integer|exists:App\ClassPeriod,id',
             'group_id' => 'required|array',
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
+            'lesson_room_id' => 'required|integer|exists:App\LessonRoom,id',
+            'lesson_room_id' => function ($attribute, $value, $fail) use ($request) {
+                if (LessonHelpers::searchSameLesson($request->all())) $fail('Указанные преподаватель, аудиитория и(или) группа в этом месте расписания уже заняты');
+            },
         ];
     }
 
@@ -91,26 +101,30 @@ class Lesson extends Model
     {
         return [
             'name' => 'nullable|string',
-            'lesson_type_id' => 'nullable|integer|exists:App\LessonType,id',
-            'week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
-            'weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
-            'class_period_id' => 'nullable|integer|exists:App\ClassPeriod,id',
-            'group_id' => 'nullable|integer|exists:App\Group,id',
-            'teacher_id' => 'nullable|integer|exists:App\Teacher,id',
+            'lesson_type_id' => 'nullable|array',
+            'week_day_id' => 'nullable|array',
+            'weekly_period_id' => 'nullable|array',
+            'class_period_id' => 'nullable|array',
+            'group_id' => 'nullable|array',
+            'teacher_id' => 'nullable|array',
+            'lesson_room_id' => 'nullable|array',
+            'week_number' => 'nullable|string',
         ];
     }
 
     public static function filterReplacementRules()
     {
         return [
-            'week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
-            'weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
-            'class_period_id' => 'nullable|integer|exists:App\ClassPeriod,id',
-            'faculty_id' => 'nullable|integer|exists:App\Faculty,id',
-            'department_id' => 'nullable|integer|exists:App\Department,id',
-            'professional_level_id' => 'nullable|integer|exists:App\ProfessionalLevel,id',
-            'position_id' => 'nullable|integer|exists:App\Position,id',
-            'schedule_position' => 'nullable|integer',
+            'week_day_id' => 'nullable|array',
+            'weekly_period_id' => 'nullable|array',
+            'class_period_id' => 'nullable|array',
+            'faculty_id' => 'nullable|array',
+            'department_id' => 'nullable|array',
+            'professional_level_id' => 'nullable|array',
+            'position_id' => 'nullable|array',
+            'lesson_room_id' => 'nullable|array',
+            'schedule_position' => 'nullable|array',
+            'week_data' => 'nullable|string',
 
             'replace_rules.*.week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
             'replace_rules.*.weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
@@ -129,6 +143,7 @@ class Lesson extends Model
             'class_period_id' => 'class period',
             'group_id' => 'group',
             'teacher_id' => 'teacher',
+            'lesson_room_id' => 'lesson room',
         ];
     }
 
@@ -138,22 +153,18 @@ class Lesson extends Model
             'name' => [
                 'method' => 'where',
                 'operator' => 'like'
-            ], 
+            ],
             'lesson_type_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'week_day_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'weekly_period_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'class_period_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn'
             ],
             'group_id' => [
                 'method' => 'whereHas',
@@ -166,9 +177,18 @@ class Lesson extends Model
                 'eager_field' => 'groups',
             ],
             'teacher_id' => [
-                'method' => 'where',
-                'operator' => '='
-            ]
+                'method' => 'whereIn',
+            ],
+            'lesson_room_id' => [
+                'method' => 'whereIn',
+            ],
+            'week_number' => [
+                'db_field' => 'WEEK(date) = ? OR date IS NULL',
+                'method' => 'whereRaw',
+                'calculated_value' => function ($week_number) {
+                    return date('W', strtotime($week_number));
+                } 
+            ],
         ];
     }
 
@@ -176,28 +196,31 @@ class Lesson extends Model
     {
         return [
             'week_day_id' => [
-                'operator' => 'not_equal'
+                'operator' => 'multi_not_equal'
             ],
             'weekly_period_id' => [
-                'operator' => 'not_equal'
+                'operator' => 'multi_not_equal'
             ],
             'class_period_id' => [
-                'operator' => 'not_equal'
+                'operator' => 'multi_not_equal'
             ],
             'faculty_id' => [
-                'operator' => 'not_equal'
+                'operator' => 'multi_not_equal'
             ],
             'department_id' => [
-                'operator' => 'not_equal'
+                'operator' => 'multi_not_equal'
             ],
             'professional_level_id' => [
-                'operator' => 'not_equal'
+                'operator' => 'multi_not_equal'
             ],
             'position_id' => [
-                'operator' => 'not_equal'
+                'operator' => 'multi_not_equal'
+            ],
+            'lesson_room_id' => [
+                'operator' => 'multi_not_equal'
             ],
             'schedule_position_id' => [
-                'operator' => 'not_equal'
+                'operator' => 'multi_not_equal'
             ]
         ];
     }
@@ -240,7 +263,7 @@ class Lesson extends Model
                 'multiple_options' => [
                     'is_multiple' => true,
                     'size' => 5,
-                    'explanation' => "Для выбора нескольких групп нажмите и удерживайте клавишу 'Ctrl'"
+                    'explanation' => "Для выбора нескольких групп нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
                 ],
                 'plural_name' => 'groups',
                 'name' => 'group',
@@ -252,6 +275,12 @@ class Lesson extends Model
                 'name' => 'teacher',
                 'header' => 'Преподаватель',
             ],
+            [
+                'type' => 'objects-select',
+                'plural_name' => 'lesson_rooms',
+                'name' => 'lesson_room',
+                'header' => 'Аудитория',
+            ],
         ];
     }
 
@@ -260,53 +289,103 @@ class Lesson extends Model
         return [
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'week_days',
                 'name' => 'week_day',
                 'header' => 'День недели',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'weekly_periods',
                 'name' => 'weekly_period',
                 'header' => 'Недельная периодичность',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'class_periods',
                 'name' => 'class_period',
                 'header' => 'Пара',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'faculties',
                 'name' => 'faculty',
                 'header' => 'Факультет',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких кафедр нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'departments',
                 'name' => 'department',
                 'header' => 'Кафедра',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких уровней нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'professional_levels',
                 'name' => 'professional_level',
                 'header' => 'Профессиональный уровень',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких должностей нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'positions',
                 'name' => 'position',
                 'header' => 'Должность',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких должностей нажмите и удерживайте клавишу 'Ctrl'"
+                ],
+                'plural_name' => 'lesson_rooms',
+                'name' => 'lesson_room',
+                'header' => 'Аудитория',
+            ],
+            [
+                'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3,
+                    // 'explanation' => "Для выбора нескольких должностей нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'schedule_positions',
                 'name' => 'schedule_position',
-                'header' => 'Позиция в расписании',
+                'header' => 'Позиция в расписании заменяющего преподавателя',
             ],
-            
         ];
     }
 
@@ -321,54 +400,94 @@ class Lesson extends Model
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2
+                ],
                 'plural_name' => 'lesson_types',
                 'name' => 'lesson_type',
                 'header' => 'Вид',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2
+                ],
                 'plural_name' => 'week_days',
                 'name' => 'week_day',
                 'header' => 'День недели',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2
+                ],
                 'plural_name' => 'weekly_periods',
                 'name' => 'weekly_period',
                 'header' => 'Недельная периодичность',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2
+                ],
                 'plural_name' => 'class_periods',
                 'name' => 'class_period',
                 'header' => 'Пара',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3
+                ],
                 'plural_name' => 'groups',
                 'name' => 'group',
                 'header' => 'Группа',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3
+                ],
                 'plural_name' => 'teachers',
                 'name' => 'teacher',
                 'header' => 'Преподаватель',
-            ]
+            ],
+            [
+                'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 3
+                ],
+                'plural_name' => 'lesson_rooms',
+                'name' => 'lesson_room',
+                'header' => 'Аудитория',
+            ],
+            [
+                'type' => 'input',
+                'input_type' => 'week',
+                'name' => 'week_number',
+                'header' => '',
+            ],
         ];
     }
 
     public static function getProperties() {
-        
+
         $groups = Group::orderBy('study_form_id')
                         ->orderBy('study_degree_id')
                         ->orderBy('faculty_id')
                         ->orderBy('course_id')
                         ->get();
-        
+
         $teachers = Teacher::orderBy('last_name')->get();
         foreach ($teachers as &$teacher) {
-            $teacher->name = $teacher->profession_level_name; 
+            $teacher->name = $teacher->profession_level_name;
         }
 
         return [
@@ -376,22 +495,24 @@ class Lesson extends Model
             'week_days' => WeekDay::select('id', 'name')->get(),
             'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),
             'class_periods' => ClassPeriod::select('id', 'name')->get(),
+            'lesson_rooms' => LessonRoom::select('id', 'number AS name')->get(),
             'groups' => $groups,
             'teachers' => $teachers
         ];
     }
 
     public static function getReplacementProperties() {
-        
+
         return [
             'lesson_types' => LessonType::select('id', 'name')->get(),
             'week_days' => WeekDay::select('id', 'name')->get(),
             'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),
-            'class_periods' => ClassPeriod::select('id', 'name')->get(),
+            'class_periods' => ClassPeriod::get(),
             'faculties' => Faculty::select('id', 'name')->get(),
             'departments' => Department::select('id', 'name')->get(),
             'professional_levels' => ProfessionalLevel::select('id', 'name')->get(),
             'positions' => Position::select('id', 'name')->get(),
+            'lesson_rooms' => LessonRoom::select('id', 'number AS name')->get(),
             'schedule_positions' => collect(config('enum.schedule_positions'))
         ];
     }

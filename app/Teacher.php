@@ -108,11 +108,11 @@ class Teacher extends Model
             'full_name' => 'nullable|string',
             'age_from' => 'nullable|integer',
             'age_to' => 'nullable|integer',
-            'faculty_id' => 'nullable|integer|exists:App\Faculty,id',
-            'department_id' => 'nullable|integer|exists:App\Department,id',
-            'professional_level_id' => 'nullable|integer|exists:App\ProfessionalLevel,id',
-            'position_id' => 'nullable|integer|exists:App\Position,id',
-            'academic_degree_id' => 'nullable|integer|exists:App\AcademicDegree,id',
+            'faculty_id' => 'nullable|array',
+            'department_id' => 'nullable|array',
+            'professional_level_id' => 'nullable|array',
+            'position_id' => 'nullable|array',
+            'academic_degree_id' => 'nullable|array',
         ];
     }
 
@@ -158,7 +158,7 @@ class Teacher extends Model
                 'db_field' => 'birth_year',
                 'method' => 'where',
                 'operator' => '<',
-                'calculated value' => function ($age) {
+                'calculated_value' => function ($age) {
                     return now()->subYear($age);
                 } 
             ],
@@ -166,29 +166,24 @@ class Teacher extends Model
                 'db_field' => 'birth_year',
                 'method' => 'where',
                 'operator' => '>',
-                'calculated value' => function ($age) {
+                'calculated_value' => function ($age) {
                     return now()->subYear($age);
                 }
             ],
             'faculty_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn',
             ],
             'department_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn',
             ],
             'professional_level_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn',
             ],
             'position_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn',
             ],
             'academic_degree_id' => [
-                'method' => 'where',
-                'operator' => '='
+                'method' => 'whereIn',
             ],
         ];
     }
@@ -290,34 +285,60 @@ class Teacher extends Model
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                    // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'faculties',
                 'name' => 'faculty',
                 'header' => 'Факультет',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                    // 'explanation' => "Для выбора нескольких кафедр нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'departments',
                 'name' => 'department',
                 'header' => 'Кафедра',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                    // 'explanation' => "Для выбора нескольких уровней нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'professional_levels',
                 'name' => 'professional_level',
                 'header' => 'Профессиональный уровень',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                    // 'explanation' => "Для выбора нескольких должностей нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'positions',
                 'name' => 'position',
                 'header' => 'Должность',
             ],
             [
                 'type' => 'objects-select',
+                'multiple_options' => [
+                    'is_multiple' => true,
+                    'size' => 2,
+                    // 'explanation' => "Для выбора нескольких степеней нажмите и удерживайте клавишу 'Ctrl'"
+                ],
                 'plural_name' => 'academic_degrees',
                 'name' => 'academic_degree',
                 'header' => 'Учёная степень',
             ]
+            
         ];
     }
 
