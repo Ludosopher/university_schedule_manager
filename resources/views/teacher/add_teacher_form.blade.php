@@ -80,7 +80,6 @@
                             @endif
                         @endforeach
                     @endif
-                    
                     <button type="submit" class="btn btn-primary">{{isset($data['updating_instance']) ? 'Обновить' : 'Добавить'}}</button>
                 </form>
             </div>

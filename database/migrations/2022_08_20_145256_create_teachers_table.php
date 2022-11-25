@@ -19,7 +19,7 @@ class CreateTeachersTable extends Migration
             $table->string('short_name');
             $table->timestamps();
         });
-        
+
         Schema::create('lesson_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -70,7 +70,7 @@ class CreateTeachersTable extends Migration
             $table->time('end');
             $table->timestamps();
         });
-        
+
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
@@ -93,6 +93,14 @@ class CreateTeachersTable extends Migration
             $table->timestamps();
         });
 
+        Schema::create('lesson_rooms', function(Blueprint $table) {
+            $table->id();
+            $table->string('number');
+            $table->unsignedInteger('capacity');
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('lessons', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -101,11 +109,14 @@ class CreateTeachersTable extends Migration
             $table->unsignedBigInteger('weekly_period_id');
             $table->unsignedBigInteger('class_period_id');
             $table->unsignedBigInteger('teacher_id');
+            $table->unsignedBigInteger('lesson_room_id');
+            $table->date('date')->nullable();
             $table->foreign('lesson_type_id')->references('id')->on('lesson_types')->onDelete('cascade');
             $table->foreign('week_day_id')->references('id')->on('week_days')->onDelete('cascade');
             $table->foreign('weekly_period_id')->references('id')->on('weekly_periods')->onDelete('cascade');
             $table->foreign('class_period_id')->references('id')->on('class_periods')->onDelete('cascade');
             $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('cascade');
+            $table->foreign('lesson_room_id')->references('id')->on('lesson_rooms')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -131,6 +142,7 @@ class CreateTeachersTable extends Migration
         Schema::dropIfExists('positions');
         Schema::dropIfExists('class_periods');
         Schema::dropIfExists('teachers');
+        Schema::dropIfExists('lesson_rooms');
         Schema::dropIfExists('lessons');
         Schema::dropIfExists('group_lesson');
     }

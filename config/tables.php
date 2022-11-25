@@ -146,11 +146,19 @@ return [
          'sorting' => true
       ],
       [
+        'field' => [
+           'lesson_room',
+           'number'
+        ],
+        'header' => 'Аудитория',
+        'sorting' => true
+      ],
+      [
          'field' => [
             'week_day',
             'name'
          ],
-         'header' => 'День недели',
+         'header' => 'День недели (дата)',
          'sorting' => true
       ],
       [
@@ -195,6 +203,11 @@ return [
       [
          'field' => 'class_period_id',
          'header' => 'Пара',
+         'sorting' => null
+      ],
+      [
+         'field' => 'lesson_room_id',
+         'header' => 'Аудитория',
          'sorting' => null
       ],
       [

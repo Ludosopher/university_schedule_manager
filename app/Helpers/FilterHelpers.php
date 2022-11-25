@@ -28,14 +28,14 @@ class FilterHelpers
                         $q;
                     });
                 }
-            } elseif (isset($conditions['calculated value'])) {
+            } elseif (isset($conditions['calculated_value']) && $conditions['method'] == 'where') {
                 if (isset($data[$field])) {
                     $method = $conditions['method'];
                     if (isset($conditions['db_field'])) {
                         $db_field = $conditions['db_field'];
-                        $query = $query->$method($db_field, $conditions['operator'], $conditions['calculated value']($data[$field]));    
+                        $query = $query->$method($db_field, $conditions['operator'], $conditions['calculated_value']($data[$field]));    
                     } else {
-                        $query = $query->$method($field, $conditions['operator'], $conditions['calculated value']($data[$field]));
+                        $query = $query->$method($field, $conditions['operator'], $conditions['calculated_value']($data[$field]));
                     }
                 }
             } elseif ($conditions['method'] == 'whereHas' && is_array($conditions['operator'])) {
@@ -48,7 +48,27 @@ class FilterHelpers
                         }
                     });
                 }    
-            } else {
+            } elseif ($conditions['method'] == 'whereIn') {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    if (isset($conditions['db_field'])) {
+                        $db_field = $conditions['db_field'];
+                        $query = $query->$method($db_field, $data[$field]);    
+                    } else {
+                        $query = $query->$method($field, $data[$field]);
+                    }
+                }    
+            } elseif ($conditions['method'] == 'whereRaw') {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    if (isset($conditions['db_field'])) {
+                        $db_field = $conditions['db_field'];
+                        $query = $query->$method($db_field, [$conditions['calculated_value']($data[$field])]);    
+                    } else {
+                        $query = $query->$method($field, [$conditions['calculated_value']($data[$field])]);
+                    }
+                }    
+            } else  {
                 if (isset($data[$field])) {
                     $method = $conditions['method'];
                     $is_like = $conditions['operator'] == 'like';
@@ -82,6 +102,19 @@ class FilterHelpers
                             }
                         } else {
                             if ($array[$key] != $data[$key]) {
+                                $is_suitable_element = false;
+                                break;    
+                            }
+                        }
+                    }
+                    if ($condition['operator'] == 'multi_not_equal') {
+                        if (is_array($array[$key])) {
+                            if (!in_array($array[$key]['id'], $data[$key])) {
+                                $is_suitable_element = false;
+                                break;    
+                            }
+                        } else {
+                            if (!in_array($array[$key], $data[$key])) {
                                 $is_suitable_element = false;
                                 break;    
                             }

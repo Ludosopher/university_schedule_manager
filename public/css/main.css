@@ -1,3 +1,11 @@
+h1 {
+    font-size: 30px !important;
+}
+
+h3 {
+    font-size: 20px !important;
+}
+
 /* The alert message box */
 .alertAccess {
     padding: 20px;
@@ -72,7 +80,7 @@
 }
 
 .form-explanation {
-    line-height: 1px;
+    line-height: 100%;
     font-size: 13px;
     margin-bottom: 6px !important;
 }
@@ -142,28 +150,57 @@
     width: 100% !important;
 }
 
+.schedule-button-group {
+    width: 70%;
+    display: flex;
+    justify-content: right; 
+}
+
+.top-right-button {
+    margin-left: 10px;
+}
+
 .schedule-period-name {
     font-size: 17px;
     font-weight: bold;
 }
 
+.schedule-date {
+    text-align: left;
+    font-size: 12px;
+    color: DarkOliveGreen;
+    font-weight: bold;
+}
+
+.schedule-date-text {
+    border: 1px solid black;
+    padding: 0px 1px 0px 1px;
+    letter-spacing: 0.3em; 
+}
+
+.schedule-date-half {
+    text-align: left;
+    font-size: 10px;
+    font-weight: bold;
+}
+
 .schedule-subject {
-    font-size: 22px;
+    font-size: 18px;
     line-height: 100%;
-    margin-top: 4px;
+    padding-top: 4px;
 }
 .schedule-subject-half {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: bold;
     line-height: 80%;
 }
 
-.schedule-type {
+.schedule-room {
     font-size: 15px;
     line-height: 150%;
 }
-.schedule-type-half {
-    font-size: 12px;
+.schedule-room-half {
+    font-size: 11px;
     font-weight: bold;
     letter-spacing: 1.5px;
     line-height: 110%;
@@ -174,7 +211,7 @@
     line-height: 150%;
 }
 .schedule-group-half {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     letter-spacing: 1.5px;
     line-height: 110%;
@@ -188,23 +225,29 @@
     position: relative;
     padding: 0rem !important;
     width: 15% !important;
-    height: 130px;
+    height: 140px;
 }
 .schedule-cell-top {
     margin: 0px !important;
-    padding-top: 7px;
+    padding-top: 2px;
     height: 50%;
     width: 100%;
     position: absolute;
     top: 0;
+    border-bottom: 1px solid #dbdbdb;
 }
 .schedule-cell-bottom {
     margin: 0px !important;
-    padding-top: 7px;
+    padding-top: 5px;
     height: 50%;
     width: 100%;
     position:absolute;
     bottom: 0;
+    border-top: 1px solid #dbdbdb;
+}
+
+.reschedule-cell {
+    height: 70px;
 }
 
 .schedule-actions-div {
@@ -214,5 +257,34 @@
 .schedule-actions-button {
     text-decoration: none !important;
     color: black;
+}
+
+.reschedule-links {
+    margin: 15px 0px 7px 0px;
+}
+
+.reschedule-link {
+    height: 30px !important;
+    line-height: 100% !important;
+    background-color: PaleGreen !important;
+    border-color: PaleGreen !important;
+    color: #3d4442 !important;
+}
+
+.schedule-dropdown {
+    width: 100% !important;
+    border-radius: 0px !important;
+}
+
+.replacement-schedule-header-div {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.replacement-doc-export-button {
+    background-color: PaleGreen !important;
+    border-color: PaleGreen !important;
+    color: #3d4442 !important;
 }
 

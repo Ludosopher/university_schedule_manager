@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ClassPeriod;
 use App\Group;
+use App\Helpers\DocExportHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use App\Lesson;
@@ -85,15 +86,21 @@ class LessonController extends ModelController
     public function getReplacementVariants (Request $request)
     {
         $request->flash();
-        if ($request->isMethod('post')) {
+        // if ($request->isMethod('post')) {
+        if (isset($request->prev_replace_rules)) {
+            $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
             $validator = Validator::make($request->all(), $this->model_name::filterReplacementRules());
             if ($validator->fails()) {
-                return redirect()->route("{$this->instance_name}-replacement", ['replace_rules' => json_decode($request->all()['prev_replace_rules'], true)])->withErrors($validator)->withInput();
+                return redirect()->route("{$this->instance_name}-replacement", ['replace_rules' => $replace_rules])->withErrors($validator)->withInput();
             }
+            $teacher_id = $replace_rules['teacher_id'];
+        } else {
+            $teacher_id = $request->all()['replace_rules']['teacher_id'];
         }
-        
+
         $data = LessonHelpers::getReplacementData($request->all());
-      
+        $data['in_schedule'] = LessonHelpers::getReplacementSchedule($teacher_id, $data['replacement_lessons'], $request->week_data);
+       
         return view("lesson.replacement_lessons")->with('data', $data);
     }
 
@@ -102,6 +109,7 @@ class LessonController extends ModelController
         $validator = Validator::make($request->all(), [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'week_data' => 'nullable|string'
         ]);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator);
@@ -112,4 +120,42 @@ class LessonController extends ModelController
         return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
     }
     
+    public function exportReplacementToDoc (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'replacement_lessons' => 'required|string',
+            'header_data' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+        }
+
+        $data = $request->all();
+                        
+        $objWriter = DocExportHelpers::replacementExport($data);
+        $objWriter->save('replacement.docx');
+        
+        return response()->download(public_path('replacement.docx'));   
+    }
+
+    public function exportReplacementScheduleToDoc (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'lessons' => 'required|string',
+            'header_data' => 'required|string',
+            'week_data' => 'nullable|string',
+            'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id'
+        ]);
+        if ($validator->fails()) {
+            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+        }
+
+        $data = $request->all();
+        $data['other_participant'] = 'group';
+                        
+        $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter->save('replacement-schedule.docx');
+        
+        return response()->download(public_path('replacement-schedule.docx'));
+    }
 }
