@@ -101,6 +101,7 @@ class Lesson extends Model
                 if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail('В указанном месте расписания данная аудитория уже используется');
             },
             'updating_id' => 'nullable|integer|exists:App\Lesson,id',
+            'date' => 'nullable|date',
         ];
     }
 
@@ -287,6 +288,12 @@ class Lesson extends Model
                 'plural_name' => 'lesson_rooms',
                 'name' => 'lesson_room',
                 'header' => 'Аудитория',
+            ],
+            [
+                'type' => 'input',
+                'input_type' => 'date',
+                'name' => 'date',
+                'header' => 'Дата',
             ],
         ];
     }
@@ -475,12 +482,7 @@ class Lesson extends Model
                 'name' => 'lesson_room',
                 'header' => 'Аудитория',
             ],
-            [
-                'type' => 'input',
-                'input_type' => 'week',
-                'name' => 'week_number',
-                'header' => '',
-            ],
+            
         ];
     }
 
