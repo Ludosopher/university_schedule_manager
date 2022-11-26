@@ -89,11 +89,18 @@ class Lesson extends Model
             'weekly_period_id' => 'required|integer|exists:App\WeeklyPeriod,id',
             'class_period_id' => 'required|integer|exists:App\ClassPeriod,id',
             'group_id' => 'required|array',
+            'group_id' => function ($attribute, $value, $fail) use ($request) {
+                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail('В указанном месте расписания данная группа уже занята');
+            },
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
+            'teacher_id' => function ($attribute, $value, $fail) use ($request) {
+                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail('В указанном месте расписания данный преподаватель уже занят');
+            },
             'lesson_room_id' => 'required|integer|exists:App\LessonRoom,id',
             'lesson_room_id' => function ($attribute, $value, $fail) use ($request) {
-                if (LessonHelpers::searchSameLesson($request->all())) $fail('Указанные преподаватель, аудиитория и(или) группа в этом месте расписания уже заняты');
+                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail('В указанном месте расписания данная аудитория уже используется');
             },
+            'updating_id' => 'nullable|integer|exists:App\Lesson,id',
         ];
     }
 
