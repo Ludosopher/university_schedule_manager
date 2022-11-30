@@ -1,6 +1,14 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
+        @if ($errors !== null && $errors->has('updating_id'))
+            @foreach($errors->get($field_name) as $error)
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ $error }}
+                </div>
+            @endforeach
+        @endif
         @if (isset($data['new_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>

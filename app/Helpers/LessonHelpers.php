@@ -419,36 +419,45 @@ class LessonHelpers
         return $data;
     }
 
-    public static function searchSameLesson($data) {
+    public static function searchSameLesson($data, $field) {
+        
+        $weekly_period_ids = config('enum.weekly_period_ids');
         
         $like_lessons_query = Lesson::where([
-                                ['week_day_id', $data['week_day_id']],
-                                ['weekly_period_id', $data['weekly_period_id']],
-                                ['class_period_id', $data['class_period_id']]
-                            ]);
+                                 ['week_day_id', $data['week_day_id']],
+                                 ['class_period_id', $data['class_period_id']]
+                              ])->where(function ($query) use($data, $weekly_period_ids) {
+                                    $query->orWhere('weekly_period_id', $data['weekly_period_id'])
+                                          ->orWhere('weekly_period_id', $weekly_period_ids['every_week']);
+                                 });
 
-        $same_teacher_lesson = $like_lessons_query->where('teacher_id', $data['teacher_id'])->first();
-
-        $same_room_lesson = $like_lessons_query->where('lesson_room_id', $data['lesson_room_id'])->first();
-        
-        $like_group_lessons = $like_lessons_query->get();
-        $groups_ids = $data['group_id'];
-        sort($groups_ids);
-        
-        $is_same_group_lesson = false;
-        foreach ($like_group_lessons as $lesson) {
-            $current_groups_ids = array_column($lesson->groups->toArray(), 'id');
-            sort($current_groups_ids);
-            if (count($current_groups_ids) == count($groups_ids)
-                && $current_groups_ids === $groups_ids
-                && $lesson->id != $data['lesson_id'])
-            {
-                $is_same_group_lesson = true;
+        $is_dublicate = false;
+        switch ($field) {
+            case 'group_id':
+                $like_group_lessons = $like_lessons_query->get();
+                $groups_ids = $data['group_id'];
+                sort($groups_ids);
+                $is_dublicate = false;
+                foreach ($like_group_lessons as $lesson) {
+                    $current_groups_ids = array_column($lesson->groups->toArray(), 'id');
+                    sort($current_groups_ids);
+                    if (count($current_groups_ids) == count($groups_ids)
+                        && $current_groups_ids == $groups_ids)
+                    {
+                        $is_dublicate = true;
+                        break;
+                    }
+                }
                 break;
-            }
+            case 'teacher_id':
+                $is_dublicate = $like_lessons_query->where('teacher_id', $data['teacher_id'])->first();
+                break;
+            case 'lesson_room_id':
+                $is_dublicate = $like_lessons_query->where('lesson_room_id', $data['lesson_room_id'])->first();
+                break; 
         }
-
-        return $same_teacher_lesson || $same_room_lesson || $is_same_group_lesson;
+        
+        return $is_dublicate;
     }
 
 }

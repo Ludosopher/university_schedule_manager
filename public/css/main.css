@@ -85,6 +85,15 @@ h3 {
     margin-bottom: 6px !important;
 }
 
+.main-nav {
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.85) 50%,rgba(255, 255, 255, 0.85) 100%), url('../storage/home-page/nimi.jpg') !important;
+    height: 130px;
+}
+
+.main-nav-link {
+    font-size: 17px !important;
+}
+
 .nav-pagination {
     float: right;
 }
@@ -286,5 +295,36 @@ h3 {
     background-color: PaleGreen !important;
     border-color: PaleGreen !important;
     color: #3d4442 !important;
+}
+
+/* home page */
+
+.hp-university-name {
+    font-size: 20px !important;
+    text-align: center !important;
+    font-weight: bold !important;
+}
+
+.hp-main-header {
+    font-size: 60px !important;
+    text-align: center !important;
+}
+
+.hp-header {
+    font-weight: bold !important;
+}
+
+.hp-text {
+    font-size: 20px !important;
+    text-align: justify !important;
+    /* text-indent: 35px; */
+}
+
+.hp-capital-letter {
+    font-weight: bold;
+    font-size: 25px;
+    color: Grey;
+    font-style: italic;
+    letter-spacing: 2px; 
 }
 
