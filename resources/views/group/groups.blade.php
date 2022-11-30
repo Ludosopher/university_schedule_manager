@@ -56,28 +56,6 @@
                                     </div>
                                 </div>    
                             @endif
-                            {{-- @if($field['type'] == 'objects-select')
-                                @php $field_name = !empty($field['name']) ? $field['name'].'_id' : 'id'; @endphp
-                                <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
-                                    <select name="{{ $field_name }}" class="form-select filter-select" aria-label="Default select example">
-                                                <option selected value=""></option>
-                                        @foreach($data[$field['plural_name']] as $value)
-                                            @if(old($field_name) !== null && old($field_name) == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
-                                            @else
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
-                                            @endif
-                                        @endforeach
-                                    </select>
-                                    @if ($errors !== null && $errors->has($field_name))
-                                        @foreach($errors->get($field_name) as $error)
-                                            <div class="validationErrorText">{{ $error }}</div>
-                                        @endforeach
-                                    @endif
-                                </div>    
-                            @endif --}}
-
                             @if($field['type'] == 'objects-select')
                                 @php $field_name = !empty($field['name']) ? $field['name'].'_id' : 'id'; @endphp
                                 <div class="mb-3">
@@ -162,15 +140,29 @@
                     </thead>
                     <tbody>
                         @foreach($data['instances'] as $instance)
+                            @php
+                                $no_admin_style = '';
+                                $no_admin_update_title = 'Изменить';
+                                $no_admin_delete_title = 'Удалить';
+                                $no_admin_update_route = route('group-update', ['updating_id' => $instance->id]);
+                                $no_admin_delete_route = route('group-delete', ['deleting_id' => $instance->id]);
+                                if (Auth::check() && !Auth::user()->is_admin) {
+                                    $no_admin_style = 'color: Silver;';
+                                    $no_admin_update_title = 'Изменить. Доступно только администратору';
+                                    $no_admin_delete_title = 'Удалить. Доступно только администратору';
+                                    $no_admin_update_route = '';
+                                    $no_admin_delete_route = '';
+                                }
+                            @endphp
                             <tr>
                                 <td>
-                                    <a class="" href="{{ route('group-update', ['updating_id' => $instance->id]) }}">
+                                    <a class="" href="{{ $no_admin_update_route }}" style="{{ $no_admin_style }}" title="{{ $no_admin_update_title }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
                                             <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
                                         </svg>
                                     </a>
-                                    <a class="" href="{{ route('group-delete', ['deleting_id' => $instance->id]) }}">
+                                    <a class="" href="{{ $no_admin_delete_route }}" style="{{ $no_admin_style }}" title="{{ $no_admin_delete_title }}">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
                                             <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
                                         </svg>
@@ -190,7 +182,7 @@
                                         @endphp
                                         <td>{{ $value }}</td>  
                                     @elseif($field == 'name')
-                                        <td><a href="{{ route('group-schedule', ['schedule_group_id' => $instance->id]) }}">{{ $instance->$field }}</a></td>
+                                        <td><a href="{{ route('group-schedule', ['schedule_group_id' => $instance->id]) }}" title="Расписание группы">{{ $instance->$field }}</a></td>
                                     @else
                                         <td>{{ $instance->$field }}</td>    
                                     @endif

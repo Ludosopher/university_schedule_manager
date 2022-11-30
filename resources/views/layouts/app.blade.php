@@ -24,11 +24,26 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
+    @php
+        $no_admin_style = '';
+        $no_admin_title = '';
+        $no_admin_add_teacher_route = route('teacher-form');
+        $no_admin_add_group_route = route('group-form');
+        $no_admin_add_lesson_route = route('group-form');
+        if (Auth::check() && !Auth::user()->is_admin) {
+            $no_admin_style = 'color: Silver;';
+            $no_admin_title = 'Доступно только администратору';
+            $no_admin_add_teacher_route = '';
+            $no_admin_add_group_route = '';
+            $no_admin_add_lesson_route = '';
+        }
+    @endphp
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Laravel') }}
+                <a class="navbar-brand" href="https://ngma.su/" target="_blank">
+                    {{-- {{ config('app.name', 'Laravel') }} --}}
+                    <img src="{{ asset('storage/home-page/university_brand.png') }}" width="52" height="53" alt="lorem">
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -37,34 +52,34 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-                        {{-- <li class="nav-item">
-                            <a class="nav-link" href="{{ route('teacher-form') }}">Добавить учителя</a>
-                        </li> --}}
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link" href="{{ route('home') }}">О сервисе</a>
+                        </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Преподаватели
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('teachers') }}">Список</a>
-                                <a class="nav-link" href="{{ route('teacher-form') }}">Добавить</a>
+                                <a class="nav-link" href="{{ $no_admin_add_teacher_route }}" style="{{ $no_admin_style }}" title="{{ $no_admin_title }}">Добавить</a>
                             </div>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Группы
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('groups') }}">Список</a>
-                                <a class="nav-link" href="{{ route('group-form') }}">Добавить</a>
+                                <a class="nav-link" href="{{ $no_admin_add_group_route }}" style="{{ $no_admin_style }}" title="{{ $no_admin_title }}">Добавить</a>
                             </div>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Пары
+                            <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Занятия
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('lessons') }}">Список</a>
-                                <a class="nav-link" href="{{ route('lesson-form') }}">Добавить</a>
+                                <a class="nav-link" href="{{ $no_admin_add_lesson_route }}" style="{{ $no_admin_style }}" title="{{ $no_admin_title }}">Добавить</a>
                             </div>
                         </li>
                     </ul>
@@ -73,16 +88,18 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link" href="{{ route('login') }}">Вход</a>
+                                {{-- {{ __('Login') }} --}}
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                    <a class="nav-link" href="{{ route('register') }}">Регистрация</a>
+                                    {{-- {{ __('Register') }} --}}
                                 </li>
                             @endif
                         @else
                             <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle main-nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
                                 </a>
 
@@ -90,7 +107,8 @@
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                        {{-- {{ __('Logout') }} --}}
+                                        Выход
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
