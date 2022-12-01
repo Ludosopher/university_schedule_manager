@@ -29,7 +29,7 @@
         $no_admin_title = '';
         $no_admin_add_teacher_route = route('teacher-form');
         $no_admin_add_group_route = route('group-form');
-        $no_admin_add_lesson_route = route('group-form');
+        $no_admin_add_lesson_route = route('lesson-form');
         if (Auth::check() && !Auth::user()->is_admin) {
             $no_admin_style = 'color: Silver;';
             $no_admin_title = 'Доступно только администратору';

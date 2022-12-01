@@ -132,10 +132,12 @@ class LessonController extends ModelController
 
         $data = $request->all();
                         
-        $objWriter = DocExportHelpers::replacementExport($data);
-        $objWriter->save('replacement.docx');
-        
-        return response()->download(public_path('replacement.docx'));   
+        $filename = "replacement.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
+        $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter->save("php://output");
     }
 
     public function exportReplacementScheduleToDoc (Request $request)
@@ -152,10 +154,12 @@ class LessonController extends ModelController
 
         $data = $request->all();
         $data['other_participant'] = 'group';
-                        
+
+        $filename = "replacement-schedule.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
         $objWriter = DocExportHelpers::scheduleExport($data);
-        $objWriter->save('replacement-schedule.docx');
-        
-        return response()->download(public_path('replacement-schedule.docx'));
+        $objWriter->save("php://output");
     }
 }

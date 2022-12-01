@@ -131,10 +131,12 @@ class GroupController extends ModelController
         $data = $request->all();
         $data['other_participant'] = $this->other_lesson_participant;
         
+        $filename = "group_schedule.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
         $objWriter = DocExportHelpers::scheduleExport($data);
-        $objWriter->save('group_schedule.docx');
-        
-        return response()->download(public_path('group_schedule.docx'));
+        $objWriter->save("php://output");
     }
 
     public function exportRescheduleToDoc (Request $request)
@@ -152,10 +154,12 @@ class GroupController extends ModelController
         $data['participant'] = $request->group_name;
         $data['other_participant'] = $this->other_lesson_participant;
         $data['is_reschedule_for'] = 'group';
-        
+
+        $filename = "group_reschedule.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
         $objWriter = DocExportHelpers::scheduleExport($data);
-        $objWriter->save('group_reschedule.docx');
-        
-        return response()->download(public_path('group_reschedule.docx'));
+        $objWriter->save("php://output");
     }
 }

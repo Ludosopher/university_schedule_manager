@@ -131,10 +131,12 @@ class TeacherController extends ModelController
         $data = $request->all();
         $data['other_participant'] = $this->other_lesson_participant;
         
+        $filename = "teacher_schedule.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
         $objWriter = DocExportHelpers::scheduleExport($data);
-        $objWriter->save('teacher_schedule.docx');
-        
-        return response()->download(public_path('teacher_schedule.docx'));
+        $objWriter->save("php://output");
     }
 
     public function exportRescheduleToDoc (Request $request)
@@ -153,10 +155,12 @@ class TeacherController extends ModelController
         $data['other_participant'] = $this->other_lesson_participant;
         $data['is_reschedule_for'] = 'teacher';
         
+        $filename = "teacher_reschedule.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
         $objWriter = DocExportHelpers::scheduleExport($data);
-        $objWriter->save('teacher_reschedule.docx');
-        
-        return response()->download(public_path('teacher_reschedule.docx'));
+        $objWriter->save("php://output");
     }
 
 }
