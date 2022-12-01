@@ -38,11 +38,6 @@ class DocExportHelpers
         $section->addTextBreak(1);
         if (isset($data['header_data'])) {
             $header_data = json_decode($data['header_data'], true);
-            // $week_period_string = '';
-            // if (isset($data['week_data'])) {
-            //     $week_data = json_decode($data['week_data'], true);
-            //     $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']}"; 
-            // }
             $section->addText('Варианты замены занятия'.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
             $section->addText("Заменяемое занятие: {$header_data['class_period']} пара, {$header_data['week_day']}, {$header_data['weekly_period']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
             $section->addText("Преподавателя: {$header_data['teacher']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
@@ -74,10 +69,6 @@ class DocExportHelpers
                     $participant_header = '';
                     $participant = '';
                 }
-                // $date_header_part = '';
-                // if (isset($week_data)) {
-                //     $date_header_part = " с {$week_data['start_date']} по {$week_data['end_date']}";
-                // }
                 $section->addText('Расписание занятий'.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
                 $section->addText("{$participant_header}: {$participant}");
             }
