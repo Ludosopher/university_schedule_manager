@@ -83,12 +83,12 @@ class TeacherController extends ModelController
     {
         
         $validator = Validator::make($request->all(), [
-            "schedule_{$this->instance_name}_id" => "required|integer|exists:{$this->model_name},id",
+            "schedule_teacher_id" => "required|integer|exists:App\Teacher,id",
             'week_number' => 'nullable|string'
         ]);
         
         if ($validator->fails()) {
-            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+            return back()->with('shedule_validation_errors', true); 
         }
 
         $data = $this->getSchedule($request);
@@ -107,9 +107,10 @@ class TeacherController extends ModelController
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
             'week_number' => 'nullable|string'
         ]);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator);
-            }
+        if ($validator->fails()) {
+            $prev_data = json_decode($request->input('prev_data'), true);        
+            return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validator); 
+        }
         
         $reschedule_data = LessonHelpers::getReschedulingData($request->all());
         $data = $this->getModelRechedulingData($request, $reschedule_data['free_periods']);
@@ -125,7 +126,7 @@ class TeacherController extends ModelController
             'week_data' => 'nullable|string',
         ]);
         if ($validator->fails()) {
-            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+            return redirect()->back()->withErrors($validator);
         }
 
         $data = $request->all();

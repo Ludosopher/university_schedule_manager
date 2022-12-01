@@ -106,14 +106,16 @@ class LessonController extends ModelController
 
     public function getReschedulingVariants (Request $request)
     {
+        $request->flash();
+
         $validator = Validator::make($request->all(), [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
             'week_data' => 'nullable|string'
         ]);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator);
-            }
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
         
         $data = LessonHelpers::getReschedulingData($request->all());
 

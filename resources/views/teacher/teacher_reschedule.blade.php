@@ -1,6 +1,14 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+            <div class="alertFail">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ $error }}
+            </div>
+            @endforeach
+        @endif
         @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))
             <h1>Варианты переноса занятия в расписании преподавателя в период с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }}</h1>   
         @else

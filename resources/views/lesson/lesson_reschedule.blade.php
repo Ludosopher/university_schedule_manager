@@ -1,6 +1,13 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
+        @if($errors->any())
+            <div class="alertFail">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                The input data does not match the requirements. Please contact your administrator.
+            </div>
+            
+        @endif
     <div>
         <div>
             @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))
@@ -104,10 +111,27 @@
     <div class="replacement-schedule-header-div">
             <h5>Смотреть в расписании:</h5>
             <div class="schedule-button-group">
-                <a class="btn btn-primary reschedule-link" href="{{ route('teacher-reschedule', ['lesson_id' => $data['lesson_id'], 'teacher_id' => $data['teacher_id'], 'week_number' => $data['week_data']['week_number']]) }}" role="button" target="_blank">Преподавателя</a>
+                {{-- <a class="btn btn-primary reschedule-link" href="{{ route('teacher-reschedule', ['lesson_id' => $data['lesson_id'], 'teacher_id' => $data['teacher_id'], 'week_number' => $data['week_data']['week_number']]) }}" role="button" target="_blank">Преподавателя</a> --}}
+                <form method="POST" action="{{ route('teacher-reschedule') }}" target="_blank">
+                @csrf
+                    <input type="hidden" name="lesson_id" value="{{ $data['lesson_id'] }}">
+                    <input type="hidden" name="teacher_id" value="{{ $data['teacher_id'] }}">
+                    <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] }}">
+                    <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
+                    <button type="submit" class="btn btn-light schedule-dropdown">Преподавателя</button>
+                </form>
                 @if (isset($data['groups_ids_names']) && is_array($data['groups_ids_names']))
                     @foreach ($data['groups_ids_names'] as $group)
-                        <a class="btn btn-primary reschedule-link top-right-button" href="{{ route('group-reschedule', ['lesson_id' => $data['lesson_id'], 'teacher_id' => $data['teacher_id'], 'group_id' => $group['id'], 'week_number' => $data['week_data']['week_number']]) }}" role="button" target="_blank">{{ $group['name'] }}</a>
+                        {{-- <a class="btn btn-primary reschedule-link top-right-button" href="{{ route('group-reschedule', ['lesson_id' => $data['lesson_id'], 'teacher_id' => $data['teacher_id'], 'group_id' => $group['id'], 'week_number' => $data['week_data']['week_number']]) }}" role="button" target="_blank">{{ $group['name'] }}</a> --}}
+                        <form method="POST" action="{{ route('group-reschedule') }}" target="_blank">
+                        @csrf
+                            <input type="hidden" name="lesson_id" value="{{ $data['lesson_id'] }}">
+                            <input type="hidden" name="teacher_id" value="{{ $data['teacher_id'] }}">
+                            <input type="hidden" name="group_id" value="{{ $group['id']  }}">
+                            <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] }}">
+                            <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
+                            <button type="submit" class="btn btn-light schedule-dropdown">{{ $group['name'] }}</button>
+                        </form>
                     @endforeach
                 @endif
             </div>
