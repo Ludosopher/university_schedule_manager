@@ -30,7 +30,7 @@ class DocExportHelpers
         ));
 
         $week_period_string = '';
-        if (isset($data['week_data'])) {
+        if (isset($data['week_data']['start_date']) && isset($data['week_data']['end_date'])) {
             $week_data = json_decode($data['week_data'], true);
             $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']}"; 
         }
