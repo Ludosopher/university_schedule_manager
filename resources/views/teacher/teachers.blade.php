@@ -19,6 +19,12 @@
                 Данные преподавателя {{ $data['updated_instance_name'] }} обновлены.
             </div>
         @endif
+        @if (\Session::has('shedule_validation_errors'))
+            <div class="alertFail">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                Ошибка валидации входящих данных для получения расписания.
+            </div>
+        @endif
         @if ($errors !== null && $errors->has('schedule_teacher_id'))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
