@@ -1,0 +1,46 @@
+<?php
+
+return [
+    // teacher attributes
+    'first_name' => '"Имя"',
+    'last_name' => '"Фамилия"',
+    'patronymic' => '"Отчество"',
+    'gender' => '"Пол"',
+    'birth_year' => '"Год рождения"',
+    'phone' => '"Телефон"',
+    'email' => '"Электронная почта"',
+    'faculty_id' => '"Факультет"',
+    'department_id' => '"Кафедра"',
+    'professional_level_id' => '"Профессиональный уровень"',
+    'position_id' => '"Должность"',
+    'academic_degree_id' => '"Научная степень"',
+    'updating_id' => 'редактируемое',
+    'full_name' => '"Полное имя"',
+    'age_from' => '"От"',
+    'age_to' => '"До"',
+    // additionally only group attributes
+    'name' => '"Предмет"',
+    'study_program_id' => '"Учебная программа"',
+    'study_orientation_id' => '"Специальность"',
+    'study_degree_id' => '"Уровень образования"',
+    'study_form_id' => '"Форма обучения"',
+    'course_id' => '"Курс"',
+    'size' => '"Численность"',
+    'group_id' => '"Группа"',
+    // additionally only lesson attributes
+    'lesson_type_id' => '"Вид занятия"',
+    'week_day_id' => '"День недели"',
+    'weekly_period_id' => '"Недельная периодичность"',
+    'class_period_id' => '"Пара"',
+    'teacher_id' => '"Преподаватель"',
+    'lesson_room_id' => '"Учебная аудитория"',
+    'week_number' => '"Номер недели"',
+    'schedule_position' => '"Позиция в расписании"',
+    'week_data' => 'данные недели',
+    'date' => '"Дата"',
+    'replace_rules_week_day_id' => 'День недели (правила фильтрации замен)',
+    'replace_rules_weekly_period_id' => 'Недельная периодичность (правила фильтрации замен)',
+    'replace_rules_class_period_id' => 'Пара (правила фильтрации замен)',
+    'replace_rules_teacher_id' => 'Преподаватель (правила фильтрации замен)',
+            
+];

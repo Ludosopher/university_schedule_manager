@@ -30,7 +30,7 @@ class TeacherController extends ModelController
     public function getTeachers (Request $request)
     {
         if ($request->isMethod('post')) {
-            $validator = Validator::make($request->all(), $this->model_name::filterRules());
+            $validator = Validator::make($request->all(), $this->model_name::filterRules(), [], $this->model_name::filterAttrNames());
             if ($validator->fails()) {
                 return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
             }

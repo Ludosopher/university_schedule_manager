@@ -90,15 +90,15 @@ class Lesson extends Model
             'class_period_id' => 'required|integer|exists:App\ClassPeriod,id',
             'group_id' => 'required|array',
             'group_id' => function ($attribute, $value, $fail) use ($request) {
-                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail('В указанном месте расписания данная группа уже занята');
+                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail(__('user_validation.group_is_occupied'));
             },
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'teacher_id' => function ($attribute, $value, $fail) use ($request) {
-                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail('В указанном месте расписания данный преподаватель уже занят');
+                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail(__('user_validation.teacher_is_occupied'));
             },
             'lesson_room_id' => 'required|integer|exists:App\LessonRoom,id',
             'lesson_room_id' => function ($attribute, $value, $fail) use ($request) {
-                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail('В указанном месте расписания данная аудитория уже используется');
+                if (LessonHelpers::searchSameLesson($request->all(), $attribute)) $fail(__('user_validation.room_is_occupied'));
             },
             'updating_id' => 'nullable|integer|exists:App\Lesson,id',
             'date' => 'nullable|date',
@@ -144,14 +144,52 @@ class Lesson extends Model
     public static function attrNames()
     {
         return [
-            'name' => 'name',
-            'lesson_type_id' => 'lesson type',
-            'week_day_id' => 'week day',
-            'weekly_period_id' => 'weekly period',
-            'class_period_id' => 'class period',
-            'group_id' => 'group',
-            'teacher_id' => 'teacher',
-            'lesson_room_id' => 'lesson room',
+            'name' => __('attribute_names.name'),
+            'lesson_type_id' => __('attribute_names.lesson_type_id'),
+            'week_day_id' => __('attribute_names.week_day_id'),
+            'weekly_period_id' => __('attribute_names.weekly_period_id'),
+            'class_period_id' => __('attribute_names.class_period_id'),
+            'group_id' => __('attribute_names.group_id'),
+            'teacher_id' => __('attribute_names.teacher_id'),
+            'lesson_room_id' => __('attribute_names.lesson_room_id'),
+            'updating_id' => __('attribute_names.updating_id'),
+            'date' => __('attribute_names.date'),
+        ];
+    }
+
+    public static function filterAttrNames()
+    {
+        return [
+            'name' => __('attribute_names.name'),
+            'lesson_type_id' => __('attribute_names.lesson_type_id'),
+            'week_day_id' => __('attribute_names.week_day_id'),
+            'weekly_period_id' => __('attribute_names.weekly_period_id'),
+            'class_period_id' => __('attribute_names.class_period_id'),
+            'group_id' => __('attribute_names.group_id'),
+            'teacher_id' => __('attribute_names.teacher_id'),
+            'lesson_room_id' => __('attribute_names.lesson_room_id'),
+            'week_number' => __('attribute_names.week_number'),
+        ];
+    }
+
+    public static function filterReplacementAttrNames()
+    {
+        return [
+            'week_day_id' => __('attribute_names.week_day_id'),
+            'weekly_period_id' => __('attribute_names.weekly_period_id'),
+            'class_period_id' => __('attribute_names.class_period_id'),
+            'faculty_id' => __('attribute_names.faculty_id'),
+            'department_id' => __('attribute_names.department_id'),
+            'professional_level_id' => __('attribute_names.professional_level_id'),
+            'position_id' =>  __('attribute_names.position_id'),
+            'lesson_room_id' => __('attribute_names.lesson_room_id'),
+            'schedule_position' => __('attribute_names.schedule_position'),
+            'week_data' => __('attribute_names.week_data'),
+
+            'replace_rules.*.week_day_id' => __('attribute_names.replace_rules_week_day_id'),
+            'replace_rules.*.weekly_period_id' => __('attribute_names.replace_rules_weekly_period_id'),
+            'replace_rules.*.class_period_id' => __('attribute_names.replace_rules_class_period_id'),
+            'replace_rules.*.teacher_id' => __('attribute_names.replace_rules_teacher_id'),
         ];
     }
 

@@ -28,7 +28,7 @@ class LessonController extends ModelController
     public function getLessons (Request $request)
     {
         if ($request->isMethod('post')) {
-            $validator = Validator::make($request->all(), $this->model_name::filterRules());
+            $validator = Validator::make($request->all(), $this->model_name::filterRules(), [], $this->model_name::filterAttrNames());
             if ($validator->fails()) {
                 return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
             }
@@ -86,10 +86,9 @@ class LessonController extends ModelController
     public function getReplacementVariants (Request $request)
     {
         $request->flash();
-        // if ($request->isMethod('post')) {
         if (isset($request->prev_replace_rules)) {
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            $validator = Validator::make($request->all(), $this->model_name::filterReplacementRules());
+            $validator = Validator::make($request->all(), $this->model_name::filterReplacementRules(), [], $this->model_name::filterReplacementAttrNames());
             if ($validator->fails()) {
                 return redirect()->route("{$this->instance_name}-replacement", ['replace_rules' => $replace_rules])->withErrors($validator)->withInput();
             }

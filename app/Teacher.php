@@ -93,7 +93,7 @@ class Teacher extends Model
             'faculty_id' => 'required|integer|exists:App\Faculty,id',
             'department_id' => 'required|integer|exists:App\Department,id',
             'department_id' => function ($attribute, $value, $fail) use ($request) {
-                if (!in_array($value, Department::where('faculty_id', $request->faculty_id)->pluck('id')->toArray())) $fail('Discrepancy between faculty and department!');
+                if (!in_array($value, Department::where('faculty_id', $request->faculty_id)->pluck('id')->toArray())) $fail(__('user_validation.faculty_department_discrepancy'));
             },
             'professional_level_id' => 'required|integer|exists:App\ProfessionalLevel,id',
             'position_id' => 'required|integer|exists:App\Position,id',
@@ -119,18 +119,33 @@ class Teacher extends Model
     public static function attrNames()
     {
         return [
-            'first_name' => 'first name',
-            'last_name' => 'last name',
-            'patronymic' => 'patronymic',
-            'gender' => 'gender',
-            'birth_year' => 'birth year',
-            'phone' => 'phone',
-            'email' => 'email',
-            'faculty_id' => 'faculty',
-            'department_id' => 'department',
-            'professional_level_id' => 'professional level',
-            'position_id' => 'position',
-            'academic_degree_id' => 'academic degree',
+            'first_name' => __('attribute_names.first_name'),
+            'last_name' => __('attribute_names.last_name'),
+            'patronymic' => __('attribute_names.patronymic'),
+            'gender' => __('attribute_names.gender'),
+            'birth_year' => __('attribute_names.birth_year'),
+            'phone' => __('attribute_names.phone'),
+            'email' => __('attribute_names.email'),
+            'faculty_id' => __('attribute_names.faculty_id'),
+            'department_id' => __('attribute_names.department_id'),
+            'professional_level_id' => __('attribute_names.professional_level_id'),
+            'position_id' =>  __('attribute_names.position_id'),
+            'academic_degree_id' => __('attribute_names.academic_degree_id'),
+            'updating_id' => __('attribute_names.updating_id')
+        ];
+    }
+
+    public static function filterAttrNames()
+    {
+        return [
+            'full_name' => __('attribute_names.full_name'),
+            'age_from' => __('attribute_names.age_from'),
+            'age_to' => __('attribute_names.age_to'),
+            'faculty_id' => __('attribute_names.faculty_id'),
+            'department_id' => __('attribute_names.department_id'),
+            'professional_level_id' => __('attribute_names.professional_level_id'),
+            'position_id' =>  __('attribute_names.position_id'),
+            'academic_degree_id' => __('attribute_names.academic_degree_id'),
         ];
     }
 

@@ -180,11 +180,6 @@ class LessonHelpers
             'prev_replace_rules' => $prev_replace_rules,
             'header_data' => $header_data,
             'week_data' => $week_data
-            // [
-            //     'week_number' => $data['week_number'] ?? null,
-            //     'start_date' => isset($data['week_number']) ? UniversalHelpers::weekDates($data['week_number'])['start_date'] : null,
-            //     'end_date' => isset($data['week_number']) ? UniversalHelpers::weekDates($data['week_number'])['end_date'] : null,
-            // ]
         ];
 
         return array_merge($data, Lesson::getReplacementProperties());
@@ -324,11 +319,6 @@ class LessonHelpers
             'lesson_class_period' => mb_strtolower($lesson->class_period->name),
             'class_periods' => array_combine(range(1, count($class_periods)), array_values($class_periods->toArray())),
             'week_data' => $week_data
-            // [
-            //     'week_number' => $data['week_number'] ?? null,
-            //     'start_date' => isset($data['week_number']) ? UniversalHelpers::weekDates($data['week_number'])['start_date'] : null,
-            //     'end_date' => isset($data['week_number']) ? UniversalHelpers::weekDates($data['week_number'])['end_date'] : null,
-            // ]
         ];
 
         return $data;

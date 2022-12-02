@@ -133,11 +133,6 @@ class ModelHelpers
                     $value = $lesson->$other_lesson_participant_name;
                 }
 
-                // $week_number = null;
-                // if (isset($lesson->date)) {
-                //     $week_number = UniversalHelpers::getWeekNumberFromDate($lesson->date);
-                // }
-
                 $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id] = [
                     'id' => $lesson->id,
                     'week_day_id' => $lesson->week_day_id,
@@ -148,7 +143,6 @@ class ModelHelpers
                     'name' => $lesson->name,
                     'room' => $lesson->lesson_room->number,
                     'date' => isset($lesson->date) ? date('d.m.y', strtotime($lesson->date)) : null,
-                    // 'week_number' => $week_number,
                     $other_lesson_participant => $value
                 ];
             }
