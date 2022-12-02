@@ -66,14 +66,14 @@ class Group extends Model
             'faculty_id' => 'required|integer|exists:App\Faculty,id',
             'study_program_id' => 'required|integer|exists:App\StudyProgram,id',
             'study_program_id' => function ($attribute, $value, $fail) use ($request) {
-                if (!in_array($value, StudyProgram::where('faculty_id', $request->faculty_id)->pluck('id')->toArray())) $fail('Discrepancy between Faculty and Study Program!');
+                if (!in_array($value, StudyProgram::where('faculty_id', $request->faculty_id)->pluck('id')->toArray())) $fail(__('user_validation. '));
             },
             'study_program_id' => function ($attribute, $value, $fail) use ($request) {
-                if (!in_array($value, StudyProgram::where('study_degree_id', $request->study_degree_id)->pluck('id')->toArray())) $fail('Discrepancy between Study Degree and Study Program!');
+                if (!in_array($value, StudyProgram::where('study_degree_id', $request->study_degree_id)->pluck('id')->toArray())) $fail(__('user_validation.study_degree_study_program_discrepancy'));
             },
             'study_orientation_id' => 'required|integer|exists:App\StudyOrientation,id',
             'study_orientation_id' => function ($attribute, $value, $fail) use ($request) {
-                if (!in_array($value, StudyOrientation::where('study_program_id', $request->study_program_id)->pluck('id')->toArray())) $fail('Discrepancy between Study Program and Study Orientation!');
+                if (!in_array($value, StudyOrientation::where('study_program_id', $request->study_program_id)->pluck('id')->toArray())) $fail(__('user_validation.study_program_study_orientation_discrepancy'));
             },
             'study_degree_id' => 'required|integer|exists:App\StudyDegree,id',
             'study_form_id' => 'required|integer|exists:App\StudyForm,id',
@@ -100,14 +100,28 @@ class Group extends Model
     public static function attrNames()
     {
         return [
-            'name' => 'name',
-            'faculty_id' => 'faculty',
-            'study_program_id' => 'study program',
-            'study_orientation_id' => 'study orientation',
-            'study_degree_id' => 'study degree',
-            'study_form_id' => 'study form',
-            'course_id' => 'course',
-            'size' => 'size',
+            'name' => __('attribute_names.name'),
+            'faculty_id' => __('attribute_names.faculty_id'),
+            'study_program_id' => __('attribute_names.study_program_id'),
+            'study_orientation_id' => __('attribute_names.study_orientation_id'),
+            'study_degree_id' => __('attribute_names.study_degree_id'),
+            'study_form_id' => __('attribute_names.study_form_id'),
+            'course_id' => __('attribute_names.course_id'),
+            'size' => __('attribute_names.size'),
+        ];
+    }
+
+    public static function filterAttrNames()
+    {
+        return [
+            'group_id' => __('attribute_names.group_id'),
+            'faculty_id' => __('attribute_names.faculty_id'),
+            'study_program_id' => __('attribute_names.study_program_id'),
+            'study_orientation_id' => __('attribute_names.study_orientation_id'),
+            'study_degree_id' => __('attribute_names.study_degree_id'),
+            'study_form_id' => __('attribute_names.study_form_id'),
+            'course_id' => __('attribute_names.course_id'),
+            'size' => __('attribute_names.size'),
         ];
     }
 
