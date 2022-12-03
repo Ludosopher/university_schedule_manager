@@ -4,33 +4,33 @@
         @if (isset($data['deleted_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные преподавателя {{ $data['deleted_instance_name'] }} удалены.
+                {{ str_replace('?', $data['deleted_instance_name'], __('teacher.teacher_removed')) }}
             </div>
         @endif
         @if (isset($data['deleting_instance_not_found']))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Такой преподаватель не найден.
+                {{ __('teacher.teacher_not_found') }}
             </div>
         @endif
         @if (isset($data['updated_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные преподавателя {{ $data['updated_instance_name'] }} обновлены.
+                {{ str_replace('?', $data['updated_instance_name'], __('teacher.teacher_updated')) }}
             </div>
         @endif
         @if (\Session::has('shedule_validation_errors'))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Ошибка валидации входящих данных для получения расписания.
+                {{ __('teacher.schedule_validation_error') }}
             </div>
         @endif
-        @if ($errors !== null && $errors->has('schedule_teacher_id'))
+        {{-- @if ($errors !== null && $errors->has('schedule_teacher_id'))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 Такой преподаватель не найден.
             </div>
-        @endif
+        @endif --}}
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>

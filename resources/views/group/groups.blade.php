@@ -4,31 +4,31 @@
         @if (isset($data['deleted_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные группы {{ $data['deleted_instance_name'] }} удалены.
+                {{ str_replace('?', $data['deleted_instance_name'], __('group.group_removed')) }}
             </div>
         @endif
         @if (isset($data['deleting_instance_not_found']))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Такая группа не найдена.
+                {{ __('group.group_not_found') }}
             </div>
         @endif
         @if (\Session::has('shedule_validation_errors'))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Ошибка валидации входящих данных для получения расписания.
+                {{ __('group.schedule_validation_error') }}
             </div>
         @endif
         @if (isset($data['updated_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные группы {{ $data['updated_instance_name'] }} обновлены.
+                {{ str_replace('?', $data['updated_instance_name'], __('group.group_updated')) }}
             </div>
         @endif
         @if (isset($data['there_are_lessons_only_with_this_group']))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Группу нельзя удалить, так как есть занятия, где она единственный участник.
+                {{ __('group.group_is_only_one_in_lesson') }}
             </div>
         @endif
         <div class="getAllContainer">
