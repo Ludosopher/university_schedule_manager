@@ -4,31 +4,31 @@
         @if (isset($data['deleted_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные пары {{ $data['deleted_instance_name'] }} удалены.
+                {{ str_replace('?', $data['deleted_instance_name'], __('lesson.lesson_removed')) }}
             </div>
         @endif
         @if (isset($data['deleting_instance_not_found']))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Такая пара не найдена.
+                {{ __('lesson.lesson_not_found') }}
             </div>
         @endif
         @if (isset($data['updated_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные пары {{ $data['updated_instance_name'] }} обновлены.
+                {{ str_replace('?', $data['updated_instance_name'], __('lesson.lesson_updated')) }}
             </div>
         @endif
         @if (isset($data['duplicated_lesson']) && isset($data['duplicated_lesson']['teacher']))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                На указанное время ({{ $data['duplicated_lesson']['week_day'] }}, {{ mb_strtolower($data['duplicated_lesson']['class_period']) }} пара {{ mb_strtolower($data['duplicated_lesson']['weekly_period']) }}) для преподавателя {{ $data['duplicated_lesson']['teacher'] }} назначено несколько занятий.
+                {{ str_replace(['?-1', '?-2', '?-3', '?-4'], [$data['duplicated_lesson']['week_day'], mb_strtolower($data['duplicated_lesson']['class_period']), mb_strtolower($data['duplicated_lesson']['weekly_period']), $data['duplicated_lesson']['teacher']], __('lesson.is_teacher_lesson_dublicate')) }}
             </div>
         @endif
         @if (isset($data['duplicated_lesson']) && isset($data['duplicated_lesson']['group']))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                На указанное время ({{ $data['duplicated_lesson']['week_day'] }}, {{ mb_strtolower($data['duplicated_lesson']['class_period']) }} пара {{ mb_strtolower($data['duplicated_lesson']['weekly_period']) }}) для группы {{ $data['duplicated_lesson']['group'] }} назначено несколько занятий.
+                {{ str_replace(['?-1', '?-2', '?-3', '?-4'], [$data['duplicated_lesson']['week_day'], mb_strtolower($data['duplicated_lesson']['class_period']), mb_strtolower($data['duplicated_lesson']['weekly_period']), $data['duplicated_lesson']['group']], __('lesson.is_group_lesson_dublicate')) }}
             </div>
         @endif
         <div class="getAllContainer">
