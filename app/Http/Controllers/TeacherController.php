@@ -32,13 +32,6 @@ class TeacherController extends ModelController
     
     public function getTeachers (FilterTeacherRequest $request)
     {
-        // if ($request->isMethod('post')) {
-        //     $validator = Validator::make($request->all(), $this->model_name::filterRules(), [], $this->model_name::filterAttrNames());
-        //     if ($validator->fails()) {
-        //         return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
-        //     }
-        // }
-     
         $data = $this->getInstances($request->validated());
 
         return view("teacher.teachers")->with('data', $data);
@@ -53,14 +46,6 @@ class TeacherController extends ModelController
 
     public function addOrUpdateTeacher (StoreTeacherRequest $request)
     {
-        //$validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames())->validated();
-        // if ($validator->fails()) {
-        //     if (isset($request->updating_id)) {
-        //         return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();    
-        //     }
-        //     return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput(); 
-        // }
-
         $data = $this->addOrUpdateInstance($request->validated());
                 
         if (isset($data['updated_instance_name'])) {
@@ -124,15 +109,6 @@ class TeacherController extends ModelController
 
     public function exportScheduleToDoc (ExportScheduleToDocTeacherRequest $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'lessons' => 'required|array',
-        //     'teacher_name' => 'required|string',
-        //     'week_data' => 'nullable|string',
-        // ])->validate();
-        // if ($validator->fails()) {
-        //     return redirect()->back()->withErrors($validator);
-        // }
-
         $data = $request->validated();
         $data['other_participant'] = $this->other_lesson_participant;
         
