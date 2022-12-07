@@ -2,12 +2,10 @@
 @section('content')
     <div class="container">
         @if($errors->any())
-            @foreach($errors->all() as $error)
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ $error }}
+                {{ __('user_validation.invalid_input_data') }}
             </div>
-            @endforeach
         @endif
         @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))
             <h1>Варианты переноса занятия в расписании преподавателя в период с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }}</h1>   
@@ -30,6 +28,7 @@
                     <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
                     <input type="hidden" name="teacher_name" value="{{ $data['teacher_name'] }}">
                     <input type="hidden" name="rescheduling_lesson_id" value="{{ $data['rescheduling_lesson_id'] }}">
+                    <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
                     <button type="submit" class="btn btn-primary top-right-button">В Word</button>
                 </form>
             </div>

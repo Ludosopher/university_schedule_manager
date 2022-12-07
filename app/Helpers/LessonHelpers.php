@@ -176,7 +176,7 @@ class LessonHelpers
         $data = [
             'replacement_lessons' => $filtered_replacement_lessons,
             'table_properties' => config("tables.replacement_variants"),
-            'filter_form_fields' => Lesson::getReplacementFilterFormFields(),
+            'filter_form_fields' => config("forms.lesson_replacement_filter"),
             'prev_replace_rules' => $prev_replace_rules,
             'header_data' => $header_data,
             'week_data' => $week_data

@@ -15,7 +15,7 @@ return [
     'position_id' => '"Должность"',
     'academic_degree_id' => '"Научная степень"',
     'updating_id' => 'редактируемое',
-    'full_name' => '"Полное имя"',
+    'full_name' => '"Фамилия, Имя или Отчество"',
     'age_from' => '"От"',
     'age_to' => '"До"',
     // additionally only group attributes

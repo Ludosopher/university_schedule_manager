@@ -6,6 +6,9 @@ use App\Helpers\DocExportHelpers;
 use App\Helpers\GroupHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
+use App\Http\Requests\group\ExportScheduleToDocGroupRequest;
+use App\Http\Requests\group\FilterGroupRequest;
+use App\Http\Requests\group\StoreGroupRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -20,17 +23,17 @@ class GroupController extends ModelController
     protected $other_lesson_participant = 'teacher';
     protected $other_lesson_participant_name = ['teacher', 'profession_level_name'];
 
-    public function getGroups (Request $request)
+    public function getGroups (FilterGroupRequest $request)
     {
-        if ($request->isMethod('post')) {
-            $validator = Validator::make($request->all(), $this->model_name::filterRules(), [], $this->model_name::filterAttrNames());
-            if ($validator->fails()) {
-                return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
-            }
-        }
-        $data = $this->getInstances($request);
+        // if ($request->isMethod('post')) {
+        //     $validator = Validator::make($request->all(), $this->model_name::filterRules(), [], $this->model_name::filterAttrNames());
+        //     if ($validator->fails()) {
+        //         return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
+        //     }
+        // }
+        $data = $this->getInstances($request->validated());
 
-        return view("{$this->instance_name}.{$this->instance_plural_name}")->with('data', $data);
+        return view("group.groups")->with('data', $data);
     }
 
     public function addGroupForm (Request $request)
@@ -40,18 +43,18 @@ class GroupController extends ModelController
         return view("{$this->instance_name}.add_{$this->instance_name}_form")->with('data', $data);
     }
 
-    public function addOrUpdateGroup (Request $request)
+    public function addOrUpdateGroup (StoreGroupRequest $request)
     {
 
-        $validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames());
-        if ($validator->fails()) {
-            if (isset($request->updating_id)) {
-                return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();
-            }
-            return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput();
-        }
+        // $validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames());
+        // if ($validator->fails()) {
+        //     if (isset($request->updating_id)) {
+        //         return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();
+        //     }
+        //     return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput();
+        // }
 
-        $data = $this->addOrUpdateInstance($request);
+        $data = $this->addOrUpdateInstance($request->validated());
 
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
@@ -98,6 +101,7 @@ class GroupController extends ModelController
 
     public function getGroupReschedule (Request $request)
     {
+        $request->flash();
         $validator = Validator::make($request->all(), [
             'group_id' => 'required|integer|exists:App\Group,id',
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
@@ -118,18 +122,18 @@ class GroupController extends ModelController
         return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
     }
 
-    public function exportScheduleToDoc (Request $request)
+    public function exportScheduleToDoc (ExportScheduleToDocGroupRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'lessons' => 'required|string',
-            'group_name' => 'required|string',
-            'week_data' => 'nullable|string',
-        ]);
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator); 
-        }
+        // $validator = Validator::make($request->all(), [
+        //     'lessons' => 'required|string',
+        //     'group_name' => 'required|string',
+        //     'week_data' => 'nullable|string',
+        // ]);
+        // if ($validator->fails()) {
+        //     return redirect()->back()->withErrors($validator); 
+        // }
 
-        $data = $request->all();
+        $data = $request->validated();
         $data['other_participant'] = $this->other_lesson_participant;
         
         $filename = "group_schedule.docx";
@@ -148,10 +152,11 @@ class GroupController extends ModelController
             'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
         ]);
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator); 
+            $prev_data = json_decode($request->all()['prev_data'], true);
+            return redirect()->route('teacher-reschedule', $prev_data)->withErrors($validator); 
         }
 
-        $data = $request->all();
+        $data = $validator->validated();
         $data['participant'] = $request->group_name;
         $data['other_participant'] = $this->other_lesson_participant;
         $data['is_reschedule_for'] = 'group';

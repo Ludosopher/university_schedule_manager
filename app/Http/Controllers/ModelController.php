@@ -16,35 +16,38 @@ use Illuminate\Support\Facades\Validator;
 
 class ModelController extends Controller
 {
-    public function getInstances (Request $request)
+    public function getInstances ($incoming_data)
     {
         $rows_per_page = config('site.rows_per_page');
                 
-        $request->flash();
+        if (request()->method() == 'POST') {
+            request()->flash();
+        }
+        
         $data['table_properties'] = config("tables.{$this->instance_plural_name}");
-        $data['filter_form_fields'] = $this->model_name::getFilterFormFields();
+        $data['filter_form_fields'] = config("forms.{$this->instance_name}_filter");
         $properties = $this->model_name::getProperties();
         
-        if (!isset($request->sort)) {
-            if (isset($request->deleted_instance_name)) {
-                $data['deleted_instance_name'] = $request->deleted_instance_name;    
+        if (!isset($incoming_data['sort'])) {
+            if (isset($incoming_data['deleted_instance_name'])) {
+                $data['deleted_instance_name'] = $incoming_data['deleted_instance_name'];    
             }
-            if (isset($request->deleting_instance_not_found)) {
+            if (isset($incoming_data['deleting_instance_not_found'])) {
                 $data['deleting_instance_not_found'] = true;   
             }
-            if (isset($request->updated_instance_name)) {
-                $data['updated_instance_name'] = $request->updated_instance_name;   
+            if (isset($incoming_data['updated_instance_name'])) {
+                $data['updated_instance_name'] = $incoming_data['updated_instance_name'];   
             }
-            if (isset($request->duplicated_lesson)) {
-                $data['duplicated_lesson'] = $request->duplicated_lesson;    
+            if (isset($incoming_data['duplicated_lesson'])) {
+                $data['duplicated_lesson'] = $incoming_data['duplicated_lesson'];    
             }
-            if (isset($request->there_are_lessons_only_with_this_group)) {
-                $data['there_are_lessons_only_with_this_group'] = $request->there_are_lessons_only_with_this_group;    
+            if (isset($incoming_data['there_are_lessons_only_with_this_group'])) {
+                $data['there_are_lessons_only_with_this_group'] = $incoming_data['there_are_lessons_only_with_this_group'];    
             }
         }
         
-        $instances = FilterHelpers::getFilteredQuery($this->model_name::with($this->eager_loading_fields), $request->all(), $this->model_name);
-        $appends = ModelHelpers::getAppends($request);
+        $instances = FilterHelpers::getFilteredQuery($this->model_name::with($this->eager_loading_fields), $incoming_data, $this->instance_name);
+        $appends = ModelHelpers::getAppends($incoming_data);
         $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
 
         return array_merge($data, $properties);
@@ -53,7 +56,7 @@ class ModelController extends Controller
     public function getInstanceFormData (Request $request)
     {
         $data = $this->model_name::getProperties();
-        $data['add_form_fields'] = $this->model_name::getAddFormFields();
+        $data['add_form_fields'] = config("forms.{$this->instance_name}");
         if (isset($request->updating_id)) {
             $updating_instance = $this->model_name::where('id', $request->updating_id)->first();
             if ($updating_instance) {
@@ -67,16 +70,16 @@ class ModelController extends Controller
         return $data;
     }
 
-    public function addOrUpdateInstance (Request $request)
+    public function addOrUpdateInstance ($data)
     {
         $instance_name_field = $this->instance_name_field;
         
-        $data = $this->model_name::getProperties();
-        $data['filter_form_fields'] = $this->model_name::getFilterFormFields();
-        $data['add_form_fields'] = $this->model_name::getAddFormFields();
+        // $data = $this->model_name::getProperties();
+        // $data['filter_form_fields'] = $this->model_name::getFilterFormFields();
+        // $data['add_form_fields'] = $this->model_name::getAddFormFields();
         
-        $instance = ModelHelpers::addOrUpdateInstance($request->all(), $this->model_name);
-        if (isset($request->updating_id)) {
+        $instance = ModelHelpers::addOrUpdateInstance($data, $this->model_name);
+        if (isset($data['updating_id'])) {
             return ['id' => $instance->id, 'updated_instance_name' => $instance->$instance_name_field];
         } else {
             return ['id' => $instance->id, 'new_instance_name' => $instance->$instance_name_field];

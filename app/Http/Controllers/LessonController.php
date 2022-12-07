@@ -7,6 +7,11 @@ use App\Group;
 use App\Helpers\DocExportHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
+use App\Helpers\ValidationHelpers;
+use App\Helpers\ValidatorHelpers;
+use App\Http\Requests\lesson\FilterLessonRequest;
+use App\Http\Requests\lesson\RescheduleLessonRequest;
+use App\Http\Requests\lesson\StoreLessonRequest;
 use App\Lesson;
 use App\Teacher;
 use App\WeekDay;
@@ -25,18 +30,18 @@ class LessonController extends ModelController
     protected $other_lesson_participant = null;
     protected $other_lesson_participant_name = null;
             
-    public function getLessons (Request $request)
+    public function getLessons (FilterLessonRequest $request)
     {
-        if ($request->isMethod('post')) {
-            $validator = Validator::make($request->all(), $this->model_name::filterRules(), [], $this->model_name::filterAttrNames());
-            if ($validator->fails()) {
-                return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
-            }
-        }
+        // if ($request->isMethod('post')) {
+        //     $validator = Validator::make($request->all(), $this->model_name::filterRules(), [], $this->model_name::filterAttrNames());
+        //     if ($validator->fails()) {
+        //         return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
+        //     }
+        // }
         
-        $data = $this->getInstances($request);
+        $data = $this->getInstances($request->validated());
 
-        return view("{$this->instance_name}.{$this->instance_plural_name}")->with('data', $data);
+        return view("lesson.lessons")->with('data', $data);
     }
 
     public function addLessonForm (Request $request)
@@ -50,18 +55,18 @@ class LessonController extends ModelController
         return view("{$this->instance_name}.add_{$this->instance_name}_form")->with('data', $data);
     }
 
-    public function addOrUpdateLesson (Request $request)
+    public function addOrUpdateLesson (StoreLessonRequest $request)
     {
-        $validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames());
-        if ($validator->fails()) {
-            if (isset($request->updating_id)) {
-                return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();    
-            }
-            return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput(); 
-        }
-
-        $data = $this->addOrUpdateInstance($request);
-        LessonHelpers::addOrUpdateLessonGroups($request->group_id, $data['id']);
+        // $validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames());
+        // if ($validator->fails()) {
+        //     if (isset($request->updating_id)) {
+        //         return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();    
+        //     }
+        //     return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput(); 
+        // }
+        $validated = $request->validated();
+        $data = $this->addOrUpdateInstance($validated);
+        LessonHelpers::addOrUpdateLessonGroups($validated['group_id'], $data['id']);
                 
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
@@ -85,10 +90,11 @@ class LessonController extends ModelController
 
     public function getReplacementVariants (Request $request)
     {
-        $request->flash();
         if (isset($request->prev_replace_rules)) {
+            $request->flash();
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            $validator = Validator::make($request->all(), $this->model_name::filterReplacementRules(), [], $this->model_name::filterReplacementAttrNames());
+            $parametrs = ValidationHelpers::getReplacementValidationParametrs();
+            $validator = Validator::make($request->all(), $parametrs['rules'], $parametrs['messages'], $parametrs['attributes']);
             if ($validator->fails()) {
                 return redirect()->route("{$this->instance_name}-replacement", ['replace_rules' => $replace_rules])->withErrors($validator)->withInput();
             }
@@ -103,22 +109,22 @@ class LessonController extends ModelController
         return view("lesson.replacement_lessons")->with('data', $data);
     }
 
-    public function getReschedulingVariants (Request $request)
+    public function getReschedulingVariants (RescheduleLessonRequest $request)
     {
         $request->flash();
 
-        $validator = Validator::make($request->all(), [
-            'teacher_id' => 'required|integer|exists:App\Teacher,id',
-            'lesson_id' => 'required|integer|exists:App\Lesson,id',
-            'week_data' => 'nullable|string'
-        ]);
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator);
-        }
+        // $validator = Validator::make($request->all(), [
+        //     'teacher_id' => 'required|integer|exists:App\Teacher,id',
+        //     'lesson_id' => 'required|integer|exists:App\Lesson,id',
+        //     'week_data' => 'nullable|string'
+        // ]);
+        // if ($validator->fails()) {
+        //     return redirect()->back()->withErrors($validator);
+        // }
         
-        $data = LessonHelpers::getReschedulingData($request->all());
+        $data = LessonHelpers::getReschedulingData($request->validated());
 
-        return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
+        return view("lesson.lesson_reschedule")->with('data', $data);
     }
     
     public function exportReplacementToDoc (Request $request)
@@ -128,16 +134,15 @@ class LessonController extends ModelController
             'header_data' => 'required|string',
         ]);
         if ($validator->fails()) {
-            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+            $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
+            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validator); 
         }
 
-        $data = $request->all();
-                        
         $filename = "replacement.docx";
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter = DocExportHelpers::replacementExport($validator->validated());
         $objWriter->save("php://output");
     }
 
@@ -150,10 +155,11 @@ class LessonController extends ModelController
             'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id'
         ]);
         if ($validator->fails()) {
-            return redirect()->route("{$this->instance_name}-schedule")->withErrors($validator); 
+            $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
+            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validator); 
         }
 
-        $data = $request->all();
+        $data = $validator->validated();
         $data['other_participant'] = 'group';
 
         $filename = "replacement-schedule.docx";

@@ -1,0 +1,516 @@
+<?php
+
+return [
+   'teacher' => [
+      [
+         'type' => 'enum-select',
+         'plural_name' => 'genders',
+         'name' => 'gender',
+         'header' => 'Пол'
+      ],
+      [
+         'type' => 'input',
+         'input_type' => 'text',
+         'name' => 'last_name',
+         'header' => 'Фамилия',
+      ],
+      [
+         'type' => 'input',
+         'input_type' => 'text',
+         'name' => 'first_name',
+         'header' => 'Имя'
+      ],
+      [
+         'type' => 'input',
+         'input_type' => 'text',
+         'name' => 'patronymic',
+         'header' => 'Отчество'
+      ],
+      [
+         'type' => 'input',
+         'input_type' => 'number',
+         'name' => 'birth_year',
+         'header' => 'Год рождения'
+      ],
+      [
+         'type' => 'input',
+         'input_type' => 'text',
+         'name' => 'phone',
+         'header' => 'Телефон',
+      ],
+      [
+         'type' => 'input',
+         'input_type' => 'email',
+         'name' => 'email',
+         'header' => 'Электронная почта',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'faculties',
+         'name' => 'faculty',
+         'header' => 'Факультет',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'departments',
+         'name' => 'department',
+         'header' => 'Кафедра',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'professional_levels',
+         'name' => 'professional_level',
+         'header' => 'Профессиональный уровень',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'positions',
+         'name' => 'position',
+         'header' => 'Должность',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'academic_degrees',
+         'name' => 'academic_degree',
+         'header' => 'Учёная степень',
+      ],
+   ],
+   'teacher_filter' => [
+      [
+         'type' => 'input',
+         'input_type' => 'text',
+         'name' => 'full_name',
+         'header' => 'Фамилия, Имя или Отчество'
+      ],
+      [
+         'type' => 'between',
+         'name' => 'age',
+         'header' => 'Возраст',
+         'min_value' => '',
+         'max_value' => '',
+         'step' => '1'
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+             // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'faculties',
+         'name' => 'faculty',
+         'header' => 'Факультет',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+             // 'explanation' => "Для выбора нескольких кафедр нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'departments',
+         'name' => 'department',
+         'header' => 'Кафедра',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+             // 'explanation' => "Для выбора нескольких уровней нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'professional_levels',
+         'name' => 'professional_level',
+         'header' => 'Профессиональный уровень',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+             // 'explanation' => "Для выбора нескольких должностей нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'positions',
+         'name' => 'position',
+         'header' => 'Должность',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+             // 'explanation' => "Для выбора нескольких степеней нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'academic_degrees',
+         'name' => 'academic_degree',
+         'header' => 'Учёная степень',
+      ]
+   ],
+   'group' => [
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'faculties',
+         'name' => 'faculty',
+         'header' => 'Факультет',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'study_programs',
+         'name' => 'study_program',
+         'header' => 'Учебная программа',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'study_orientations',
+         'name' => 'study_orientation',
+         'header' => 'Специальность',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'study_degrees',
+         'name' => 'study_degree',
+         'header' => 'Уровень образования',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'study_forms',
+         'name' => 'study_form',
+         'header' => 'Форма образования',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'courses',
+         'name' => 'course',
+         'header' => 'Курс',
+      ],
+      [
+         'type' => 'input',
+         'input_type' => 'number',
+         'name' => 'size',
+         'header' => 'Численность',
+      ],
+   ],
+   'group_filter' => [
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+         ],
+         'plural_name' => 'groups',
+         'name' => '',
+         'header' => 'Группа',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+         ],
+         'plural_name' => 'faculties',
+         'name' => 'faculty',
+         'header' => 'Факультет',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+         ],
+         'plural_name' => 'study_programs',
+         'name' => 'study_program',
+         'header' => 'Учебная программа',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+         ],
+         'plural_name' => 'study_orientations',
+         'name' => 'study_orientation',
+         'header' => 'Специальность',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+         ],
+         'plural_name' => 'study_degrees',
+         'name' => 'study_degree',
+         'header' => 'Уровень образования',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+         ],
+         'plural_name' => 'study_forms',
+         'name' => 'study_form',
+         'header' => 'Форма образования',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2,
+         ],
+         'plural_name' => 'courses',
+         'name' => 'course',
+         'header' => 'Курс',
+      ],
+      [
+         'type' => 'between',
+         'name' => 'size',
+         'header' => 'Численность',
+         'min_value' => '1',
+         'max_value' => '50',
+         'step' => '1'
+      ],
+   ],
+   'lesson' => [
+      [
+         'type' => 'input',
+         'input_type' => 'text',
+         'name' => 'name',
+         'header' => 'Предмет',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'lesson_types',
+         'name' => 'lesson_type',
+         'header' => 'Вид',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'week_days',
+         'name' => 'week_day',
+         'header' => 'День недели',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'weekly_periods',
+         'name' => 'weekly_period',
+         'header' => 'Недельная периодичность',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'class_periods',
+         'name' => 'class_period',
+         'header' => 'Пара',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 5,
+             'explanation' => "Для выбора нескольких групп нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+         ],
+         'plural_name' => 'groups',
+         'name' => 'group',
+         'header' => 'Группа',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'teachers',
+         'name' => 'teacher',
+         'header' => 'Преподаватель',
+      ],
+      [
+         'type' => 'objects-select',
+         'plural_name' => 'lesson_rooms',
+         'name' => 'lesson_room',
+         'header' => 'Аудитория',
+      ],
+      [
+         'type' => 'input',
+         'input_type' => 'date',
+         'name' => 'date',
+         'header' => 'Дата',
+      ],
+   ],
+   'lesson_filter' => [
+      [
+         'type' => 'input',
+         'input_type' => 'text',
+         'name' => 'name',
+         'header' => 'Предмет',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2
+         ],
+         'plural_name' => 'lesson_types',
+         'name' => 'lesson_type',
+         'header' => 'Вид',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2
+         ],
+         'plural_name' => 'week_days',
+         'name' => 'week_day',
+         'header' => 'День недели',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2
+         ],
+         'plural_name' => 'weekly_periods',
+         'name' => 'weekly_period',
+         'header' => 'Недельная периодичность',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2
+         ],
+         'plural_name' => 'class_periods',
+         'name' => 'class_period',
+         'header' => 'Пара',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3
+         ],
+         'plural_name' => 'groups',
+         'name' => 'group',
+         'header' => 'Группа',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3
+         ],
+         'plural_name' => 'teachers',
+         'name' => 'teacher',
+         'header' => 'Преподаватель',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3
+         ],
+         'plural_name' => 'lesson_rooms',
+         'name' => 'lesson_room',
+         'header' => 'Аудитория',
+      ],
+   ],
+   'lesson_replacement_filter' => [
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'week_days',
+         'name' => 'week_day',
+         'header' => 'День недели',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'weekly_periods',
+         'name' => 'weekly_period',
+         'header' => 'Недельная периодичность',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'class_periods',
+         'name' => 'class_period',
+         'header' => 'Пара',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких факультетов нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'faculties',
+         'name' => 'faculty',
+         'header' => 'Факультет',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких кафедр нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'departments',
+         'name' => 'department',
+         'header' => 'Кафедра',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких уровней нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'professional_levels',
+         'name' => 'professional_level',
+         'header' => 'Профессиональный уровень',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких должностей нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'positions',
+         'name' => 'position',
+         'header' => 'Должность',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких должностей нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'lesson_rooms',
+         'name' => 'lesson_room',
+         'header' => 'Аудитория',
+      ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 3,
+             // 'explanation' => "Для выбора нескольких должностей нажмите и удерживайте клавишу 'Ctrl'"
+         ],
+         'plural_name' => 'schedule_positions',
+         'name' => 'schedule_position',
+         'header' => 'Позиция в расписании заменяющего преподавателя',
+       ],
+   ]
+   
+
+   
+];

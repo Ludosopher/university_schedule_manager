@@ -41,9 +41,9 @@ class ModelHelpers
         return false;
     }
 
-    public static function getAppends($request) {
+    public static function getAppends($data) {
         $appends = [];
-        foreach ($request->all() as $key => $value) {
+        foreach ($data as $key => $value) {
             if ($key != '_token'
                 && $key != 'deleted_instance_name'
                 && $key != 'deleting_instance_not_found'
