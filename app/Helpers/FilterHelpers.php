@@ -7,9 +7,9 @@ use App\Teacher;
 
 class FilterHelpers
 {
-    public static function getFilteredQuery($query, $data, $model_name) {
+    public static function getFilteredQuery($query, $data, $instance_name) {
        
-        $filter_conditions = $model_name::filterConditions();
+        $filter_conditions = config("filters.{$instance_name}");
         foreach ($filter_conditions as $field => $conditions) {
             if ($conditions['method'] == 'where' && is_array($conditions['operator'])) {
                 if (isset($data[$field])) {
@@ -87,7 +87,7 @@ class FilterHelpers
 
     public static function getFilteredArrayOfArrays($array_arrays, $data) {
 
-        $filterReplacementConditions = Lesson::filterReplacementConditions();
+        $filterReplacementConditions = config('filters.lesson_replacement');
         $filtered_array_arrays = [];
         $is_suitable_element = true;
 

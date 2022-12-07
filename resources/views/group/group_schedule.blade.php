@@ -4,7 +4,7 @@
     @if($errors->any())
         <div class="alertFail">
             <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            The input data does not match the requirements. Please contact your administrator.
+            {{ __('user_validation.invalid_input_data') }}
         </div>
     @endif
     @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))

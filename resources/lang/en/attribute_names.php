@@ -15,7 +15,7 @@ return [
     'position_id' => '"Position"',
     'academic_degree_id' => '"Academic degree"',
     'updating_id' => '"Updating"',
-    'full_name' => '"Full name"',
+    'full_name' => '"First Name, Last Name or Patronymic"',
     'age_from' => '"From"',
     'age_to' => '"To"',
     // additionally only group attributes

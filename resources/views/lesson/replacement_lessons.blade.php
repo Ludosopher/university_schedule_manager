@@ -1,12 +1,17 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
+        @if($errors->any())
+            <div class="alertFail">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ __('user_validation.invalid_input_data') }}
+            </div>
+        @endif
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>
                 <form method="POST" action="{{ route('lesson-replacement') }}">
                 @csrf
-                    <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
                     @if(isset($data['filter_form_fields']))
                         @foreach($data['filter_form_fields'] as $field)
                             @if($field['type'] == 'between')
@@ -81,6 +86,7 @@
                             @endif    
                         @endforeach    
                     @endif
+                    <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
                     <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}" style="margin-bottom: 20px;">
                     <p for="{{ $field_name }}" class="form-explanation"><span style="color: red;">*</span> Для выбора нескольких полей нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора.</p>
                     <button type="submit" class="btn btn-primary form-button">Показать</button>
@@ -99,6 +105,7 @@
                     <div class="schedule-button-group">
                         <form method="POST" action="{{ route('lesson-replacement-doc-export') }}">
                         @csrf
+                            <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
                             <input type="hidden" name="replacement_lessons" value="{{ json_encode($data['replacement_lessons']) }}">
                             <input type="hidden" name="header_data" value="{{ json_encode($data['header_data']) }}">
                             <button type="submit" class="btn btn-primary top-right-button">В Word</button>
@@ -141,6 +148,7 @@
                     <h3>В расписании преподавателя</h3>
                     <form method="POST" action="{{ route('lesson-replacement-schedule-doc-export') }}">
                     @csrf
+                        <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
                         <input type="hidden" name="lessons" value="{{ json_encode($data['in_schedule']) }}">
                         <input type="hidden" name="header_data" value="{{ json_encode($data['header_data']) }}">
                         <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
