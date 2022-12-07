@@ -25,12 +25,6 @@ class GroupController extends ModelController
 
     public function getGroups (FilterGroupRequest $request)
     {
-        // if ($request->isMethod('post')) {
-        //     $validator = Validator::make($request->all(), $this->model_name::filterRules(), [], $this->model_name::filterAttrNames());
-        //     if ($validator->fails()) {
-        //         return redirect()->route("{$this->instance_plural_name}")->withErrors($validator)->withInput();
-        //     }
-        // }
         $data = $this->getInstances($request->validated());
 
         return view("group.groups")->with('data', $data);
@@ -45,14 +39,6 @@ class GroupController extends ModelController
 
     public function addOrUpdateGroup (StoreGroupRequest $request)
     {
-
-        // $validator = Validator::make($request->all(), $this->model_name::rules($request), [], $this->model_name::attrNames());
-        // if ($validator->fails()) {
-        //     if (isset($request->updating_id)) {
-        //         return redirect()->route("{$this->instance_name}-form", ['updating_id' => $request->updating_id])->withErrors($validator)->withInput();
-        //     }
-        //     return redirect()->route("{$this->instance_name}-form")->withErrors($validator)->withInput();
-        // }
 
         $data = $this->addOrUpdateInstance($request->validated());
 
@@ -124,15 +110,6 @@ class GroupController extends ModelController
 
     public function exportScheduleToDoc (ExportScheduleToDocGroupRequest $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'lessons' => 'required|string',
-        //     'group_name' => 'required|string',
-        //     'week_data' => 'nullable|string',
-        // ]);
-        // if ($validator->fails()) {
-        //     return redirect()->back()->withErrors($validator); 
-        // }
-
         $data = $request->validated();
         $data['other_participant'] = $this->other_lesson_participant;
         
