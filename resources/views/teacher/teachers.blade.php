@@ -19,18 +19,12 @@
                 {{ str_replace('?', $data['updated_instance_name'], __('teacher.teacher_updated')) }}
             </div>
         @endif
-        @if (\Session::has('shedule_validation_errors'))
+        @if($errors->any() && ($errors->has('schedule_teacher_id') || $errors->has('week_number')))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('teacher.schedule_validation_error') }}
+                {{ __('user_validation.invalid_input_data') }}
             </div>
         @endif
-        {{-- @if ($errors !== null && $errors->has('schedule_teacher_id'))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Такой преподаватель не найден.
-            </div>
-        @endif --}}
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>

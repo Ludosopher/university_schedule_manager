@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if($errors->any())
+        @if($errors->any() && ($errors->has('replacement_lessons') || $errors->has('lessons') || $errors->has('header_data') || $errors->has('week_data') || $errors->has('replaceable_lesson_id')))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ __('user_validation.invalid_input_data') }}

@@ -13,10 +13,10 @@
                 {{ __('group.group_not_found') }}
             </div>
         @endif
-        @if (\Session::has('shedule_validation_errors'))
+        @if($errors->any() && ($errors->has('schedule_group_id') || $errors->has('week_number')))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('group.schedule_validation_error') }}
+                {{ __('user_validation.invalid_input_data') }}
             </div>
         @endif
         @if (isset($data['updated_instance_name']))

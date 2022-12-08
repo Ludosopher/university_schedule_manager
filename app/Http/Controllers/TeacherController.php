@@ -9,8 +9,11 @@ use App\Helpers\FilterHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
+use App\Helpers\ValidationHelpers;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\FilterTeacherRequest;
+use App\Http\Requests\teacher\RescheduleTeacherRequest;
+use App\Http\Requests\teacher\ScheduleTeacherRequest;
 use App\Http\Requests\teacher\StoreTeacherRequest;
 use App\Lesson;
 use App\Teacher;
@@ -41,7 +44,7 @@ class TeacherController extends ModelController
     {
         $data = $this->getInstanceFormData($request);
         
-        return view("{$this->instance_name}.add_{$this->instance_name}_form")->with('data', $data);
+        return view("teacher.add_teacher_form")->with('data', $data);
     }
 
     public function addOrUpdateTeacher (StoreTeacherRequest $request)
@@ -49,9 +52,9 @@ class TeacherController extends ModelController
         $data = $this->addOrUpdateInstance($request->validated());
                 
         if (isset($data['updated_instance_name'])) {
-            return redirect()->route("{$this->instance_plural_name}", ['updated_instance_name' => $data['updated_instance_name']]);
+            return redirect()->route("teachers", ['updated_instance_name' => $data['updated_instance_name']]);
         } elseif (isset($data['new_instance_name'])) {
-            return redirect()->route("{$this->instance_name}-form", ['new_instance_name' => $data['new_instance_name']]);
+            return redirect()->route("teacher-form", ['new_instance_name' => $data['new_instance_name']]);
         }
     }
 
@@ -61,50 +64,36 @@ class TeacherController extends ModelController
             
         if ($deleted_instance) {
             $instance_name_field = $this->instance_name_field;
-            return redirect()->route("{$this->instance_plural_name}", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+            return redirect()->route("teachers", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
         } else {
-            return redirect()->route("{$this->instance_plural_name}", ['deleting_instance_not_found' => true]);
+            return redirect()->route("teachers", ['deleting_instance_not_found' => true]);
         }
     }
 
-    public function getTeacherSchedule (Request $request)
+    public function getTeacherSchedule (ScheduleTeacherRequest $request)
     {
-        
-        $validator = Validator::make($request->all(), [
-            "schedule_teacher_id" => "required|integer|exists:App\Teacher,id",
-            'week_number' => 'nullable|string'
-        ]);
-        
-        if ($validator->fails()) {
-            return back()->with('shedule_validation_errors', true); 
-        }
-
-        $data = $this->getSchedule($request);
+        $data = $this->getSchedule($request->validated());
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
        
-        return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
+        return view("teacher.teacher_schedule")->with('data', $data);
     }
 
     public function getTeacherReschedule (Request $request)
     {
         $request->flash();
-        $validator = Validator::make($request->all(), [
-            'teacher_id' => 'required|integer|exists:App\Teacher,id',
-            'lesson_id' => 'required|integer|exists:App\Lesson,id',
-            'week_number' => 'nullable|string'
-        ]);
-        if ($validator->fails()) {
+        $validation = ValidationHelpers::getTeacherRescheduleValidation($request->all());
+        if (! $validation['success']) {
             $prev_data = json_decode($request->input('prev_data'), true);        
-            return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validator); 
+            return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validation['validator']);
         }
-        
-        $reschedule_data = LessonHelpers::getReschedulingData($request->all());
+                
+        $reschedule_data = LessonHelpers::getReschedulingData($validation['validated']);
         $data = $this->getModelRechedulingData($request, $reschedule_data['free_periods']);
         
-        return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
+        return view("teacher.teacher_reschedule")->with('data', $data);
     }
 
     public function exportScheduleToDoc (ExportScheduleToDocTeacherRequest $request)
@@ -122,17 +111,13 @@ class TeacherController extends ModelController
 
     public function exportRescheduleToDoc (Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'lessons' => 'required|string',
-            'teacher_name' => 'required|string',
-            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
-        ]);
-        if ($validator->fails()) {
+        $validation = ValidationHelpers::exportTeacherRescheduleToDocValidation($request->all());
+        if (! $validation['success']) {
             $prev_data = json_decode($request->all()['prev_data'], true);
-            return redirect()->route('teacher-reschedule', $prev_data)->withErrors($validator);
+            return redirect()->route('teacher-reschedule', $prev_data)->withErrors($validation['validator']);
         }
 
-        $data = $validator->validated();
+        $data = $validation['validated'];
         $data['participant'] = $request->teacher_name;
         $data['other_participant'] = $this->other_lesson_participant;
         $data['is_reschedule_for'] = 'teacher';

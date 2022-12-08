@@ -6,8 +6,10 @@ use App\Helpers\DocExportHelpers;
 use App\Helpers\GroupHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
+use App\Helpers\ValidationHelpers;
 use App\Http\Requests\group\ExportScheduleToDocGroupRequest;
 use App\Http\Requests\group\FilterGroupRequest;
+use App\Http\Requests\group\ScheduleGroupRequest;
 use App\Http\Requests\group\StoreGroupRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -39,14 +41,13 @@ class GroupController extends ModelController
 
     public function addOrUpdateGroup (StoreGroupRequest $request)
     {
-
         $data = $this->addOrUpdateInstance($request->validated());
 
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
-                return redirect()->route("{$this->instance_plural_name}", ['updated_instance_name' => $data['updated_instance_name']]);
+                return redirect()->route("groups", ['updated_instance_name' => $data['updated_instance_name']]);
             } elseif (isset($data['new_instance_name'])) {
-                return redirect()->route("{$this->instance_name}-form", ['new_instance_name' => $data['new_instance_name']]);
+                return redirect()->route("group-form", ['new_instance_name' => $data['new_instance_name']]);
             }
         }
     }
@@ -55,57 +56,45 @@ class GroupController extends ModelController
     {
         $relation_delited_result = GroupHelpers::deleteGroupLessonRelation($request->deleting_id);
         if (!$relation_delited_result) {
-            return redirect()->route("{$this->instance_plural_name}", ['deleting_instance_not_found' => true]);
+            return redirect()->route("groups", ['deleting_instance_not_found' => true]);
         }
         if ($relation_delited_result === 'there_are_lessons_only_with_this_group') {
-            return redirect()->route("{$this->instance_plural_name}", [$relation_delited_result => true]);
+            return redirect()->route("groups", [$relation_delited_result => true]);
         }
 
         $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name);
         $instance_name_field = $this->instance_name_field;
-        return redirect()->route("{$this->instance_plural_name}", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+        return redirect()->route("groups", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
     }
 
-    public function getGroupSchedule (Request $request)
+    public function getGroupSchedule (ScheduleGroupRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            "schedule_group_id" => "required|integer|exists:App\Group,id",
-            'week_number' => 'nullable|string'
-        ]);
-        if ($validator->fails()) {
-            return back()->with('shedule_validation_errors', true);
-        }
-
-        $data = $this->getSchedule($request);
+        $data = $this->getSchedule($request->validated());
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
 
-        return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
+        return view("group.group_schedule")->with('data', $data);
     }
 
     public function getGroupReschedule (Request $request)
     {
         $request->flash();
-        $validator = Validator::make($request->all(), [
-            'group_id' => 'required|integer|exists:App\Group,id',
-            'teacher_id' => 'required|integer|exists:App\Teacher,id',
-            'lesson_id' => 'required|integer|exists:App\Lesson,id'
-        ]);
-            if ($validator->fails()) {
-                $prev_data = json_decode($request->input('prev_data'), true);        
-                return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validator);
-            }
-
-        $reschedule_data = LessonHelpers::getReschedulingData($request->all());
+        $validation = ValidationHelpers::getGroupRescheduleValidation($request->all());
+        if (! $validation['success']) {
+            $prev_data = json_decode($request->input('prev_data'), true);        
+            return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validation['validator']);
+        }
+                
+        $reschedule_data = LessonHelpers::getReschedulingData($validation['validated']);
         $data = $this->getModelRechedulingData($request, $reschedule_data['free_periods']);
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
         
-        return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
+        return view("group.group_reschedule")->with('data', $data);
     }
 
     public function exportScheduleToDoc (ExportScheduleToDocGroupRequest $request)
@@ -123,17 +112,13 @@ class GroupController extends ModelController
 
     public function exportRescheduleToDoc (Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'lessons' => 'required|string',
-            'group_name' => 'required|string',
-            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
-        ]);
-        if ($validator->fails()) {
+        $validation = ValidationHelpers::exportGroupRescheduleToDocValidation($request->all());
+        if (! $validation['success']) {
             $prev_data = json_decode($request->all()['prev_data'], true);
-            return redirect()->route('teacher-reschedule', $prev_data)->withErrors($validator); 
+            return redirect()->route('group-reschedule', $prev_data)->withErrors($validation['validator']);
         }
 
-        $data = $validator->validated();
+        $data = $validation['validated'];
         $data['participant'] = $request->group_name;
         $data['other_participant'] = $this->other_lesson_participant;
         $data['is_reschedule_for'] = 'group';

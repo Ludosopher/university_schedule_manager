@@ -79,10 +79,10 @@ class LessonController extends ModelController
         if (isset($request->prev_replace_rules)) {
             $request->flash();
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            $parametrs = ValidationHelpers::getReplacementValidationParametrs();
-            $validator = Validator::make($request->all(), $parametrs['rules'], $parametrs['messages'], $parametrs['attributes']);
-            if ($validator->fails()) {
-                return redirect()->route("{$this->instance_name}-replacement", ['replace_rules' => $replace_rules])->withErrors($validator)->withInput();
+            
+            $validation = ValidationHelpers::getReplacementVariantsValidation($request->all());
+            if (! $validation['success']) {
+                return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator'])->withInput();
             }
             $teacher_id = $replace_rules['teacher_id'];
         } else {
@@ -106,37 +106,29 @@ class LessonController extends ModelController
     
     public function exportReplacementToDoc (Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'replacement_lessons' => 'required|string',
-            'header_data' => 'required|string',
-        ]);
-        if ($validator->fails()) {
+        $validation = ValidationHelpers::exportReplacementToDocValidation($request->all());
+        if (! $validation['success']) {
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validator); 
+            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator']); 
         }
 
         $filename = "replacement.docx";
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = DocExportHelpers::replacementExport($validator->validated());
+        $objWriter = DocExportHelpers::replacementExport($validation['validated']);
         $objWriter->save("php://output");
     }
 
     public function exportReplacementScheduleToDoc (Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'lessons' => 'required|string',
-            'header_data' => 'required|string',
-            'week_data' => 'nullable|string',
-            'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id'
-        ]);
-        if ($validator->fails()) {
+        $validation = ValidationHelpers::exportReplacementScheduleToDocValidation($request->all());
+        if (! $validation['success']) {
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validator); 
+            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator']); 
         }
 
-        $data = $validator->validated();
+        $data = $validation['validated'];
         $data['other_participant'] = 'group';
 
         $filename = "replacement-schedule.docx";

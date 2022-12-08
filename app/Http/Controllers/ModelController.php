@@ -48,8 +48,9 @@ class ModelController extends Controller
         
         $instances = FilterHelpers::getFilteredQuery($this->model_name::with($this->eager_loading_fields), $incoming_data, $this->instance_name);
         $appends = ModelHelpers::getAppends($incoming_data);
+        
         $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
-
+        
         return array_merge($data, $properties);
     }
 
@@ -86,18 +87,18 @@ class ModelController extends Controller
         }
     }
 
-    public function getSchedule (Request $request)
+    public function getSchedule ($incoming_data)
     {
         $schedule_instance_id_field = "schedule_{$this->instance_name}_id";
         $data = [
             'model_name' => $this->model_name,
             'instance_name' => $this->instance_name,
-            'schedule_instance_id' => $request->$schedule_instance_id_field,
+            'schedule_instance_id' => $incoming_data[$schedule_instance_id_field],
             'instance_name_field' => $this->instance_name_field,
             'profession_level_name_field' => $this->profession_level_name_field,
             'other_lesson_participant' => $this->other_lesson_participant,
             'other_lesson_participant_name' => $this->other_lesson_participant_name,
-            'week_number' => $request->week_number ?? null
+            'week_number' => $incoming_data['week_number'] ?? null
         ];
 
         return ModelHelpers::getSchedule($data);
