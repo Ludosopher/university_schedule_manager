@@ -27,7 +27,8 @@ class GroupController extends ModelController
 
     public function getGroups (FilterGroupRequest $request)
     {
-        $data = $this->getInstances($request->validated());
+        $request->validated();
+        $data = $this->getInstances(request()->all());
 
         return view("group.groups")->with('data', $data);
     }

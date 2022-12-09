@@ -35,7 +35,8 @@ class TeacherController extends ModelController
     
     public function getTeachers (FilterTeacherRequest $request)
     {
-        $data = $this->getInstances($request->validated());
+        $request->validated();
+        $data = $this->getInstances(request()->all());
 
         return view("teacher.teachers")->with('data', $data);
     }

@@ -20,7 +20,11 @@ class ModelController extends Controller
     {
         $rows_per_page = config('site.rows_per_page');
                 
-        if (request()->method() == 'POST') {
+        // if (request()->method() == 'POST') {
+        //     request()->flash();
+        // }
+
+        if (count(request()->all())) {
             request()->flash();
         }
         
@@ -48,7 +52,6 @@ class ModelController extends Controller
         
         $instances = FilterHelpers::getFilteredQuery($this->model_name::with($this->eager_loading_fields), $incoming_data, $this->instance_name);
         $appends = ModelHelpers::getAppends($incoming_data);
-        
         $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
         
         return array_merge($data, $properties);

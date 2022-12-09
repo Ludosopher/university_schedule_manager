@@ -32,7 +32,8 @@ class LessonController extends ModelController
             
     public function getLessons (FilterLessonRequest $request)
     {
-        $data = $this->getInstances($request->validated());
+        $request->validated();
+        $data = $this->getInstances(request()->all());
 
         return view("lesson.lessons")->with('data', $data);
     }

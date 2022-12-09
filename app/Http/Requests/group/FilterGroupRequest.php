@@ -25,7 +25,7 @@ class FilterGroupRequest extends FormRequest
     {
         if ($this->method() == 'POST') {
             return [
-                'group_id' => 'nullable|array',
+                'id' => 'nullable|array',
                 'faculty_id' => 'nullable|array',
                 'study_program_id' => 'nullable|array',
                 'study_orientation_id' => 'nullable|array',
@@ -43,7 +43,7 @@ class FilterGroupRequest extends FormRequest
     {
         if ($this->method() == 'POST') {
             return [
-                'group_id' => __('attribute_names.group_id'),
+                'id' => __('attribute_names.group_id'),
                 'faculty_id' => __('attribute_names.faculty_id'),
                 'study_program_id' => __('attribute_names.study_program_id'),
                 'study_orientation_id' => __('attribute_names.study_orientation_id'),
