@@ -8,7 +8,17 @@
         </div>
     @endif
     @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))
-        <h1 class="top-header">Расписание занятий преподавателя с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }}</h1>   
+        @php
+            if (isset($data['is_red_week'])) {
+                $week_color = "синяя";
+                $bg_color = '#ace7f2';
+                if ($data['is_red_week']) {
+                    $week_color = "красная";
+                    $bg_color = '#ffb3b9';
+                }
+            }
+        @endphp
+        <h1 class="top-header">Расписание занятий преподавателя с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }} <span style="background-color: {{ $bg_color }};">( {{ $week_color }} неделя )</span></h1>   
     @else
         <h1 class="top-header">Регулярное расписание занятий преподавателя</h1>
     @endif
@@ -34,14 +44,19 @@
             <table class="table table-bordered text-center schedule-table">
                 <thead>
                     <tr class="bg-light-gray">
-                        <th class="text-uppercase">Пара
-                        </th>
-                        <th class="text-uppercase">Понедельник</th>
-                        <th class="text-uppercase">Вторник</th>
-                        <th class="text-uppercase">Среда</th>
-                        <th class="text-uppercase">Четверг</th>
-                        <th class="text-uppercase">Пятница</th>
-                        <th class="text-uppercase">Суббота</th>
+                        <th class="text-uppercase">Пара</th>
+                        @if(isset($data['week_dates']))
+                            @foreach($data['week_dates'] as $name => $date)
+                                <th class="text-uppercase">{{ $name }} ({{ $date }})</th>
+                            @endforeach
+                        @else
+                            <th class="text-uppercase">Понедельник</th>
+                            <th class="text-uppercase">Вторник</th>
+                            <th class="text-uppercase">Среда</th>
+                            <th class="text-uppercase">Четверг</th>
+                            <th class="text-uppercase">Пятница</th>
+                            <th class="text-uppercase">Суббота</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>

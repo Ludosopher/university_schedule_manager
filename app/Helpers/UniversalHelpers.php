@@ -34,7 +34,20 @@ class UniversalHelpers
         ];
     }
 
-    public static function weekDates($week_str) {
+    public static function getWeekDates($year, $week)
+    {
+        return [
+            'Понедельник' => (new DateTime())->setISODate($year, $week)->format('d.m'),
+            'Вторник' => (new DateTime())->setISODate($year, $week, 2)->format('d.m'),
+            'Среда' => (new DateTime())->setISODate($year, $week, 3)->format('d.m'),
+            'Четверг' => (new DateTime())->setISODate($year, $week, 4)->format('d.m'),
+            'Пятница' => (new DateTime())->setISODate($year, $week, 5)->format('d.m'),
+            'Суббота' => (new DateTime())->setISODate($year, $week, 6)->format('d.m'),
+            // 'Воскресенье' => (new DateTime())->setISODate($year, $week, 7)->format('d.m.y') 
+        ];
+    }
+
+    public static function weekStartEndDates($week_str) {
         $week_data = self::getWeekData($week_str);
         if ($week_data) {
             return self::getWeekStartEndDates($week_data['year'], $week_data['week']);
@@ -42,12 +55,20 @@ class UniversalHelpers
         return false; 
     }
 
-    public static function testDateLesson($week_request, $lesson) {
-        if (!isset($week_request) && isset($lesson->date)) {
+    public static function weekDates($week_str) {
+        $week_data = self::getWeekData($week_str);
+        if ($week_data) {
+            return self::getWeekDates($week_data['year'], $week_data['week']);
+        }
+        return false; 
+    }
+
+    public static function testLessonDate($week_number, $lesson) {
+        if (!isset($week_number) && isset($lesson->date)) {
             return false;
         }
-        if (isset($week_request) && isset($lesson->date)) {
-            if (date('Y-W', strtotime($lesson->date)) != date('Y-W', strtotime($week_request))) {
+        if (isset($week_number) && isset($lesson->date)) {
+            if (date('Y-W', strtotime($lesson->date)) != date('Y-W', strtotime($week_number))) {
                 return false;
             }
         }
@@ -68,5 +89,39 @@ class UniversalHelpers
             }
         }
         return $data;
+    }
+
+    public static function weekColorIsRed($week_number_str) {
+        
+        $red_week_is_odd = config('site.red_week_is_odd');
+        $week_data = self::getWeekData($week_number_str);
+
+        $this_week_is_odd = (int)$week_data['week'] % 2;
+
+        if ($red_week_is_odd == $this_week_is_odd) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function getWeeklyScheduleLesson ($week_number, $lesson) {
+        
+        if (! isset($week_number)) {
+            return;
+        }
+
+        $weekly_period_ids = config('enum.weekly_period_ids');
+
+        $week_is_red = self::weekColorIsRed($week_number);
+
+        if (($week_is_red && $lesson->weekly_period_id != $weekly_period_ids['blue_week'])
+            || 
+            (! $week_is_red && $lesson->weekly_period_id != $weekly_period_ids['red_week'])) 
+        {
+            $lesson->weekly_period_id = $weekly_period_ids['every_week'];
+            return $lesson;
+        }
+        
+        return false;
     }
 }

@@ -69,9 +69,16 @@ class ModelHelpers
         $profession_level_name_field = $config['profession_level_name_field'];
         $other_lesson_participant = $config['other_lesson_participant'];
         $other_lesson_participant_name = $config['other_lesson_participant_name'];
-        $week_number = $incoming_data['week_number'] ?? null;
+        
+        $week_number = null;
+        if (isset($incoming_data['week_number'])) {
+            $week_number = $incoming_data['week_number'];
+            $data['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
+            $data['week_dates'] = UniversalHelpers::weekDates($week_number);
+        }
+        
 
-        $week_dates = UniversalHelpers::weekDates($week_number);
+        $week_dates = UniversalHelpers::weekStartEndDates($week_number);
         if ($week_dates) {
             $data['week_data'] = [
                 'week_number' => $week_number,
@@ -108,9 +115,18 @@ class ModelHelpers
         $data['lessons'] = [];
         foreach ($lessons as $lesson) {
 
-            if (! UniversalHelpers::testDateLesson($week_number, $lesson)) {
+            if (! UniversalHelpers::testLessonDate($week_number, $lesson)) {
                 continue;
             };
+            
+            if (isset($week_number)) {
+                $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $lesson);
+                if ($week_schedule_lesson) {
+                    $lesson = $week_schedule_lesson;
+                } else {
+                    continue;
+                }
+            }
 
             if (isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id])
                 || isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$weekly_period_ids['every_week']]))

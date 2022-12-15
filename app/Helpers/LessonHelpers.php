@@ -43,12 +43,12 @@ class LessonHelpers
         $is_suitable_lesson = true;
         $looked_teachers = [$seeking_teacher->id];
         foreach ($groups_lessons as $g_lesson) {
-            if (!UniversalHelpers::testDateLesson($week_number, $g_lesson)) {
+            if (!UniversalHelpers::testLessonDate($week_number, $g_lesson)) {
                 continue;
             };
             if (!in_array($g_lesson->teacher->id, $looked_teachers)) {
                 foreach ($g_lesson->teacher->lessons as $dt_lesson) {
-                    if (!UniversalHelpers::testDateLesson($week_number, $dt_lesson)) {
+                    if (!UniversalHelpers::testLessonDate($week_number, $dt_lesson)) {
                         continue;
                     };
                     if ($dt_lesson->week_day_id == $data['week_day_id']
@@ -62,14 +62,14 @@ class LessonHelpers
                 $looked_teachers[] = $g_lesson->teacher->id;
                 if ($is_suitable_teacher) {
                     foreach ($g_lesson->teacher->lessons as $dt_lesson) {
-                        if (!UniversalHelpers::testDateLesson($week_number, $dt_lesson)) {
+                        if (!UniversalHelpers::testLessonDate($week_number, $dt_lesson)) {
                             continue;
                         };
                         $dt_lesson_groups_ids = array_column($dt_lesson->groups->toArray(), 'id');
                         sort($dt_lesson_groups_ids);
                         if (count($dt_lesson_groups_ids) == count($groups_ids) && $dt_lesson_groups_ids === $groups_ids) {
                             foreach ($seeking_teacher->lessons as $st_lesson) {
-                                if (!UniversalHelpers::testDateLesson($week_number, $st_lesson)) {
+                                if (!UniversalHelpers::testLessonDate($week_number, $st_lesson)) {
                                     continue;
                                 };
                                 if ($st_lesson->week_day_id == $dt_lesson->week_day_id
@@ -242,7 +242,7 @@ class LessonHelpers
                             // echo '|||||||||||||||||||||||||||||||||||||||||||||||||';
                             // echo '</pre>';
                             foreach ($subject_lessons as $sub_lesson) {
-                                if (!UniversalHelpers::testDateLesson($week_number, $sub_lesson)) {
+                                if (!UniversalHelpers::testLessonDate($week_number, $sub_lesson)) {
                                     continue;
                                 };
                                 // echo '<pre>';
