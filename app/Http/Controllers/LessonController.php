@@ -30,7 +30,8 @@ class LessonController extends Controller
         'eager_loading_fields' => ['lesson_type', 'week_day', 'weekly_period', 'class_period', 'teacher', 'groups'],
         'other_lesson_participant' => null,
         'other_lesson_participant_name' => null,
-        'boolean_attridutes' => [],
+        'boolean_attributes' => [],
+        'many_to_many_attributes' => ['group_id' => 'groups'],
     ];
 
     public function getLessons (FilterLessonRequest $request)
@@ -46,7 +47,7 @@ class LessonController extends Controller
         $data = ModelHelpers::getInstanceFormData($request->all(), $this->config);
 
         if (isset($data['updating_instance'])) {
-            $data = LessonHelpers::getGroupsData($data);
+            $data = ModelHelpers::getManyToManyData($data, $this->config['many_to_many_attributes']);
         }
 
         return view("lesson.add_lesson_form")->with('data', $data);
@@ -55,21 +56,22 @@ class LessonController extends Controller
     public function addOrUpdateLesson (StoreLessonRequest $request)
     {
         $validated = $request->validated();
-        $data = ModelHelpers::addOrUpdateInstance($validated, $this->config);
-        LessonHelpers::addOrUpdateLessonGroups($validated['group_id'], $data['id']);
+        $lesson = ModelHelpers::addOrUpdateInstance($validated, $this->config);
+        ModelHelpers::addOrUpdateManyToManyAttributes($validated, $lesson['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);
 
-        if (is_array($data)) {
-            if (isset($data['updated_instance_name'])) {
-                return redirect()->route("lessons", ['updated_instance_name' => $data['updated_instance_name']]);
-            } elseif (isset($data['new_instance_name'])) {
-                return redirect()->route("lesson-form", ['new_instance_name' => $data['new_instance_name']]);
+        if (is_array($lesson)) {
+            if (isset($lesson['updated_instance_name'])) {
+                return redirect()->route("lessons", ['updated_instance_name' => $lesson['updated_instance_name']]);
+            } elseif (isset($lesson['new_instance_name'])) {
+                return redirect()->route("lesson-add-form", ['new_instance_name' => $lesson['new_instance_name']]);
             }
         }
     }
 
     public function deleteLesson (Request $request)
     {
-        $relations_deleted_result = LessonHelpers::deleteLessonGroupsRelation($request->deleting_id);
+        $attributes = array_values($this->config['many_to_many_attributes']);
+        $relations_deleted_result = ModelHelpers::deleteManyToManyAttributes($request->deleting_id, $this->config['model_name'], $attributes);
         if (!$relations_deleted_result) {
             return redirect()->route("lessons", ['deleting_instance_not_found' => true]);
         }

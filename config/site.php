@@ -14,5 +14,7 @@ return [
       'distance' => 5
    ],
 
+   'red_week_is_odd' => true,
+
    
 ];

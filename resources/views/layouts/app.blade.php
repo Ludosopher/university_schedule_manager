@@ -51,7 +51,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('teachers') }}">Список</a>
                                 @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                    <a class="nav-link" href="{{ route('teacher-form') }}">Добавить</a>
+                                    <a class="nav-link" href="{{ route('teacher-add-form') }}">Добавить</a>
                                 @endif
                             </div>
                         </li>
@@ -62,7 +62,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('groups') }}">Список</a>
                                 @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                    <a class="nav-link" href="{{ route('group-form') }}">Добавить</a>
+                                    <a class="nav-link" href="{{ route('group-add-form') }}">Добавить</a>
                                 @endif
                             </div>
                         </li>
@@ -73,7 +73,7 @@
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('lessons') }}">Список</a>
                                 @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                    <a class="nav-link" href="{{ route('lesson-form') }}">Добавить</a>
+                                    <a class="nav-link" href="{{ route('lesson-add-form') }}">Добавить</a>
                                 @endif
                             </div>
                         </li>

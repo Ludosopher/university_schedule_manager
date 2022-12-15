@@ -69,7 +69,7 @@ class ModelHelpers
         $profession_level_name_field = $config['profession_level_name_field'];
         $other_lesson_participant = $config['other_lesson_participant'];
         $other_lesson_participant_name = $config['other_lesson_participant_name'];
-        $week_number = $incoming_data['week_number'] ?? '';
+        $week_number = $incoming_data['week_number'] ?? null;
 
         $week_dates = UniversalHelpers::weekDates($week_number);
         if ($week_dates) {
@@ -108,7 +108,7 @@ class ModelHelpers
         $data['lessons'] = [];
         foreach ($lessons as $lesson) {
 
-            if (!UniversalHelpers::testDateLesson($week_number, $lesson)) {
+            if (! UniversalHelpers::testDateLesson($week_number, $lesson)) {
                 continue;
             };
 
@@ -327,7 +327,6 @@ class ModelHelpers
             }
             $data['updating_instance']->$field = $attribute_ids;
         }
-        
         return $data;
     }
 

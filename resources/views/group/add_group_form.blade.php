@@ -15,7 +15,7 @@
                     <h2 style="margin-top: 1.5rem">Добавление новой группы</h2>
                 @endif
 
-                <form method="POST" action="{{ route('group-add') }}">
+                <form method="POST" action="{{ route('group-add-update') }}">
                 @csrf
                     @if(isset($data['updating_instance']))
                         <input type="hidden" name="updating_id" value="{{ $data['updating_instance']->id }}">

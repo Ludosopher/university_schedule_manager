@@ -325,34 +325,34 @@ class LessonHelpers
         return $data;
     }
 
-    public static function addOrUpdateLessonGroups($group_ids, $id) {
+    // public static function addOrUpdateLessonGroups($group_ids, $id) {
 
-        $lesson = Lesson::find($id);
-        $lesson->groups()->sync($group_ids);
+    //     $lesson = Lesson::find($id);
+    //     $lesson->groups()->sync($group_ids);
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    public static function getGroupsData($data) {
+    // public static function getGroupsData($data) {
 
-        $updating_lesson = $data['updating_instance'];
-        foreach ($updating_lesson->groups as $group) {
-            $group_ids[] = $group->id;
-        }
-        $data['updating_instance']->group_id = $group_ids;
+    //     $updating_lesson = $data['updating_instance'];
+    //     foreach ($updating_lesson->groups as $group) {
+    //         $group_ids[] = $group->id;
+    //     }
+    //     $data['updating_instance']->group_id = $group_ids;
 
-        return $data;
-    }
+    //     return $data;
+    // }
 
-    public static function deleteLessonGroupsRelation($id) {
-        $lesson = Lesson::with(['groups'])->find($id);
-        if ($lesson) {
-            $lesson->groups()->detach();
-            return true;
-        }
+    // public static function deleteLessonGroupsRelation($id) {
+    //     $lesson = Lesson::with(['groups'])->find($id);
+    //     if ($lesson) {
+    //         $lesson->groups()->detach();
+    //         return true;
+    //     }
 
-        return false;
-    }
+    //     return false;
+    // }
 
     public static function getReplacementSchedule($teacher_id, $incom_replacement_lessons, $week_data) {
 

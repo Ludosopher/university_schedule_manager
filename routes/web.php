@@ -27,9 +27,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/user/delete', 'UserController@deleteUser')->name('user-delete')->middleware('admin');
         
     Route::match(['get', 'post'], '/teacher/get-all', 'TeacherController@getTeachers')->name('teachers');
-    Route::get('/teacher/add-form', 'TeacherController@addTeacherForm')->name('teacher-form')->middleware('moderator');
-    Route::post('/teacher/add', 'TeacherController@addOrUpdateTeacher')->name('teacher-add')->middleware('moderator');
-    Route::get('/teacher/update', 'TeacherController@addTeacherForm')->name('teacher-update')->middleware('moderator');
+    Route::get('/teacher/add-form', 'TeacherController@addTeacherForm')->name('teacher-add-form')->middleware('moderator');
+    Route::post('/teacher/add-update', 'TeacherController@addOrUpdateTeacher')->name('teacher-add-update')->middleware('moderator');
+    Route::get('/teacher/update-form', 'TeacherController@addTeacherForm')->name('teacher-update-form')->middleware('moderator');
     Route::get('/teacher/delete', 'TeacherController@deleteTeacher')->name('teacher-delete')->middleware('moderator');
     Route::match(['get', 'post'], '/teacher/schedule', 'TeacherController@getTeacherSchedule')->name('teacher-schedule');
     Route::post('/teacher/schedule/export-to-doc', 'TeacherController@exportScheduleToDoc')->name('teacher-schedule-doc-export');
@@ -37,9 +37,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/teacher/reschedule/export-to-doc', 'TeacherController@exportRescheduleToDoc')->name('teacher-reschedule-doc-export');
 
     Route::match(['get', 'post'],'/group/get-all', 'GroupController@getGroups')->name('groups');
-    Route::get('/group/add-form', 'GroupController@addGroupForm')->name('group-form')->middleware('moderator');
-    Route::post('/group/add', 'GroupController@addOrUpdateGroup')->name('group-add')->middleware('moderator');
-    Route::get('/group/update', 'GroupController@addGroupForm')->name('group-update')->middleware('moderator');
+    Route::get('/group/add-form', 'GroupController@addGroupForm')->name('group-add-form')->middleware('moderator');
+    Route::post('/group/add-update', 'GroupController@addOrUpdateGroup')->name('group-add-update')->middleware('moderator');
+    Route::get('/group/update-form', 'GroupController@addGroupForm')->name('group-update-form')->middleware('moderator');
     Route::get('/group/delete', 'GroupController@deleteGroup')->name('group-delete')->middleware('moderator');
     Route::match(['get', 'post'], '/group/schedule', 'GroupController@getGroupSchedule')->name('group-schedule');
     Route::post('/group/schedule/export-to-doc', 'GroupController@exportScheduleToDoc')->name('group-schedule-doc-export');
@@ -47,9 +47,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/group/reschedule/export-to-doc', 'GroupController@exportRescheduleToDoc')->name('group-reschedule-doc-export');
 
     Route::match(['get', 'post'],'/lesson/get-all', 'LessonController@getLessons')->name('lessons');
-    Route::get('/lesson/add-form', 'LessonController@addLessonForm')->name('lesson-form')->middleware('moderator');
-    Route::post('/lesson/add', 'LessonController@addOrUpdateLesson')->name('lesson-add')->middleware('moderator');
-    Route::get('/lesson/update', 'LessonController@addLessonForm')->name('lesson-update')->middleware('moderator');
+    Route::get('/lesson/add-form', 'LessonController@addLessonForm')->name('lesson-add-form')->middleware('moderator');
+    Route::post('/lesson/add', 'LessonController@addOrUpdateLesson')->name('lesson-add-update')->middleware('moderator');
+    Route::get('/lesson/update-form', 'LessonController@addLessonForm')->name('lesson-update-form')->middleware('moderator');
     Route::get('/lesson/delete', 'LessonController@deleteLesson')->name('lesson-delete')->middleware('moderator');
     Route::match(['get', 'post'], '/lesson/replacement', 'LessonController@getReplacementVariants')->name('lesson-replacement');
     Route::post('/lesson/replacement/export-to-doc', 'LessonController@exportReplacementToDoc')->name('lesson-replacement-doc-export');

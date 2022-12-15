@@ -34,7 +34,8 @@ class TeacherController extends Controller
         'eager_loading_fields' => ['faculty', 'department', 'professional_level', 'position'],
         'other_lesson_participant' => 'group',
         'other_lesson_participant_name' => 'groups_name',
-        'boolean_attridutes' => [],
+        'boolean_attributes' => [],
+        'many_to_many_attributes' => [],
     ];
 
     public function getTeachers (FilterTeacherRequest $request)
@@ -59,7 +60,7 @@ class TeacherController extends Controller
         if (isset($data['updated_instance_name'])) {
             return redirect()->route("teachers", ['updated_instance_name' => $data['updated_instance_name']]);
         } elseif (isset($data['new_instance_name'])) {
-            return redirect()->route("teacher-form", ['new_instance_name' => $data['new_instance_name']]);
+            return redirect()->route("teacher-add-form", ['new_instance_name' => $data['new_instance_name']]);
         }
     }
 

@@ -36,7 +36,11 @@ class UserController extends Controller
         'eager_loading_fields' => ['teachers', 'groups'],
         'other_lesson_participant' => null,
         'other_lesson_participant_name' => null,
-        'boolean_attridutes' => ['is_moderator', 'is_admin'],
+        'boolean_attributes' => ['is_moderator', 'is_admin'],
+        'many_to_many_attributes' => [
+            'teacher_id' => 'teachers', 
+            'group_id' => 'groups'
+        ],
     ];
 
     public function getUsers (FilterUserRequest $request)
@@ -52,11 +56,7 @@ class UserController extends Controller
         $data = ModelHelpers::getInstanceFormData($request->all(), $this->config);
         
         if (isset($data['updating_instance'])) {
-            $attributes = [
-                'teacher_id' => 'teachers', 
-                'group_id' => 'groups'
-            ];
-            $data = ModelHelpers::getManyToManyData($data, $attributes);
+            $data = ModelHelpers::getManyToManyData($data, $this->config['many_to_many_attributes']);
         }
 
         return view("user.add_user_form")->with('data', $data);
@@ -65,20 +65,17 @@ class UserController extends Controller
     public function updateUser (StoreUserRequest $request)
     {
         $validated = $request->validated();
-        $validated = UniversalHelpers::preparingBooleans($validated, $this->config['boolean_attridutes']);
+        $validated = UniversalHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
         $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
-        $attributes = [
-            'teacher_id' => 'teachers', 
-            'group_id' => 'groups'
-        ];
-        ModelHelpers::addOrUpdateManyToManyAttributes($validated, $user['id'], $this->config['model_name'], $attributes);
+        
+        ModelHelpers::addOrUpdateManyToManyAttributes($validated, $user['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);
 
         return redirect()->route("users", ['updated_instance_name' => $user['updated_instance_name']]);
     }
 
     public function deleteUser (Request $request)
     {
-        $attributes = ['teachers', 'groups'];
+        $attributes = array_values($this->config['many_to_many_attributes']);
         $relations_deleted_result = ModelHelpers::deleteManyToManyAttributes($request->deleting_id, $this->config['model_name'], $attributes);
         if (!$relations_deleted_result) {
             return redirect()->route("users", ['deleting_instance_not_found' => true]);

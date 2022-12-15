@@ -25,7 +25,8 @@ class GroupController extends Controller
         'eager_loading_fields' => ['faculty', 'study_program', 'study_orientation', 'study_degree', 'study_form', 'course'],
         'other_lesson_participant' => 'teacher',
         'other_lesson_participant_name' => ['teacher', 'profession_level_name'],
-        'boolean_attridutes' => [],
+        'boolean_attributes' => [],
+        'many_to_many_attributes' => [],
     ];
 
     public function getGroups (FilterGroupRequest $request)
@@ -51,7 +52,7 @@ class GroupController extends Controller
             if (isset($data['updated_instance_name'])) {
                 return redirect()->route("groups", ['updated_instance_name' => $data['updated_instance_name']]);
             } elseif (isset($data['new_instance_name'])) {
-                return redirect()->route("group-form", ['new_instance_name' => $data['new_instance_name']]);
+                return redirect()->route("group-add-form", ['new_instance_name' => $data['new_instance_name']]);
             }
         }
     }
