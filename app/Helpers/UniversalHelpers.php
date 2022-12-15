@@ -60,4 +60,13 @@ class UniversalHelpers
 
         return "{$year}-W{$week}";
     }
+
+    public static function preparingBooleans($data, $boolean_attributes) {
+        foreach ($boolean_attributes as $attribute) {
+            if (! isset($data[$attribute])) {
+                $data[$attribute] = false;
+            }
+        }
+        return $data;
+    }
 }

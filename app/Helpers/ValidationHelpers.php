@@ -88,7 +88,8 @@ class ValidationHelpers
         $rules = [
             'group_id' => 'required|integer|exists:App\Group,id',
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
-            'lesson_id' => 'required|integer|exists:App\Lesson,id'
+            'lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'week_number' => 'nullable|string',
         ];
         
         return self::validation($data, $rules);

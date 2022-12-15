@@ -12,7 +12,7 @@ h3 {
     background-color: #008000; /* Green */
     color: white;
     margin-bottom: 15px;
-    
+
 }
 
 .alertFail {
@@ -20,11 +20,11 @@ h3 {
     background-color: #dd3e16; /* Red */
     color: white;
     margin-bottom: 15px;
-    
+
 }
 
 .validationErrorText {
-    color: red; 
+    color: red;
 }
 
 /* The close button */
@@ -51,6 +51,7 @@ h3 {
 /*Get all*/
 .getAllContainer {
     display: flex;
+    margin-top: 1.5rem;
 }
 
 .getAllLeft {
@@ -85,10 +86,10 @@ h3 {
     margin-bottom: 6px !important;
 }
 
-.main-nav {
+/* .main-nav {
     background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.85) 50%,rgba(255, 255, 255, 0.85) 100%), url('../storage/home-page/nimi.jpg') !important;
     height: 130px;
-}
+} */
 
 .main-nav-link {
     font-size: 17px !important;
@@ -105,7 +106,7 @@ h3 {
 .sorting-header {
     width: 100%;
     display: flex;
-    justify-content: center; 
+    justify-content: center;
 }
 
 .header-name {
@@ -113,7 +114,7 @@ h3 {
 }
 
 .regular-cell {
-    line-height: 120%;    
+    line-height: 120%;
 }
 
 .replace-link {
@@ -126,7 +127,7 @@ h3 {
 }
 
 .filter-input {
-    width: 100% !important;  
+    width: 100% !important;
 }
 
 .sort-button {
@@ -134,11 +135,11 @@ h3 {
 }
 
 /* .integer-input-div {
-    
+
 } */
 
 /* .integer-input {
-    
+
 } */
 
 /*add/update form*/
@@ -162,7 +163,7 @@ h3 {
 .schedule-button-group {
     width: 70%;
     display: flex;
-    justify-content: right; 
+    justify-content: right;
 }
 
 .top-right-button {
@@ -184,7 +185,7 @@ h3 {
 .schedule-date-text {
     border: 1px solid black;
     padding: 0px 1px 0px 1px;
-    letter-spacing: 0.3em; 
+    letter-spacing: 0.3em;
 }
 
 .schedule-date-half {
@@ -227,7 +228,7 @@ h3 {
 }
 
 .schedule-period {
-    width: 10%; 
+    width: 10%;
 }
 
 .schedule-cell {
@@ -285,6 +286,10 @@ h3 {
     border-radius: 0px !important;
 }
 
+.top-header {
+    margin-top: 1.5rem;
+}
+
 .replacement-schedule-header-div {
     display: flex;
     justify-content: space-between;
@@ -298,16 +303,59 @@ h3 {
 }
 
 /* home page */
+/* #home-main {
+    width: 100%;
+    height: 650px;
+    background-image: url('../storage/home-page/schedule.png');
+    background-repeat: no-repeat;
+    background-position: 87% 100%;
+    background-size: 37%;
+} */
 
-.hp-university-name {
-    font-size: 20px !important;
-    text-align: center !important;
-    font-weight: bold !important;
+#home-main {
+    position: relative;
+    padding: 0px !important;
+    width: 100%;
+    height: 850px;
+    background-image: url('../storage/home-page/MenegerR2.png');
+    background-repeat: no-repeat;
+    /* background-position: 87% 100%; */
+    background-size: cover;
+}
+
+.fail-on-hp {
+    position: absolute;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+#home-main-left {
+    width: 55%;
+    height: 250px;
+    margin: 80px 0px 0px 150px;
 }
 
 .hp-main-header {
-    font-size: 60px !important;
-    text-align: center !important;
+    margin: 1.5rem 0px 3.5rem 0px;
+    width: 70%;
+    font-size: 50px !important;
+    text-align: left !important;
+    line-height: 0.9;
+    letter-spacing: 0.05em;
+}
+
+#schedule-word {
+    color: SkyBlue;
+}
+
+.hp-main-description {
+    margin: 50px 0px 0px 0px;
+    width: 700px;
+    text-align: left !important;
+    font-size: 30px;
 }
 
 .hp-header {
@@ -325,6 +373,6 @@ h3 {
     font-size: 25px;
     color: Grey;
     font-style: italic;
-    letter-spacing: 2px; 
+    letter-spacing: 2px;
 }
 

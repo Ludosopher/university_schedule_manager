@@ -240,6 +240,48 @@ return [
          'header' => 'Встроенность в расписание заменяющего преподавателя',
          'sorting' => null
       ],
-
-   ]
+   ],
+   'users' => [
+      [
+         'field' => 'name',
+         'header' => 'Имя',
+         'sorting' => true
+      ],
+      [
+         'field' => 'phone',
+         'header' => 'Телефон',
+         'sorting' => false
+      ],
+      [
+         'field' => 'email',
+         'header' => 'Электронная почта',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'moderator',
+         ],
+         'sort_name' => 'is_moderator',
+         'header' => 'Модератор',
+         'sorting' => true
+      ],
+      [
+         'field' => [
+            'admin',
+         ],
+         'sort_name' => 'is_admin',
+         'header' => 'Администратор',
+         'sorting' => true
+      ],
+      [
+         'field' => 'teacher_names',
+         'header' => 'Допуск к управлению расписанием преподавателей',
+         'sorting' => false
+      ],
+      [
+         'field' => 'group_names',
+         'header' => 'Допуск к управлению расписанием групп',
+         'sorting' => false
+      ],
+   ],
 ];

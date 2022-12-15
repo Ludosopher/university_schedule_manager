@@ -4,31 +4,31 @@
         @if (isset($data['deleted_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', $data['deleted_instance_name'], __('teacher.teacher_removed')) }}
+                {{ str_replace('?', $data['deleted_instance_name'], __('user.user_removed')) }}
             </div>
         @endif
         @if (isset($data['deleting_instance_not_found']))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('teacher.teacher_not_found') }}
+                {{ __('user.user_not_found') }}
             </div>
         @endif
         @if (isset($data['updated_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', $data['updated_instance_name'], __('teacher.teacher_updated')) }}
+                {{ str_replace('?', $data['updated_instance_name'], __('user.user_updated')) }}
             </div>
         @endif
-        @if($errors->any() && ($errors->has('schedule_teacher_id') || $errors->has('week_number')))
+        {{-- @if($errors->any() && ($errors->has('schedule_teacher_id') || $errors->has('week_number')))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ __('user_validation.invalid_input_data') }}
             </div>
-        @endif
+        @endif --}}
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>
-                <form method="POST" action="{{ route('teachers') }}">
+                <form method="POST" action="{{ route('users') }}">
                 @csrf
                     @if(isset($data['filter_form_fields']))
                         @foreach($data['filter_form_fields'] as $field)
@@ -90,6 +90,24 @@
                                     @endif
                                 </div>
                             @endif
+                            @if($field['type'] == 'switch')
+                                @php $field_name = $field['name']; @endphp
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        @if(old($field_name) !== null && count(request()->all()))
+                                            <input class="form-check-input" name="{{ $field_name }}" type="checkbox" id="{{ $field_name }}" value="{{ true }}" checked>
+                                        @else
+                                            <input class="form-check-input" name="{{ $field_name }}" type="checkbox" id="{{ $field_name }}" value="{{ true }}">
+                                        @endif
+                                        <label class="form-check-label" for="{{ $field_name }}">{{ $field['header'] }}</label>
+                                    </div>
+                                    @if ($errors !== null && $errors->has($field_name))
+                                        @foreach($errors->get($field_name) as $error)
+                                            <div class="validationErrorText">{{ $error }}</div>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            @endif
                             @if($field['type'] == 'input')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
@@ -109,13 +127,11 @@
                 </form>
             </div>
             <div class="getAllRight">
-                <h1>Преподаватели</h1>
+                <h1>Пользователи</h1>
                 <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                     <thead>
                         <tr>
-                            @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                <th class="th-sm text-center align-top"></th>
-                            @endif
+                            <th class="th-sm text-center align-top"></th>
                             @foreach($data['table_properties'] as $property)
                                 @if($property['sorting'])
                                     @if(is_array($property['field']) && isset($property['sort_name']))
@@ -143,24 +159,22 @@
                     <tbody>
                         @foreach($data['instances'] as $instance)
                             <tr>
-                                @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                    <td>
-                                        <a class="" href="{{ route('teacher-update', ['updating_id' => $instance->id]) }}" title="Изменить">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
-                                            </svg>
-                                        </a>
-                                        <a class="" href="{{ route('teacher-delete', ['deleting_id' => $instance->id]) }}" title="Удалить">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
-                                            </svg>
-                                        </a>
-                                    </td>
-                                @endif
+                                <td>
+                                    <a class="" href="{{ route('user-form', ['updating_id' => $instance->id]) }}" title="Изменить">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                        </svg>
+                                    </a>
+                                    <a class="" href="{{ route('user-delete', ['deleting_id' => $instance->id]) }}" title="Удалить">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
+                                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                                        </svg>
+                                    </a>
+                                </td>
                                 @foreach($data['table_properties'] as $property)
                                     @php $field = $property['field'] @endphp
-                                    @if(is_array($field) && count($field) > 1)
+                                    @if(is_array($field))
                                         @php
                                             $value = $instance;
                                             foreach ($field as $part) {
@@ -182,9 +196,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                <th class="th-sm text-center align-top"></th>
-                            @endif
+                            <th class="th-sm text-center align-top"></th>
                             @foreach($data['table_properties'] as $property)
                                 <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
                             @endforeach

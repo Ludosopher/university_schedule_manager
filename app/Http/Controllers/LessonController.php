@@ -19,42 +19,45 @@ use App\WeeklyPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class LessonController extends ModelController
+class LessonController extends Controller
 {
-    protected $model_name = 'App\Lesson';
-    protected $instance_name = 'lesson';
-    protected $instance_plural_name = 'lessons';
-    protected $instance_name_field = 'name';
-    protected $profession_level_name_field = null;
-    protected $eager_loading_fields = ['lesson_type', 'week_day', 'weekly_period', 'class_period', 'teacher', 'groups'];
-    protected $other_lesson_participant = null;
-    protected $other_lesson_participant_name = null;
-            
+    protected $config = [
+        'model_name' => 'App\Lesson',
+        'instance_name' => 'lesson',
+        'instance_plural_name' => 'lessons',
+        'instance_name_field' => 'name',
+        'profession_level_name_field' => null,
+        'eager_loading_fields' => ['lesson_type', 'week_day', 'weekly_period', 'class_period', 'teacher', 'groups'],
+        'other_lesson_participant' => null,
+        'other_lesson_participant_name' => null,
+        'boolean_attridutes' => [],
+    ];
+
     public function getLessons (FilterLessonRequest $request)
     {
         $request->validated();
-        $data = $this->getInstances(request()->all());
+        $data = ModelHelpers::getInstances(request()->all(), $this->config);
 
         return view("lesson.lessons")->with('data', $data);
     }
 
     public function addLessonForm (Request $request)
     {
-        $data = $this->getInstanceFormData($request);
-        
+        $data = ModelHelpers::getInstanceFormData($request->all(), $this->config);
+
         if (isset($data['updating_instance'])) {
-            $data = LessonHelpers::getGroupsData($data);    
+            $data = LessonHelpers::getGroupsData($data);
         }
-         
+
         return view("lesson.add_lesson_form")->with('data', $data);
     }
 
     public function addOrUpdateLesson (StoreLessonRequest $request)
     {
         $validated = $request->validated();
-        $data = $this->addOrUpdateInstance($validated);
+        $data = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         LessonHelpers::addOrUpdateLessonGroups($validated['group_id'], $data['id']);
-                
+
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
                 return redirect()->route("lessons", ['updated_instance_name' => $data['updated_instance_name']]);
@@ -70,8 +73,8 @@ class LessonController extends ModelController
         if (!$relations_deleted_result) {
             return redirect()->route("lessons", ['deleting_instance_not_found' => true]);
         }
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name);
-        $instance_name_field = $this->instance_name_field;
+        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
+        $instance_name_field = $this->config['instance_name_field'];
         return redirect()->route("lessons", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
     }
 
@@ -80,7 +83,7 @@ class LessonController extends ModelController
         if (isset($request->prev_replace_rules)) {
             $request->flash();
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            
+
             $validation = ValidationHelpers::getReplacementVariantsValidation($request->all());
             if (! $validation['success']) {
                 return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator'])->withInput();
@@ -92,7 +95,7 @@ class LessonController extends ModelController
 
         $data = LessonHelpers::getReplacementData($request->all());
         $data['in_schedule'] = LessonHelpers::getReplacementSchedule($teacher_id, $data['replacement_lessons'], $request->week_data);
-       
+
         return view("lesson.replacement_lessons")->with('data', $data);
     }
 
@@ -104,13 +107,13 @@ class LessonController extends ModelController
 
         return view("lesson.lesson_reschedule")->with('data', $data);
     }
-    
+
     public function exportReplacementToDoc (Request $request)
     {
         $validation = ValidationHelpers::exportReplacementToDocValidation($request->all());
         if (! $validation['success']) {
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator']); 
+            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator']);
         }
 
         $filename = "replacement.docx";
@@ -126,7 +129,7 @@ class LessonController extends ModelController
         $validation = ValidationHelpers::exportReplacementScheduleToDocValidation($request->all());
         if (! $validation['success']) {
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator']); 
+            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator']);
         }
 
         $data = $validation['validated'];

@@ -154,6 +154,39 @@ return [
          'operator' => 'multi_not_equal'
       ]
    ],
-
+   'user' => [
+      'name' => [
+         'method' => 'where',
+         'operator' => 'like'
+      ],
+      'teacher_id' => [
+         'method' => 'whereHas',
+         'operator' => [
+             'id' => [
+                 'method' => 'where',
+                 'operator' => '='
+             ],
+         ],
+         'eager_field' => 'teachers',
+      ],
+      'group_id' => [
+         'method' => 'whereHas',
+         'operator' => [
+             'id' => [
+                 'method' => 'where',
+                 'operator' => '='
+             ],
+         ],
+         'eager_field' => 'groups',
+      ],
+      'is_moderator' => [
+         'method' => 'where',
+         'operator' => '='
+      ],
+      'is_admin' => [
+         'method' => 'where',
+         'operator' => '='
+      ],
+   ],
   
 ];

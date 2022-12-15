@@ -8,9 +8,9 @@
         </div>
     @endif
     @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))
-        <h1>Расписание занятий группы с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }}</h1>   
+        <h1 class="top-header">Расписание занятий группы с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }}</h1>   
     @else
-        <h1>Регулярное расписание занятий группы</h1>
+        <h1 class="top-header">Регулярное расписание занятий группы</h1>
     @endif
     <div class="replacement-schedule-header-div">
         <h3>Группа: {{ $data['instance_name'] ?? ''}}</h3>

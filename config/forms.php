@@ -6,73 +6,85 @@ return [
          'type' => 'enum-select',
          'plural_name' => 'genders',
          'name' => 'gender',
-         'header' => 'Пол'
+         'header' => 'Пол',
+         'is_required' => true,
       ],
       [
          'type' => 'input',
          'input_type' => 'text',
          'name' => 'last_name',
          'header' => 'Фамилия',
+         'is_required' => true,
       ],
       [
          'type' => 'input',
          'input_type' => 'text',
          'name' => 'first_name',
-         'header' => 'Имя'
+         'header' => 'Имя',
+         'is_required' => true,
       ],
       [
          'type' => 'input',
          'input_type' => 'text',
          'name' => 'patronymic',
-         'header' => 'Отчество'
+         'header' => 'Отчество',
+         'is_required' => false,
       ],
       [
          'type' => 'input',
          'input_type' => 'number',
          'name' => 'birth_year',
-         'header' => 'Год рождения'
+         'header' => 'Год рождения',
+         'is_required' => true,
       ],
       [
          'type' => 'input',
          'input_type' => 'text',
          'name' => 'phone',
          'header' => 'Телефон',
+         'is_required' => true,
       ],
       [
          'type' => 'input',
          'input_type' => 'email',
          'name' => 'email',
          'header' => 'Электронная почта',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'faculties',
          'name' => 'faculty',
          'header' => 'Факультет',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'departments',
          'name' => 'department',
          'header' => 'Кафедра',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'professional_levels',
          'name' => 'professional_level',
          'header' => 'Профессиональный уровень',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'positions',
          'name' => 'position',
          'header' => 'Должность',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'academic_degrees',
          'name' => 'academic_degree',
          'header' => 'Учёная степень',
+         'is_required' => true,
       ],
    ],
    'teacher_filter' => [
@@ -152,42 +164,49 @@ return [
          'plural_name' => 'faculties',
          'name' => 'faculty',
          'header' => 'Факультет',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'study_programs',
          'name' => 'study_program',
          'header' => 'Учебная программа',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'study_orientations',
          'name' => 'study_orientation',
          'header' => 'Специальность',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'study_degrees',
          'name' => 'study_degree',
          'header' => 'Уровень образования',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'study_forms',
          'name' => 'study_form',
          'header' => 'Форма образования',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'courses',
          'name' => 'course',
          'header' => 'Курс',
+         'is_required' => true,
       ],
       [
          'type' => 'input',
          'input_type' => 'number',
          'name' => 'size',
          'header' => 'Численность',
+         'is_required' => true,
       ],
    ],
    'group_filter' => [
@@ -276,30 +295,35 @@ return [
          'input_type' => 'text',
          'name' => 'name',
          'header' => 'Предмет',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'lesson_types',
          'name' => 'lesson_type',
          'header' => 'Вид',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'week_days',
          'name' => 'week_day',
          'header' => 'День недели',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'weekly_periods',
          'name' => 'weekly_period',
          'header' => 'Недельная периодичность',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'class_periods',
          'name' => 'class_period',
          'header' => 'Пара',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
@@ -311,24 +335,28 @@ return [
          'plural_name' => 'groups',
          'name' => 'group',
          'header' => 'Группа',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'teachers',
          'name' => 'teacher',
          'header' => 'Преподаватель',
+         'is_required' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'lesson_rooms',
          'name' => 'lesson_room',
          'header' => 'Аудитория',
+         'is_required' => true,
       ],
       [
          'type' => 'input',
          'input_type' => 'date',
          'name' => 'date',
          'header' => 'Дата',
+         'is_required' => false,
       ],
    ],
    'lesson_filter' => [
@@ -509,8 +537,92 @@ return [
          'name' => 'schedule_position',
          'header' => 'Позиция в расписании заменяющего преподавателя',
        ],
-   ]
-   
+      ],
+      'user' => [
+         [
+            'type' => 'switch',
+            'input_type' => null,
+            'name' => 'is_moderator',
+            'header' => 'Модератор',
+            'is_required' => false,
+         ],
+         [
+            'type' => 'switch',
+            'input_type' => null,
+            'name' => 'is_admin',
+            'header' => 'Администратор',
+            'is_required' => false,
+         ],
+         [
+            'type' => 'objects-select',
+            'multiple_options' => [
+                'is_multiple' => true,
+                'size' => 5,
+                'explanation' => "Для выбора нескольких преподавателей нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+            ],
+            'plural_name' => 'teachers',
+            'name' => 'teacher',
+            'header' => 'Допуск к управлению расписанием преподавателей',
+            'is_required' => false,
+         ],
+         [
+            'type' => 'objects-select',
+            'multiple_options' => [
+                'is_multiple' => true,
+                'size' => 5,
+                'explanation' => "Для выбора нескольких групп нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+            ],
+            'plural_name' => 'groups',
+            'name' => 'group',
+            'header' => 'Допуск к управлению расписанием групп',
+            'is_required' => false,
+         ],
+      ],
+      'user_filter' => [
+         [
+            'type' => 'input',
+            'input_type' => 'text',
+            'name' => 'name',
+            'header' => 'Имя',
+         ],
+         [
+            'type' => 'switch',
+            'input_type' => null,
+            'name' => 'is_moderator',
+            'header' => 'Модератор',
+            'is_required' => true,
+         ],
+         [
+            'type' => 'switch',
+            'input_type' => null,
+            'name' => 'is_admin',
+            'header' => 'Администратор',
+            'is_required' => true,
+         ],
+         [
+            'type' => 'objects-select',
+            'multiple_options' => [
+                'is_multiple' => true,
+                'size' => 5,
+                'explanation' => "Для выбора нескольких преподавателей нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+            ],
+            'plural_name' => 'teachers',
+            'name' => 'teacher',
+            'header' => 'Допуск к управлению расписанием преподавателей',
+            'is_required' => true,
+         ],
+         [
+            'type' => 'objects-select',
+            'multiple_options' => [
+                'is_multiple' => true,
+                'size' => 5,
+                'explanation' => "Для выбора нескольких групп нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+            ],
+            'plural_name' => 'groups',
+            'name' => 'group',
+            'header' => 'Допуск к управлению расписанием групп',
+            'is_required' => true,
+         ],
+      ],
 
-   
 ];

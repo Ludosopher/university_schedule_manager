@@ -3,14 +3,16 @@
 namespace App\Helpers;
 
 use App\ClassPeriod;
+use App\Group;
 use App\Lesson;
 use App\Teacher;
+use App\WeekDay;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
 
 class ModelHelpers
 {
-    public static function addOrUpdateInstance($data, $model) {
+    public static function addOrUpdate($data, $model) {
 
         if (isset($data['updating_id'])) {
             $instance = $model::where('id', $data['updating_id'])->first();
@@ -57,32 +59,33 @@ class ModelHelpers
         return $appends;
     }
 
-    public static function getSchedule($incom_data) {
+    public static function getSchedule($incoming_data, $config) {
 
-        $model_name = $incom_data['model_name'];
-        $instance_name = $incom_data['instance_name'];
-        $schedule_instance_id = $incom_data['schedule_instance_id'];
+        $model_name = $config['model_name'];
+        $instance_name = $config['instance_name'];
+        $schedule_instance_id = $incoming_data["schedule_{$config['instance_name']}_id"];
         $data['schedule_instance_id'] = $schedule_instance_id;
-        $instance_name_field = $incom_data['instance_name_field'];
-        $profession_level_name_field = $incom_data['profession_level_name_field'];
-        $other_lesson_participant = $incom_data['other_lesson_participant'];
-        $other_lesson_participant_name = $incom_data['other_lesson_participant_name'];
-                        
-        $week_dates = UniversalHelpers::weekDates($incom_data['week_number']);
+        $instance_name_field = $config['instance_name_field'];
+        $profession_level_name_field = $config['profession_level_name_field'];
+        $other_lesson_participant = $config['other_lesson_participant'];
+        $other_lesson_participant_name = $config['other_lesson_participant_name'];
+        $week_number = $incoming_data['week_number'] ?? '';
+
+        $week_dates = UniversalHelpers::weekDates($week_number);
         if ($week_dates) {
             $data['week_data'] = [
-                'week_number' => $incom_data['week_number'],
-                'start_date' => UniversalHelpers::weekDates($incom_data['week_number'])['start_date'],
-                'end_date' => UniversalHelpers::weekDates($incom_data['week_number'])['end_date'],
+                'week_number' => $week_number,
+                'start_date' => $week_dates['start_date'],
+                'end_date' => $week_dates['end_date'],
             ];
         } else {
             $data['week_data'] = [
-                'week_number' => $incom_data['week_number'],
+                'week_number' => $week_number,
                 'start_date' => null,
                 'end_date' => null,
             ];
         }
-        
+
         $weekly_period_ids = config('enum.weekly_period_ids');
         $class_periods = ClassPeriod::get();
         $data['class_periods'] = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
@@ -101,15 +104,15 @@ class ModelHelpers
                              ->where("{$instance_name}_id", $schedule_instance_id)
                              ->get();
         }
- 
+
         $data['lessons'] = [];
         foreach ($lessons as $lesson) {
-            
-            if (!UniversalHelpers::testDateLesson($incom_data['week_number'], $lesson)) {
+
+            if (!UniversalHelpers::testDateLesson($week_number, $lesson)) {
                 continue;
             };
-            
-            if (isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id]) 
+
+            if (isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id])
                 || isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$weekly_period_ids['every_week']]))
             {
                 $data['duplicated_lesson'] = [
@@ -148,6 +151,183 @@ class ModelHelpers
             }
         }
 
+        return $data;
+    }
+
+    public static function getInstanceFormData ($incoming_data, $config)
+    {
+        $model_name = $config['model_name'];
+        $data = $model_name::getProperties();
+        $data['add_form_fields'] = config("forms.{$config['instance_name']}");
+        if (isset($incoming_data['updating_id'])) {
+            $updating_instance = $model_name::where('id', $incoming_data['updating_id'])->first();
+            if ($updating_instance) {
+                $data = array_merge($data, ['updating_instance' => $updating_instance]);
+            }
+        }
+        if (isset($incoming_data['new_instance_name'])) {
+            $data = array_merge($data, ['new_instance_name' => $incoming_data['new_instance_name']]);
+        }
+
+        return $data;
+    }
+
+    public static function addOrUpdateInstance ($data, $config)
+    {
+        $instance_name_field = $config['instance_name_field'];
+        $model_name = $config['model_name'];
+
+        
+
+        $instance = self::addOrUpdate($data, $model_name);
+        if (isset($data['updating_id'])) {
+            return ['id' => $instance->id, 'updated_instance_name' => $instance->$instance_name_field];
+        } else {
+            return ['id' => $instance->id, 'new_instance_name' => $instance->$instance_name_field];
+        }
+    }
+
+    public static function getInstances ($incoming_data, $config)
+    {
+        $rows_per_page = config('site.rows_per_page');
+        $model_name = $config['model_name'];
+
+        if (count($incoming_data)) {
+            request()->flash();
+        }
+
+        $data['table_properties'] = config("tables.{$config['instance_plural_name']}");
+        $data['filter_form_fields'] = config()->has("forms.{$config['instance_name']}_filter") ? config("forms.{$config['instance_name']}_filter") : [];
+        $properties = $model_name::getProperties();
+
+        if (!isset($incoming_data['sort'])) {
+            if (isset($incoming_data['deleted_instance_name'])) {
+                $data['deleted_instance_name'] = $incoming_data['deleted_instance_name'];
+            }
+            if (isset($incoming_data['deleting_instance_not_found'])) {
+                $data['deleting_instance_not_found'] = true;
+            }
+            if (isset($incoming_data['updated_instance_name'])) {
+                $data['updated_instance_name'] = $incoming_data['updated_instance_name'];
+            }
+            if (isset($incoming_data['duplicated_lesson'])) {
+                $data['duplicated_lesson'] = $incoming_data['duplicated_lesson'];
+            }
+            if (isset($incoming_data['there_are_lessons_only_with_this_group'])) {
+                $data['there_are_lessons_only_with_this_group'] = $incoming_data['there_are_lessons_only_with_this_group'];
+            }
+        }
+
+        $instances = FilterHelpers::getFilteredQuery($model_name::with($config['eager_loading_fields']), $incoming_data, $config['instance_name']);
+        $appends = self::getAppends($incoming_data);
+        $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
+
+        return array_merge($data, $properties);
+    }
+
+    public static function getModelRechedulingData($incoming_data, $reschedule_periods, $config) {
+
+        $class_periods = ClassPeriod::get();
+        $week_days = WeekDay::get();
+        $rescheduling_lesson = Lesson::where('id', $incoming_data['lesson_id'])->first();
+        $incoming_data["schedule_{$config['instance_name']}_id"] = $incoming_data["{$config['instance_name']}_id"];
+
+        $schedule_data = ModelHelpers::getSchedule($incoming_data, $config);
+        if (isset($schedule_data['duplicated_lesson'])) {
+            return $schedule_data;
+        }
+        $schedule_lessons = $schedule_data['lessons'] ?? [];
+
+        $data = [
+            'rescheduling_lesson_id' => $rescheduling_lesson->id,
+            'class_periods' => $class_periods,
+            'other_lesson_participant_name' => $config['other_lesson_participant'],
+            'teacher_name' => $rescheduling_lesson->teacher->profession_level_name,
+            'teacher_id' => $rescheduling_lesson->teacher->id,
+            'group_id' => $incoming_data['group_id'] ?? null
+        ];
+
+        $week_number = $incoming_data['week_number'] ?? '';
+        $week_dates = UniversalHelpers::weekDates($week_number);
+        if ($week_dates) {
+            $data['week_data'] = [
+                'week_number' => $week_number,
+                'start_date' => $week_dates['start_date'],
+                'end_date' => $week_dates['end_date'],
+            ];
+        } else {
+            $data['week_data'] = [
+                'week_number' => $week_number,
+                'start_date' => null,
+                'end_date' => null,
+            ];
+        }
+
+        if (isset($incoming_data['group_id'])) {
+            $data['group_name'] = Group::find($incoming_data['group_id'])->name;
+        }
+
+        foreach ($class_periods as $class_period) {
+            foreach ($week_days as $week_day) {
+                if (isset($schedule_lessons[$class_period->id][$week_day->id])) {
+                    $this_lessons = $schedule_lessons[$class_period->id][$week_day->id];
+                    foreach ($this_lessons as $weekly_period_id => $this_lesson) {
+                        $data['periods'][$class_period->id][$week_day->id][$weekly_period_id] = $this_lesson;
+                    }
+                }
+                if (isset($reschedule_periods[$class_period->id][$week_day->id])) {
+                    $this_periods = $reschedule_periods[$class_period->id][$week_day->id];
+                    foreach ($this_periods as $weekly_period_id => $this_period) {
+                        $data['periods'][$class_period->id][$week_day->id][$weekly_period_id] = $this_period;
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    // public static function addOrUpdateManyToMany($model_id, $model_name, $attribute_ids, $attribute_name) {
+
+    //     $model = $model_name::find($model_id);
+    //     $model->$attribute_name()->sync($attribute_ids);
+
+    //     return true;
+    // }
+
+    public static function addOrUpdateManyToManyAttributes($data, $model_id, $model_name, $attributes) {
+
+        foreach ($attributes as $field => $attribute) {
+            if (isset($data[$field])) {
+                $model = $model_name::find($model_id);
+                $model->$attribute()->sync($data[$field]);
+            }
+        }
+        return true;
+    }
+
+    public static function deleteManyToManyAttributes($model_id, $model_name, $attributes) {
+        $model = $model_name::with($attributes)->find($model_id);
+        if ($model) {
+            foreach ($attributes as $attribute) {
+                $model->$attribute()->detach();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static function getManyToManyData($data, $attributes) {
+
+        $instance = $data['updating_instance'];
+        foreach ($attributes as $field => $attribute) {
+            $attribute_ids = [];
+            foreach ($instance->$attribute as $elem) {
+                $attribute_ids[] = $elem->id;
+            }
+            $data['updating_instance']->$field = $attribute_ids;
+        }
+        
         return $data;
     }
 

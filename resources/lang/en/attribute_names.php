@@ -42,5 +42,8 @@ return [
     'replace_rules_weekly_period_id' => 'Weekly period (replacement filter rules)',
     'replace_rules_class_period_id' => 'Class period (replacement filter rules)',
     'replace_rules_teacher_id' => 'Teacher (replacement filter rules)',
+    // additionally only user attributes
+    'is_moderator' => '"Moderator"',
+    'is_admin' => '"Administrator"',
             
 ];

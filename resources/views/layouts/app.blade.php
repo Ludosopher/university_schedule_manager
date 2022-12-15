@@ -14,7 +14,7 @@
 
     <!-- JavaScript Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-            
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
@@ -24,20 +24,6 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    @php
-        $no_admin_style = '';
-        $no_admin_title = '';
-        $no_admin_add_teacher_route = route('teacher-form');
-        $no_admin_add_group_route = route('group-form');
-        $no_admin_add_lesson_route = route('lesson-form');
-        if (Auth::check() && !Auth::user()->is_admin) {
-            $no_admin_style = 'color: Silver;';
-            $no_admin_title = 'Доступно только администратору';
-            $no_admin_add_teacher_route = '';
-            $no_admin_add_group_route = '';
-            $no_admin_add_lesson_route = '';
-        }
-    @endphp
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -53,7 +39,10 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link main-nav-link" href="{{ route('home') }}">О сервисе</a>
+                            <a class="nav-link main-nav-link" href="{{ route('home') }}">Домашняя</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link" href="{{ route('about') }}">О сервисе</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -61,7 +50,9 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('teachers') }}">Список</a>
-                                <a class="nav-link" href="{{ $no_admin_add_teacher_route }}" style="{{ $no_admin_style }}" title="{{ $no_admin_title }}">Добавить</a>
+                                @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
+                                    <a class="nav-link" href="{{ route('teacher-form') }}">Добавить</a>
+                                @endif
                             </div>
                         </li>
                         <li class="nav-item dropdown">
@@ -70,7 +61,9 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('groups') }}">Список</a>
-                                <a class="nav-link" href="{{ $no_admin_add_group_route }}" style="{{ $no_admin_style }}" title="{{ $no_admin_title }}">Добавить</a>
+                                @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
+                                    <a class="nav-link" href="{{ route('group-form') }}">Добавить</a>
+                                @endif
                             </div>
                         </li>
                         <li class="nav-item dropdown">
@@ -79,9 +72,16 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('lessons') }}">Список</a>
-                                <a class="nav-link" href="{{ $no_admin_add_lesson_route }}" style="{{ $no_admin_style }}" title="{{ $no_admin_title }}">Добавить</a>
+                                @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
+                                    <a class="nav-link" href="{{ route('lesson-form') }}">Добавить</a>
+                                @endif
                             </div>
                         </li>
+                        @if (Auth::check() && Auth::user()->is_admin)
+                            <li class="nav-item">
+                                <a class="nav-link main-nav-link" href="{{ route('users') }}">Пользователи</a>
+                            </li>
+                        @endif
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">

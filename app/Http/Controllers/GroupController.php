@@ -14,35 +14,38 @@ use App\Http\Requests\group\StoreGroupRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class GroupController extends ModelController
+class GroupController extends Controller
 {
-    protected $model_name = 'App\Group';
-    protected $instance_name = 'group';
-    protected $instance_plural_name = 'groups';
-    protected $instance_name_field = 'name';
-    protected $profession_level_name_field = null;
-    protected $eager_loading_fields = ['faculty', 'study_program', 'study_orientation', 'study_degree', 'study_form', 'course'];
-    protected $other_lesson_participant = 'teacher';
-    protected $other_lesson_participant_name = ['teacher', 'profession_level_name'];
+    protected $config = [
+        'model_name' => 'App\Group',
+        'instance_name' => 'group',
+        'instance_plural_name' => 'groups',
+        'instance_name_field' => 'name',
+        'profession_level_name_field' => null,
+        'eager_loading_fields' => ['faculty', 'study_program', 'study_orientation', 'study_degree', 'study_form', 'course'],
+        'other_lesson_participant' => 'teacher',
+        'other_lesson_participant_name' => ['teacher', 'profession_level_name'],
+        'boolean_attridutes' => [],
+    ];
 
     public function getGroups (FilterGroupRequest $request)
     {
         $request->validated();
-        $data = $this->getInstances(request()->all());
+        $data = ModelHelpers::getInstances(request()->all(), $this->config);
 
         return view("group.groups")->with('data', $data);
     }
 
     public function addGroupForm (Request $request)
     {
-        $data = $this->getInstanceFormData($request);
+        $data = ModelHelpers::getInstanceFormData($request->all(), $this->config);
 
-        return view("{$this->instance_name}.add_{$this->instance_name}_form")->with('data', $data);
+        return view("group.add_group_form")->with('data', $data);
     }
 
     public function addOrUpdateGroup (StoreGroupRequest $request)
     {
-        $data = $this->addOrUpdateInstance($request->validated());
+        $data = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
 
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
@@ -63,14 +66,14 @@ class GroupController extends ModelController
             return redirect()->route("groups", [$relation_delited_result => true]);
         }
 
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->model_name);
-        $instance_name_field = $this->instance_name_field;
+        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
+        $instance_name_field = $this->config['instance_name_field'];
         return redirect()->route("groups", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
     }
 
     public function getGroupSchedule (ScheduleGroupRequest $request)
     {
-        $data = $this->getSchedule($request->validated());
+        $data = ModelHelpers::getSchedule($request->validated(), $this->config);
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
@@ -84,25 +87,25 @@ class GroupController extends ModelController
         $request->flash();
         $validation = ValidationHelpers::getGroupRescheduleValidation($request->all());
         if (! $validation['success']) {
-            $prev_data = json_decode($request->input('prev_data'), true);        
+            $prev_data = json_decode($request->input('prev_data'), true);
             return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validation['validator']);
         }
-                
+
         $reschedule_data = LessonHelpers::getReschedulingData($validation['validated']);
-        $data = $this->getModelRechedulingData($request, $reschedule_data['free_periods']);
+        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data['free_periods'], $this->config);
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
-        
+
         return view("group.group_reschedule")->with('data', $data);
     }
 
     public function exportScheduleToDoc (ExportScheduleToDocGroupRequest $request)
     {
         $data = $request->validated();
-        $data['other_participant'] = $this->other_lesson_participant;
-        
+        $data['other_participant'] = $this->config['other_lesson_participant'];
+
         $filename = "group_schedule.docx";
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
@@ -121,7 +124,7 @@ class GroupController extends ModelController
 
         $data = $validation['validated'];
         $data['participant'] = $request->group_name;
-        $data['other_participant'] = $this->other_lesson_participant;
+        $data['other_participant'] = $this->config['other_lesson_participant'];
         $data['is_reschedule_for'] = 'group';
 
         $filename = "group_reschedule.docx";

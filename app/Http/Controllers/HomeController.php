@@ -21,8 +21,16 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (isset($request->permission_error) && $request->permission_error) {
+            return view('home')->with(['permission_error' => $request->permission_error]);
+        }
         return view('home');
+    }
+
+    public function about()
+    {
+        return view('about');
     }
 }

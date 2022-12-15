@@ -7,7 +7,7 @@
                 {{ __('user_validation.invalid_input_data') }}
             </div>
         @endif
-        <div class="getAllContainer">
+        <div class="getAllContainer" class="top-header">
             <div class="getAllLeft">
                 <h4>Найти</h4>
                 <form method="POST" action="{{ route('lesson-replacement') }}">

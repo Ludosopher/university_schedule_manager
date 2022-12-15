@@ -203,6 +203,20 @@ class DatabaseSeeder extends Seeder
                 'short_notation' => 'ЛР',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
+            ],
+            [
+                'id' => 4,
+                'name' => 'Экзамен',
+                'short_notation' => 'Экз.',
+                'created_at' => '2022-05-17 00:00:00',
+                'updated_at' => '2022-05-17 00:00:00',
+            ],
+            [
+                'id' => 5,
+                'name' => 'Зачёт',
+                'short_notation' => 'Зач.',
+                'created_at' => '2022-05-17 00:00:00',
+                'updated_at' => '2022-05-17 00:00:00',
             ]
         ]);
 
@@ -5411,10 +5425,10 @@ class DatabaseSeeder extends Seeder
                 'lesson_id' => 139,
                 'group_id' => 31,
             ],
-            [
-                'lesson_id' => 140,
-                'group_id' => 39,
-            ],
+            // [
+            //     'lesson_id' => 140,
+            //     'group_id' => 39,
+            // ],
             [
                 'lesson_id' => 141,
                 'group_id' => 29,
@@ -5427,10 +5441,10 @@ class DatabaseSeeder extends Seeder
                 'lesson_id' => 143,
                 'group_id' => 35,
             ],
-            [
-                'lesson_id' => 144,
-                'group_id' => 27,
-            ],
+            // [
+            //     'lesson_id' => 144,
+            //     'group_id' => 27,
+            // ],
             [
                 'lesson_id' => 145,
                 'group_id' => 39,
