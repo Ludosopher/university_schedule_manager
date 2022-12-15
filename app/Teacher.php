@@ -49,6 +49,11 @@ class Teacher extends Model
     {
         return $this->hasMany('App\Lesson');
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
     
     public $additional_attributes = ['full_name', 'profession_level_name', 'age'];
     public function getFullNameAttribute()

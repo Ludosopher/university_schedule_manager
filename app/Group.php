@@ -45,6 +45,11 @@ class Group extends Model
         return $this->belongsTo(Course::class);
     }
 
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
     public $additional_attributes = ['name'];
     
     public function getNameAttribute()

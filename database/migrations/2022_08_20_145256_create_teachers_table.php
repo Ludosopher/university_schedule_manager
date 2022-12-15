@@ -120,9 +120,25 @@ class CreateTeachersTable extends Migration
             $table->timestamps();
         });
 
+        Schema::create('teacher_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('teacher_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('cascade');
+        });
+
+        Schema::create('group_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('group_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
+        });
+
         Schema::create('group_lesson', function (Blueprint $table) {
             $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('lesson_id');
+            $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
+            $table->foreign('lesson_id')->references('id')->on('lessons')->onDelete('cascade');
         });
     }
 
@@ -144,6 +160,8 @@ class CreateTeachersTable extends Migration
         Schema::dropIfExists('teachers');
         Schema::dropIfExists('lesson_rooms');
         Schema::dropIfExists('lessons');
+        Schema::dropIfExists('teacher_user');
+        Schema::dropIfExists('group_user');
         Schema::dropIfExists('group_lesson');
     }
 }

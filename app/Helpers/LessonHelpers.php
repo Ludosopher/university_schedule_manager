@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\ClassPeriod;
 use App\Group;
+use App\Http\Controllers\TeacherController;
 use App\Lesson;
 use App\Teacher;
 use App\WeekDay;
@@ -194,7 +195,7 @@ class LessonHelpers
         $class_periods_limits = config('site.class_periods_limits');
         $week_days = WeekDay::select('id', 'name')->get();
         $class_periods = ClassPeriod::get();
-        
+
         if (isset($data['week_data'])) {
             $week_data = json_decode($data['week_data'], true);
             $week_number = $week_data['week_number'];
@@ -206,7 +207,7 @@ class LessonHelpers
             $class_periods_limit = $class_periods_limits['full_time'];
             $week_days_limit = $week_days_limits['full_time'];
         }
-        
+
 
         $schedule_subjects[] = $teacher->lessons;
         foreach ($lesson->groups as $lesson_group) {
@@ -358,18 +359,10 @@ class LessonHelpers
         $class_periods = ClassPeriod::get();
         $week_days = WeekDay::get();
 
-        $incom_data = [
-            'model_name' => 'App\Teacher',
-            'instance_name' => 'teacher',
-            'schedule_instance_id' => $teacher_id,
-            'instance_name_field' => 'full_name',
-            'profession_level_name_field' => 'profession_level_name',
-            'other_lesson_participant' => 'group',
-            'other_lesson_participant_name' => 'groups_name',
-            'week_number' => isset($week_data) ? json_decode($week_data, true)['week_number'] : null
-        ];
-
-        $schedule_data = ModelHelpers::getSchedule($incom_data);
+        $incoming_data["schedule_teacher_id"] = $teacher_id;
+        $incoming_data["week_number"] = isset($week_data) ? json_decode($week_data, true)['week_number'] : null;
+        $teacher_controller = new TeacherController();
+        $schedule_data = ModelHelpers::getSchedule($incoming_data, $teacher_controller->config);
 
         foreach ($incom_replacement_lessons as $lesson) {
             $replacement_lessons[$lesson['class_period_id']['id']][$lesson['week_day_id']['id']][$lesson['weekly_period_id']['id']] = [
@@ -410,9 +403,9 @@ class LessonHelpers
     }
 
     public static function searchSameLesson($data, $field) {
-        
+
         $weekly_period_ids = config('enum.weekly_period_ids');
-        
+
         $like_lessons_query = Lesson::where([
                                  ['week_day_id', $data['week_day_id']],
                                  ['class_period_id', $data['class_period_id']]
@@ -444,9 +437,9 @@ class LessonHelpers
                 break;
             case 'lesson_room_id':
                 $is_dublicate = $like_lessons_query->where('lesson_room_id', $data['lesson_room_id'])->first();
-                break; 
+                break;
         }
-        
+
         return $is_dublicate;
     }
 

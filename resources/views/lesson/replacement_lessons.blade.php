@@ -1,13 +1,21 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
+<<<<<<< HEAD
         @if($errors->any())
+=======
+        @if($errors->any() && ($errors->has('replacement_lessons') || $errors->has('lessons') || $errors->has('header_data') || $errors->has('week_data') || $errors->has('replaceable_lesson_id')))
+>>>>>>> develop
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ __('user_validation.invalid_input_data') }}
             </div>
         @endif
+<<<<<<< HEAD
         <div class="getAllContainer">
+=======
+        <div class="getAllContainer" class="top-header">
+>>>>>>> develop
             <div class="getAllLeft">
                 <h4>Найти</h4>
                 <form method="POST" action="{{ route('lesson-replacement') }}">

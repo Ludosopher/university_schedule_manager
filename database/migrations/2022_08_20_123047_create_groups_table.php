@@ -14,9 +14,11 @@ class CreateGroupsTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->string('phone')->nullable();
             $table->boolean('is_admin')->default(false);
+            $table->boolean('is_moderator')->default(false);
         });
-        
+
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
             $table->string('name');
