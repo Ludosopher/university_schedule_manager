@@ -93,7 +93,7 @@ class GroupController extends Controller
         }
 
         $reschedule_data = LessonHelpers::getReschedulingData($validation['validated']);
-        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data['free_periods'], $this->config);
+        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data, $this->config);
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);

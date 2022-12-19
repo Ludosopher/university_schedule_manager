@@ -97,7 +97,7 @@ class TeacherController extends Controller
         }
 
         $reschedule_data = LessonHelpers::getReschedulingData($validation['validated']);
-        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data['free_periods'], $this->config);
+        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data, $this->config);
 
         return view("teacher.teacher_reschedule")->with('data', $data);
     }
@@ -131,7 +131,7 @@ class TeacherController extends Controller
         $filename = "teacher_reschedule.docx";
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
-
+// dd($data);
         $objWriter = DocExportHelpers::scheduleExport($data);
         $objWriter->save("php://output");
     }

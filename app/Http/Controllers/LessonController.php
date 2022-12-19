@@ -96,7 +96,7 @@ class LessonController extends Controller
         }
 
         $data = LessonHelpers::getReplacementData($request->all());
-        $data['in_schedule'] = LessonHelpers::getReplacementSchedule($teacher_id, $data['replacement_lessons'], $request->week_data);
+        $data['in_schedule'] = LessonHelpers::getReplacementSchedule($teacher_id, $data, $request->all());
 
         return view("lesson.replacement_lessons")->with('data', $data);
     }
@@ -104,7 +104,6 @@ class LessonController extends Controller
     public function getReschedulingVariants (RescheduleLessonRequest $request)
     {
         $request->flash();
-
         $data = LessonHelpers::getReschedulingData($request->validated());
 
         return view("lesson.lesson_reschedule")->with('data', $data);

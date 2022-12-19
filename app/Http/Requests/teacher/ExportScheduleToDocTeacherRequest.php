@@ -27,6 +27,8 @@ class ExportScheduleToDocTeacherRequest extends FormRequest
             'lessons' => 'required|string',
             'teacher_name' => 'required|string',
             'week_data' => 'nullable|string',
+            'week_dates' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean'
         ];
     }
 }

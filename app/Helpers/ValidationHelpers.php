@@ -39,7 +39,10 @@ class ValidationHelpers
             'position_id' => 'nullable|array',
             'lesson_room_id' => 'nullable|array',
             'schedule_position' => 'nullable|array',
+            'week_number' => 'nullable|string',
             'week_data' => 'nullable|string',
+            'week_dates' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean',
       
             'replace_rules.*.week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
             'replace_rules.*.weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
@@ -77,7 +80,9 @@ class ValidationHelpers
         $rules = [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
-            'week_number' => 'nullable|string'
+            'week_number' => 'nullable|string',
+            'week_dates' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean',
         ];
         
         return self::validation($data, $rules);
@@ -90,6 +95,8 @@ class ValidationHelpers
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
             'week_number' => 'nullable|string',
+            'week_dates' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean',
         ];
         
         return self::validation($data, $rules);
@@ -100,7 +107,10 @@ class ValidationHelpers
         $rules = [
             'lessons' => 'required|string',
             'teacher_name' => 'required|string',
-            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
+            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'week_data' => 'nullable|string',
+            'week_dates' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean',
         ];
         
         return self::validation($data, $rules);
@@ -111,7 +121,10 @@ class ValidationHelpers
         $rules = [
             'lessons' => 'required|string',
             'group_name' => 'required|string',
-            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
+            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'week_data' => 'nullable|string',
+            'week_dates' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean',
         ];
         
         return self::validation($data, $rules);
@@ -122,6 +135,8 @@ class ValidationHelpers
         $rules = [
             'replacement_lessons' => 'required|string',
             'header_data' => 'required|string',
+            'week_data' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean',
         ];
         
         return self::validation($data, $rules);
@@ -133,7 +148,9 @@ class ValidationHelpers
             'lessons' => 'required|string',
             'header_data' => 'required|string',
             'week_data' => 'nullable|string',
-            'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id'
+            'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'week_dates' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean', 
         ];
         
         return self::validation($data, $rules);

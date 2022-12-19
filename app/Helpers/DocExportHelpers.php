@@ -30,9 +30,10 @@ class DocExportHelpers
         ));
 
         $week_period_string = '';
-        if (isset($data['week_data']['start_date']) && isset($data['week_data']['end_date'])) {
+        if (isset($data['week_data']) && isset($data['is_red_week'])) {
             $week_data = json_decode($data['week_data'], true);
-            $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']}"; 
+            $week_color = $data['is_red_week'] ? 'красная' : 'синяя';
+            $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']} ( {$week_color} неделя )"; 
         }
         
         $section->addTextBreak(1);
@@ -94,13 +95,19 @@ class DocExportHelpers
         $table = $section->addTable('Schedule');
         $table->addRow(null, array('tblHeader' => true));
         $table->addCell(1300, $headerCellStyle)->addText('Пары', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Понедельник', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Вторник', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Среда', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Четверг', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Пятница', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Суббота', $headerFontStyle, $headerParagraphStyle);
-
+        if (isset($data['week_dates'])) {
+            $week_dates = json_decode($data['week_dates']);
+            foreach ($week_dates as $name => $date) {
+                $table->addCell(2000, $headerCellStyle)->addText("{$name} ({$date})", $headerFontStyle, $headerParagraphStyle);
+            }
+        } else {
+            $table->addCell(2000, $headerCellStyle)->addText('Понедельник', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Вторник', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Среда', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Четверг', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Пятница', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Суббота', $headerFontStyle, $headerParagraphStyle);
+        }
         foreach($class_period_ids as $lesson_name => $class_period_id) {
             $table->addRow(1200);
             $left_header_cell = $table->addCell(1300, $headerCellStyle);
@@ -263,7 +270,14 @@ class DocExportHelpers
             'marginBottom' => 600,
         ));
         
-        $section->addText('Варианты замены занятия', ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+        $week_period_string = '';
+        if (isset($data['week_data']) && isset($data['is_red_week'])) {
+            $week_data = json_decode($data['week_data'], true);
+            $week_color = $data['is_red_week'] ? 'красная' : 'синяя';
+            $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']} ( {$week_color} неделя )"; 
+        }
+        
+        $section->addText('Варианты замены занятия'.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText("Заменяемое занятие: {$header_data['class_period']} пара, {$header_data['week_day']}, {$header_data['weekly_period']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText("Преподавателя: {$header_data['teacher']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText("Группы: {$header_data['group']}", null, array('spaceBefore' => 0, 'spaceAfter' => 100));
@@ -283,6 +297,9 @@ class DocExportHelpers
         $table = $section->addTable('Replacement');
         $table->addRow(null, array('tblHeader' => true));
         foreach ($table_properties as $property) {
+            if (isset($data['is_red_week']) && $property['header'] == 'Недельная периодичность') {
+                continue;
+            }
             $table->addCell(2000, $headerCellStyle)->addText($property['header'], $headerFontStyle, $headerParagraphStyle); 
         }
         foreach($replacement_lessons as $lesson) {
@@ -290,7 +307,9 @@ class DocExportHelpers
             
             foreach($table_properties as $property) {
                 $field = $property['field'];
-                if ($field == 'week_day_id' && isset($lesson['date'])) {
+                if (isset($data['is_red_week']) && $field == 'weekly_period_id') {
+                    continue;
+                } elseif ($field == 'week_day_id' && isset($lesson['date'])) {
                     $content = "{$lesson[$field]['name']} ({$lesson['date']})";
                 } elseif (is_array($lesson[$field])) {
                     $content = $lesson[$field]['name'];

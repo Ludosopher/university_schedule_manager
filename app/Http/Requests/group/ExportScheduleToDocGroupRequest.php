@@ -24,9 +24,11 @@ class ExportScheduleToDocGroupRequest extends FormRequest
     public function rules()
     {
         return [
-            'lessons' => 'required|array',
+            'lessons' => 'required|string',
             'group_name' => 'required|string',
             'week_data' => 'nullable|string',
+            'week_dates' => 'nullable|string',
+            'is_red_week' => 'nullable|boolean',
         ];
     }
 }

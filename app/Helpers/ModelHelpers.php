@@ -77,13 +77,12 @@ class ModelHelpers
             $data['week_dates'] = UniversalHelpers::weekDates($week_number);
         }
         
-
-        $week_dates = UniversalHelpers::weekStartEndDates($week_number);
-        if ($week_dates) {
+        $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
+        if ($week_border_dates) {
             $data['week_data'] = [
                 'week_number' => $week_number,
-                'start_date' => $week_dates['start_date'],
-                'end_date' => $week_dates['end_date'],
+                'start_date' => $week_border_dates['start_date'],
+                'end_date' => $week_border_dates['end_date'],
             ];
         } else {
             $data['week_data'] = [
@@ -119,8 +118,8 @@ class ModelHelpers
                 continue;
             };
             
-            if (isset($week_number)) {
-                $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $lesson);
+            $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $lesson);
+            if (isset($week_schedule_lesson)) {
                 if ($week_schedule_lesson) {
                     $lesson = $week_schedule_lesson;
                 } else {
@@ -241,7 +240,7 @@ class ModelHelpers
         return array_merge($data, $properties);
     }
 
-    public static function getModelRechedulingData($incoming_data, $reschedule_periods, $config) {
+    public static function getModelRechedulingData($incoming_data, $reschedule_data, $config) {
 
         $class_periods = ClassPeriod::get();
         $week_days = WeekDay::get();
@@ -263,21 +262,30 @@ class ModelHelpers
             'group_id' => $incoming_data['group_id'] ?? null
         ];
 
-        $week_number = $incoming_data['week_number'] ?? '';
-        $week_dates = UniversalHelpers::weekDates($week_number);
-        if ($week_dates) {
-            $data['week_data'] = [
-                'week_number' => $week_number,
-                'start_date' => $week_dates['start_date'],
-                'end_date' => $week_dates['end_date'],
-            ];
-        } else {
-            $data['week_data'] = [
-                'week_number' => $week_number,
-                'start_date' => null,
-                'end_date' => null,
-            ];
-        }
+        $data['week_dates'] = $reschedule_data['week_dates'];
+        $data['is_red_week'] = $reschedule_data['is_red_week'];
+        $data['week_data'] = $reschedule_data['week_data'];
+
+        // $week_number = null;
+        // if (isset($incoming_data['week_number'])) {
+        //     $week_number = $incoming_data['week_number'];
+        //     $data['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
+        //     $data['week_dates'] = UniversalHelpers::weekDates($week_number);
+        // }
+        // $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
+        // if ($week_border_dates) {
+        //     $data['week_data'] = [
+        //         'week_number' => $week_number,
+        //         'start_date' => $week_border_dates['start_date'],
+        //         'end_date' => $week_border_dates['end_date'],
+        //     ];
+        // } else {
+        //     $data['week_data'] = [
+        //         'week_number' => $week_number,
+        //         'start_date' => null,
+        //         'end_date' => null,
+        //     ];
+        // }
 
         if (isset($incoming_data['group_id'])) {
             $data['group_name'] = Group::find($incoming_data['group_id'])->name;
@@ -291,8 +299,8 @@ class ModelHelpers
                         $data['periods'][$class_period->id][$week_day->id][$weekly_period_id] = $this_lesson;
                     }
                 }
-                if (isset($reschedule_periods[$class_period->id][$week_day->id])) {
-                    $this_periods = $reschedule_periods[$class_period->id][$week_day->id];
+                if (isset($reschedule_data['free_periods'][$class_period->id][$week_day->id])) {
+                    $this_periods = $reschedule_data['free_periods'][$class_period->id][$week_day->id];
                     foreach ($this_periods as $weekly_period_id => $this_period) {
                         $data['periods'][$class_period->id][$week_day->id][$weekly_period_id] = $this_period;
                     }
