@@ -31,6 +31,11 @@
                 <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}">
                 <button type="submit" class="btn btn-primary">За эту неделю</button>
             </form>
+            <form method="POST" action="{{ route('teacher-month-schedule', ['schedule_teacher_id' => $data['schedule_instance_id']]) }}">
+            @csrf
+                <input type="month" name="month_number" value="">
+                <button type="submit" class="btn btn-primary">За этот месяц</button>
+            </form>
             <form method="POST" action="{{ route('teacher-schedule-doc-export') }}">
             @csrf
                 <input type="hidden" name="lessons" value="{{ isset($data['lessons']) ? json_encode($data['lessons']) : '' }}">
@@ -86,45 +91,46 @@
                                     @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
                                     @php $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]; @endphp
                                     <td class="schedule-cell" style="background-color: {{ $weekly_period_color[$weekly_period_id['every_week']] }}">
-                                        <div class="dropdown schedule-actions-div">
-                                            <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                @if(isset($lesson['date']))
-                                                    <div class="margin-10px-top font-size14 schedule-date"><span class="schedule-date-text">{{ $lesson['date'] }}</span></div>
-                                                @endif
-                                                <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
-                                                <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
-                                                <div class="font-size13 text-light-gray schedule-group">{{ $lesson['group'] }}</div>
-                                            </a>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                                {{-- <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-replacement', ['week_number' => ($lesson['week_number'] ?? null) , 'replace_rules' => ['lesson_id' => $lesson['id'], 'teacher_id' => $lesson['teacher_id'], 'class_period_id' => $lesson['class_period_id'], 'weekly_period_id' => $lesson['weekly_period_id'], 'week_day_id' => $lesson['week_day_id']]]) }}">Варианты замены</a></li> --}}
-                                                <li>
-                                                    <form method="POST" action="{{ route('lesson-replacement') }}" target="_blank">
-                                                    @csrf
-                                                        <input type="hidden" name="replace_rules[lesson_id]" value="{{ $lesson['id'] }}">
-                                                        <input type="hidden" name="replace_rules[teacher_id]" value="{{ $lesson['teacher_id'] }}">
-                                                        <input type="hidden" name="replace_rules[class_period_id]" value="{{ $lesson['class_period_id'] }}">
-                                                        <input type="hidden" name="replace_rules[weekly_period_id]" value="{{ $lesson['weekly_period_id'] }}">
-                                                        <input type="hidden" name="replace_rules[week_day_id]" value="{{ $lesson['week_day_id'] }}">
-                                                        <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
-                                                        <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
-                                                        <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                        <button type="submit" class="btn btn-light schedule-dropdown">Варианты замены</button>
-                                                    </form>
-                                                </li>
-                                                <li>
-                                                    <form method="POST" action="{{ route('lesson-rescheduling') }}" target="_blank">
-                                                    @csrf
-                                                        <input type="hidden" name="lesson_id" value="{{ $lesson['id'] }}">
-                                                        <input type="hidden" name="teacher_id" value="{{ $lesson['teacher_id'] }}">
-                                                        <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
-                                                        <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
-                                                        <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                        <button type="submit" class="btn btn-light schedule-dropdown">Варианты переноса</button>
-                                                    </form>
-                                                </li>
-                                                {{-- <li><a class="dropdown-item" target="_blank" href="{{ route('lesson-rescheduling', ['lesson_id' => $lesson['id'], 'teacher_id' => $lesson['teacher_id']]) }}">Варианты переноса</a></li> --}}
-                                            </ul>
-                                        </div>
+                                        @if(isset($lesson['date']))
+                                            <div style="border: 1px solid #DCDCDC; margin: 7px; height: 90%;">
+                                        @endif
+                                            <div class="dropdown schedule-actions-div">
+                                                <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
+                                                    <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
+                                                    <div class="font-size13 text-light-gray schedule-group">{{ $lesson['group'] }}</div>
+                                                </a>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                                    <li>
+                                                        <form method="POST" action="{{ route('lesson-replacement') }}" target="_blank">
+                                                        @csrf
+                                                            <input type="hidden" name="replace_rules[lesson_id]" value="{{ $lesson['id'] }}">
+                                                            <input type="hidden" name="replace_rules[teacher_id]" value="{{ $lesson['teacher_id'] }}">
+                                                            <input type="hidden" name="replace_rules[class_period_id]" value="{{ $lesson['class_period_id'] }}">
+                                                            <input type="hidden" name="replace_rules[weekly_period_id]" value="{{ $lesson['weekly_period_id'] }}">
+                                                            <input type="hidden" name="replace_rules[week_day_id]" value="{{ $lesson['week_day_id'] }}">
+                                                            <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
+                                                            <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                                                            <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
+                                                            <button type="submit" class="btn btn-light schedule-dropdown">Варианты замены</button>
+                                                        </form>
+                                                    </li>
+                                                    <li>
+                                                        <form method="POST" action="{{ route('lesson-rescheduling') }}" target="_blank">
+                                                        @csrf
+                                                            <input type="hidden" name="lesson_id" value="{{ $lesson['id'] }}">
+                                                            <input type="hidden" name="teacher_id" value="{{ $lesson['teacher_id'] }}">
+                                                            <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
+                                                            <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                                                            <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
+                                                            <button type="submit" class="btn btn-light schedule-dropdown">Варианты переноса</button>
+                                                        </form>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        @if(isset($lesson['date']))
+                                            </div>
+                                        @endif
                                     </td>
                                     @elseif(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']]))
                                         @php
@@ -135,9 +141,6 @@
                                             @if($lesson_red)
                                                 <div class="schedule-cell-top" style="background-color: {{ $weekly_period_color[$weekly_period_id['red_week']] }}">
                                                     <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        @if(isset($lesson_red['date']))
-                                                            <div class="margin-10px-top font-size14 schedule-date-half"><span class="schedule-date-text">{{ $lesson_red['date'] }}</span></div>
-                                                        @endif
                                                         <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
                                                         <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_red['room'] }}</div>
                                                         <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['group'] }}</div>
@@ -174,9 +177,6 @@
                                             @if($lesson_blue)
                                                 <div class="schedule-cell-bottom" style="background-color: {{ $weekly_period_color[$weekly_period_id['blue_week']] }}">
                                                     <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        @if(isset($lesson_blue['date']))
-                                                            <div class="margin-10px-top font-size14 schedule-date-half"><span class="schedule-date-text">{{ $lesson_blue['date'] }}</span></div>
-                                                        @endif
                                                         <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
                                                         <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>
                                                         <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['group'] }}</div>

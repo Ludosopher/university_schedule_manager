@@ -169,6 +169,116 @@ class ModelHelpers
         return $data;
     }
 
+    public static function getMonthSchedule($incoming_data, $config) {
+
+        $model_name = $config['model_name'];
+        $instance_name = $config['instance_name'];
+        $schedule_instance_id = $incoming_data["schedule_{$config['instance_name']}_id"];
+        // $data['schedule_instance_id'] = $schedule_instance_id;
+        $instance_name_field = $config['instance_name_field'];
+        $profession_level_name_field = $config['profession_level_name_field'];
+        $other_lesson_participant = $config['other_lesson_participant'];
+        $other_lesson_participant_name = $config['other_lesson_participant_name'];
+        
+        $weekly_period_ids = config('enum.weekly_period_ids');
+        $class_periods = ClassPeriod::get();
+        $data['class_periods'] = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
+    
+        $instance = $model_name::where('id', $schedule_instance_id)->first();
+        if ($instance) {
+            $data['instance_name'] = $profession_level_name_field !== null ? $instance->$profession_level_name_field : $instance->$instance_name_field;
+        }
+    
+        if ($instance_name == 'group') {
+            $lessons = Lesson::with(['week_day', 'weekly_period', 'class_period', 'lesson_room', 'groups'])->whereHas('groups', function (Builder $query) use ($schedule_instance_id) {
+                $query->where('id', $schedule_instance_id);
+            })->get();
+        } else {
+            $lessons = Lesson::with(['lesson_type', $instance_name, 'week_day', 'weekly_period', 'class_period', 'lesson_room'])
+                             ->where("{$instance_name}_id", $schedule_instance_id)
+                             ->get();
+        }
+        
+        $month_week_numbers = UniversalHelpers::getMonthWeekNumbers($incoming_data['month_number']);
+        
+        $momth_value = date('n', strtotime($incoming_data['month_number']));
+        $months_genitive = config('enum.months');
+        $data['month_name'] = date("{$months_genitive[$momth_value]} Y").' года';
+
+        foreach ($month_week_numbers as $week_number) {
+            
+            $data['weeks'][$week_number]['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
+            $data['weeks'][$week_number]['week_dates'] = UniversalHelpers::weekDates($week_number);
+            
+            
+            $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
+            $data['weeks'][$week_number]['week_data'] = [
+                'week_number' => $week_number,
+                'start_date' => $week_border_dates['start_date'],
+                'end_date' => $week_border_dates['end_date'],
+            ];
+            
+            $data['weeks'][$week_number]['lessons'] = [];
+            $iterated_lessons = $lessons->toArray();
+           
+            foreach ($iterated_lessons as $key => $lesson) {
+
+                if (! UniversalHelpers::testLessonDate($week_number, $lessons[$key])) {
+                    continue;
+                };
+                
+                $week_schedule_lesson = UniversalHelpers::getMonthWeeklyScheduleLesson($week_number, $lesson);
+                if (isset($week_schedule_lesson)) {
+                    if ($week_schedule_lesson) {
+                        $lesson = $week_schedule_lesson;
+                    } else {
+                        continue;
+                    }
+                }
+    
+                if (isset($data['weeks'][$week_number]['lessons'][$lesson['class_period_id']][$lesson['week_day_id']][$lesson['weekly_period_id']])
+                    || isset($data['weeks'][$week_number]['lessons'][$lesson['class_period_id']][$lesson['week_day_id']][$weekly_period_ids['every_week']]))
+                {
+                    $data['duplicated_lesson'] = [
+                        $instance_name => $instance->$instance_name_field,
+                        'class_period' => $lessons[$key]->class_period->name,
+                        'week_day' => $lessons[$key]->week_day->name,
+                        'weekly_period' => $lessons[$key]->weekly_period->name
+                    ];
+                    return $data;
+                } else {
+    
+                    if (is_array($other_lesson_participant_name)) {
+                        $value = $lessons[$key];
+                        foreach ($other_lesson_participant_name as $part) {
+                            $value = $value->$part;
+                            if (!is_object($value)) {
+                                break;
+                            }
+                        }
+                    } else {
+                        $value = $lessons[$key]->$other_lesson_participant_name;
+                    }
+    
+                    $data['weeks'][$week_number]['lessons'][$lesson['class_period_id']][$lesson['week_day_id']][$lesson['weekly_period_id']] = [
+                        'id' => $lesson['id'],
+                        'week_day_id' => $lesson['week_day_id'],
+                        'weekly_period_id' => $lesson['weekly_period_id'],
+                        'class_period_id' => $lesson['class_period_id'],
+                        'teacher_id' => $lesson['teacher_id'],
+                        'type' => $lessons[$key]->lesson_type->short_notation,
+                        'name' => $lesson['name'],
+                        'room' => $lessons[$key]->lesson_room->number,
+                        'date' => isset($lesson['date']) ? date('d.m.y', strtotime($lesson['date'])) : null,
+                        $other_lesson_participant => $value
+                    ];
+                }
+            }
+        }
+
+        return $data;
+    }
+
     public static function getInstanceFormData ($incoming_data, $config)
     {
         $model_name = $config['model_name'];

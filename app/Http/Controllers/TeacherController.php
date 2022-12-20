@@ -9,6 +9,7 @@ use App\Helpers\FilterHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
+use App\Helpers\UniversalHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\FilterTeacherRequest;
@@ -87,6 +88,17 @@ class TeacherController extends Controller
         return view("teacher.teacher_schedule")->with('data', $data);
     }
 
+    public function getMonthTeacherSchedule (Request $request)
+    {
+        $data = ModelHelpers::getMonthSchedule($request->all(), $this->config);
+
+        if (isset($data['duplicated_lesson'])) {
+            return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+        }
+
+        return view("teacher.teacher_month_schedule")->with('data', $data);
+    }
+
     public function getTeacherReschedule (Request $request)
     {
         $request->flash();
@@ -115,6 +127,19 @@ class TeacherController extends Controller
         $objWriter->save("php://output");
     }
 
+    public function exportMonthScheduleToDoc (Request $request)
+    {
+        $data = $request->all();
+        $data['other_participant'] = $this->config['other_lesson_participant'];
+
+        $filename = "teacher_month_schedule.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
+        $objWriter = DocExportHelpers::monthScheduleExport($data);
+        $objWriter->save("php://output");
+    }
+
     public function exportRescheduleToDoc (Request $request)
     {
         $validation = ValidationHelpers::exportTeacherRescheduleToDocValidation($request->all());
@@ -131,7 +156,7 @@ class TeacherController extends Controller
         $filename = "teacher_reschedule.docx";
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
-// dd($data);
+
         $objWriter = DocExportHelpers::scheduleExport($data);
         $objWriter->save("php://output");
     }

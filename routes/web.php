@@ -32,7 +32,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/teacher/update-form', 'TeacherController@addTeacherForm')->name('teacher-update-form')->middleware('moderator');
     Route::get('/teacher/delete', 'TeacherController@deleteTeacher')->name('teacher-delete')->middleware('moderator');
     Route::match(['get', 'post'], '/teacher/schedule', 'TeacherController@getTeacherSchedule')->name('teacher-schedule');
+    Route::match(['get', 'post'], '/teacher/month-schedule', 'TeacherController@getMonthTeacherSchedule')->name('teacher-month-schedule');
     Route::post('/teacher/schedule/export-to-doc', 'TeacherController@exportScheduleToDoc')->name('teacher-schedule-doc-export');
+    Route::post('/teacher/month-schedule/export-to-doc', 'TeacherController@exportMonthScheduleToDoc')->name('teacher-month-schedule-doc-export');
     Route::match(['get', 'post'], '/teacher/reschedule', 'TeacherController@getTeacherReschedule')->name('teacher-reschedule');
     Route::post('/teacher/reschedule/export-to-doc', 'TeacherController@exportRescheduleToDoc')->name('teacher-reschedule-doc-export');
 

@@ -104,14 +104,33 @@ class UniversalHelpers
         return false;
     }
 
+    public static function getMonthWeeklyScheduleLesson ($week_number, $lesson) {
+        
+        if (! isset($week_number)) {
+            return;
+        }
+        
+        $weekly_period_ids = config('enum.weekly_period_ids');
+        $week_is_red = self::weekColorIsRed($week_number);
+
+        if (($week_is_red && $lesson['weekly_period_id'] != $weekly_period_ids['blue_week'])
+            || 
+            (! $week_is_red && $lesson['weekly_period_id'] != $weekly_period_ids['red_week'])) 
+        {
+            $lesson['weekly_period_id'] = $weekly_period_ids['every_week'];
+            return $lesson;
+        }
+        
+        return false;
+    }
+
     public static function getWeeklyScheduleLesson ($week_number, $lesson) {
         
         if (! isset($week_number)) {
             return;
         }
-
+        
         $weekly_period_ids = config('enum.weekly_period_ids');
-
         $week_is_red = self::weekColorIsRed($week_number);
 
         if (($week_is_red && $lesson->weekly_period_id != $weekly_period_ids['blue_week'])
@@ -124,4 +143,29 @@ class UniversalHelpers
         
         return false;
     }
+
+    public static function getMonthWeekNumbers($month_number) {
+                
+        $first_month_day = date('Y-m-01', strtotime($month_number));
+        if (date('w', strtotime($first_month_day)) == 0) {
+            $first_month_day = date('Y-n-d', strtotime("{$first_month_day} + 1 day"));
+        } 
+
+        $last_month_day = date('Y-m-t', strtotime($month_number));
+        if (date('w', strtotime($last_month_day)) == 0) {
+            $last_month_day = date('Y-n-d', strtotime("{$first_month_day} - 1 day"));
+        }
+
+        $month_week_numbers = [];
+        for ($i = $first_month_day; $i <= $last_month_day; $i = date('Y-n-d', strtotime("{$i} + 1 day"))) {
+            $week_number = UniversalHelpers::getWeekNumberFromDate($i);
+            if (! in_array($week_number, $month_week_numbers)) {
+                $month_week_numbers[] = UniversalHelpers::getWeekNumberFromDate($i);
+            }
+        }
+
+        return $month_week_numbers;
+    }
+
+
 }
