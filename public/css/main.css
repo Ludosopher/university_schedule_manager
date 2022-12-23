@@ -166,6 +166,14 @@ h3 {
     justify-content: right;
 }
 
+.month-schedule-button {
+    /* background-color: rgb(87, 130, 185) !important; */
+}
+
+.month-schedule-form {
+    margin-right: 20px;
+}
+
 .top-right-button {
     margin-left: 10px;
 }

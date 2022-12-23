@@ -7,14 +7,15 @@
             {{ __('user_validation.invalid_input_data') }}
         </div>
     @endif
-    <h1 class="top-header">Расписание занятий преподавателя на {{ $data['month_name'] }}</h1>
+{{-- @dd(old()) --}}
+    <h1 class="top-header">Расписание занятий группы на {{ $data['month_name'] }}</h1>
     <div class="replacement-schedule-header-div">
-        <h3>Преподаватель: {{ $data['instance_name'] ?? ''}}</h3>
+        <h3>Группа: {{ $data['instance_name'] ?? ''}}</h3>
         <div class="schedule-button-group">
-            <form method="POST" action="{{ route('teacher-month-schedule-doc-export') }}">
+            <form method="POST" action="{{ route('group-month-schedule-doc-export') }}">
             @csrf
                 <input type="hidden" name="month_name" value="{{ $data['month_name'] }}">
-                <input type="hidden" name="teacher_name" value="{{ $data['instance_name'] }}">
+                <input type="hidden" name="group_name" value="{{ $data['instance_name'] }}">
                 <input type="hidden" name="weeks" value="{{ json_encode($data['weeks']) }}">
                 <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
                 <button type="submit" class="btn btn-primary top-right-button">В Word</button>
@@ -82,7 +83,7 @@
                                                     <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                                                         <div class="margin-10px-top font-size14 month-schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
                                                         <div class="font-size13 text-light-gray month-schedule-room">ауд. {{ $lesson['room'] }}</div>
-                                                        <div class="font-size13 text-light-gray month-schedule-group">{{ $lesson['group'] }}</div>
+                                                        <div class="font-size13 text-light-gray month-schedule-group">{{ $lesson['teacher'] }}</div>
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                         <li>

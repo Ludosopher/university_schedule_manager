@@ -44,7 +44,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/group/update-form', 'GroupController@addGroupForm')->name('group-update-form')->middleware('moderator');
     Route::get('/group/delete', 'GroupController@deleteGroup')->name('group-delete')->middleware('moderator');
     Route::match(['get', 'post'], '/group/schedule', 'GroupController@getGroupSchedule')->name('group-schedule');
+    Route::match(['get', 'post'], '/group/month-schedule', 'GroupController@getMonthGroupSchedule')->name('group-month-schedule');
     Route::post('/group/schedule/export-to-doc', 'GroupController@exportScheduleToDoc')->name('group-schedule-doc-export');
+    Route::post('/group/month-schedule/export-to-doc', 'GroupController@exportMonthScheduleToDoc')->name('group-month-schedule-doc-export');
     Route::match(['get', 'post'],  '/group/reschedule', 'GroupController@getGroupReschedule')->name('group-reschedule');
     Route::post('/group/reschedule/export-to-doc', 'GroupController@exportRescheduleToDoc')->name('group-reschedule-doc-export');
 

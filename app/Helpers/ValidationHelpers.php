@@ -156,4 +156,26 @@ class ValidationHelpers
         return self::validation($data, $rules);
     }
 
+    public static function exportMonthTeacherScheduleToDocValidation($data) {
+        
+        $rules = [
+            "month_name" => "required|array",
+            "teacher_name" => "required|string",
+            "weeks" => "required|string", 
+        ];
+        
+        return self::validation($data, $rules);
+    }
+
+    public static function exportMonthGroupScheduleToDocValidation($data) {
+        
+        $rules = [
+            "month_name" => "required|array",
+            "group_name" => "required|string",
+            "weeks" => "required|string", 
+        ];
+        
+        return self::validation($data, $rules);
+    }
+
 }

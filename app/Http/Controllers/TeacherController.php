@@ -11,8 +11,10 @@ use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
 use App\Helpers\UniversalHelpers;
 use App\Helpers\ValidationHelpers;
+use App\Http\Requests\teacher\ExportMonthScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\FilterTeacherRequest;
+use App\Http\Requests\teacher\MonthScheduleTeacherRequest;
 use App\Http\Requests\teacher\RescheduleTeacherRequest;
 use App\Http\Requests\teacher\ScheduleTeacherRequest;
 use App\Http\Requests\teacher\StoreTeacherRequest;
@@ -80,7 +82,7 @@ class TeacherController extends Controller
     public function getTeacherSchedule (ScheduleTeacherRequest $request)
     {
         $data = ModelHelpers::getSchedule($request->validated(), $this->config);
-
+        // request()->flash();
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
@@ -88,10 +90,10 @@ class TeacherController extends Controller
         return view("teacher.teacher_schedule")->with('data', $data);
     }
 
-    public function getMonthTeacherSchedule (Request $request)
+    public function getMonthTeacherSchedule (MonthScheduleTeacherRequest $request)
     {
-        $data = ModelHelpers::getMonthSchedule($request->all(), $this->config);
-
+        $data = ModelHelpers::getMonthSchedule($request->validated(), $this->config);
+        request()->flash();
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
@@ -129,7 +131,14 @@ class TeacherController extends Controller
 
     public function exportMonthScheduleToDoc (Request $request)
     {
-        $data = $request->all();
+        $request->flash();
+        $validation = ValidationHelpers::exportMonthTeacherScheduleToDocValidation($request->all());
+        if (! $validation['success']) {
+            $prev_data = json_decode($request->input('prev_data'), true);
+            return redirect()->route('teacher-month-schedule', $prev_data)->withErrors($validation['validator']);
+        }
+
+        $data = $validation['validated'];
         $data['other_participant'] = $this->config['other_lesson_participant'];
 
         $filename = "teacher_month_schedule.docx";

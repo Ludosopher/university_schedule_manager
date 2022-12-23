@@ -25,6 +25,11 @@
     <div class="replacement-schedule-header-div">
         <h3>Группа: {{ $data['instance_name'] ?? ''}}</h3>
         <div class="schedule-button-group">
+            <form method="POST" class="month-schedule-form" action="{{ route('group-month-schedule', ['schedule_group_id' => $data['schedule_instance_id']]) }}" target="_blank">
+            @csrf
+                <input type="month" name="month_number" value="">
+                <button type="submit" class="btn btn-success month-schedule-button">За этот месяц</button>
+            </form>
             <form method="POST" action="{{ route('group-schedule', ['schedule_group_id' => $data['schedule_instance_id']]) }}" target="_blank">
             @csrf
                 <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}">
@@ -83,8 +88,12 @@
 
                                 @foreach($week_day_ids as $wd_name => $week_day_id)
                                     @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
-                                    @php $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]; @endphp
-                                    <td class="schedule-cell" style="background-color: {{ $weekly_period_color[$weekly_period_id['every_week']] }}">
+                                    @php 
+                                        $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                                        $cell_bg_color = isset($lesson['date']) ? '#D3D3D3' : $weekly_period_color[$weekly_period_id['every_week']];
+                                        $title = isset($lesson['date']) ? 'Единоразовое занятие' : 'Регулярное занятие'; 
+                                    @endphp
+                                    <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}" title="{{ $title }}">
                                         <div class="dropdown schedule-actions-div">
                                             <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                                                 @if(isset($lesson['date']))
