@@ -23,7 +23,7 @@
                     <h2 style="margin-top: 1.5rem">Добавление нового занятия</h2>
                 @endif
 
-                <form method="POST" action="{{ route('lesson-add') }}">
+                <form method="POST" action="{{ route('lesson-add-update') }}">
                 @csrf
                     @if(isset($data['updating_instance']))
                         <input type="hidden" name="updating_id" value="{{ $data['updating_instance']->id }}">

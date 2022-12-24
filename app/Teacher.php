@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Kyslik\ColumnSortable\Sortable;
 
@@ -78,11 +79,7 @@ class Teacher extends Model
 
     public function getAgeAttribute()
     {
-        $birth_year = new \DateTime($this->birth_year);
-        $carrent_date = new \DateTime();
-        $diff = $carrent_date->diff($birth_year);
-
-        return $diff->y;
+        return Carbon::parse("{$this->birth_year}-06-15")->diffInYears();
     }
 
     public static function getProperties() {

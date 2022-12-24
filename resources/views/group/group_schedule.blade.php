@@ -7,14 +7,29 @@
             {{ __('user_validation.invalid_input_data') }}
         </div>
     @endif
-    @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))
-        <h1 class="top-header">Расписание занятий группы с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }}</h1>   
+    @if(isset($data['week_data']) && isset($data['is_red_week']))
+        @php
+            $week_color = "синяя";
+            $bg_color = '#ace7f2';
+            $is_red_week = 0;
+            if ($data['is_red_week']) {
+                $week_color = "красная";
+                $bg_color = '#ffb3b9';
+                $is_red_week = 1;
+            }
+        @endphp
+        <h1 class="top-header">Расписание занятий группы с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }} <span style="background-color: {{ $bg_color }};">( {{ $week_color }} неделя )</span></h1>   
     @else
         <h1 class="top-header">Регулярное расписание занятий группы</h1>
     @endif
     <div class="replacement-schedule-header-div">
         <h3>Группа: {{ $data['instance_name'] ?? ''}}</h3>
         <div class="schedule-button-group">
+            <form method="POST" class="month-schedule-form" action="{{ route('group-month-schedule', ['schedule_group_id' => $data['schedule_instance_id']]) }}" target="_blank">
+            @csrf
+                <input type="month" name="month_number" value="">
+                <button type="submit" class="btn btn-success month-schedule-button">За этот месяц</button>
+            </form>
             <form method="POST" action="{{ route('group-schedule', ['schedule_group_id' => $data['schedule_instance_id']]) }}" target="_blank">
             @csrf
                 <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}">
@@ -25,6 +40,8 @@
                 <input type="hidden" name="lessons" value="{{ isset($data['lessons']) ? json_encode($data['lessons']) : '' }}">
                 <input type="hidden" name="group_name" value="{{ $data['instance_name'] }}">
                 <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
+                <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                 <button type="submit" class="btn btn-primary top-right-button">В Word</button>
             </form>
         </div>
@@ -34,14 +51,19 @@
             <table class="table table-bordered text-center">
                 <thead>
                     <tr class="bg-light-gray">
-                        <th class="text-uppercase">Пара
-                        </th>
-                        <th class="text-uppercase">Понедельник</th>
-                        <th class="text-uppercase">Вторник</th>
-                        <th class="text-uppercase">Среда</th>
-                        <th class="text-uppercase">Четверг</th>
-                        <th class="text-uppercase">Пятница</th>
-                        <th class="text-uppercase">Суббота</th>
+                        <th class="text-uppercase">Пара</th>
+                        @if(isset($data['week_dates']))
+                            @foreach($data['week_dates'] as $name => $date)
+                                <th class="text-uppercase">{{ $name }} ({{ $date }})</th>
+                            @endforeach
+                        @else
+                            <th class="text-uppercase">Понедельник</th>
+                            <th class="text-uppercase">Вторник</th>
+                            <th class="text-uppercase">Среда</th>
+                            <th class="text-uppercase">Четверг</th>
+                            <th class="text-uppercase">Пятница</th>
+                            <th class="text-uppercase">Суббота</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -66,8 +88,12 @@
 
                                 @foreach($week_day_ids as $wd_name => $week_day_id)
                                     @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
-                                    @php $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]; @endphp
-                                    <td class="schedule-cell" style="background-color: {{ $weekly_period_color[$weekly_period_id['every_week']] }}">
+                                    @php 
+                                        $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                                        $cell_bg_color = isset($lesson['date']) ? '#D3D3D3' : $weekly_period_color[$weekly_period_id['every_week']];
+                                        $title = isset($lesson['date']) ? 'Единоразовое занятие' : 'Регулярное занятие'; 
+                                    @endphp
+                                    <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}" title="{{ $title }}">
                                         <div class="dropdown schedule-actions-div">
                                             <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                                                 @if(isset($lesson['date']))

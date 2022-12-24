@@ -9,16 +9,14 @@ use App\Helpers\FilterHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
-<<<<<<< HEAD
-use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
-use App\Http\Requests\teacher\FilterTeacherRequest;
-=======
+use App\Helpers\UniversalHelpers;
 use App\Helpers\ValidationHelpers;
+use App\Http\Requests\teacher\ExportMonthScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\FilterTeacherRequest;
+use App\Http\Requests\teacher\MonthScheduleTeacherRequest;
 use App\Http\Requests\teacher\RescheduleTeacherRequest;
 use App\Http\Requests\teacher\ScheduleTeacherRequest;
->>>>>>> develop
 use App\Http\Requests\teacher\StoreTeacherRequest;
 use App\Lesson;
 use App\Teacher;
@@ -30,21 +28,6 @@ use Illuminate\Support\Facades\Validator;
 
 class TeacherController extends Controller
 {
-<<<<<<< HEAD
-    protected $model_name = 'App\Teacher';
-    protected $instance_name = 'teacher';
-    protected $instance_plural_name = 'teachers';
-    protected $instance_name_field = 'full_name';
-    protected $profession_level_name_field = 'profession_level_name';
-    protected $eager_loading_fields = ['faculty', 'department', 'professional_level', 'position'];
-    protected $other_lesson_participant = 'group';
-    protected $other_lesson_participant_name = 'groups_name';
-    
-    public function getTeachers (FilterTeacherRequest $request)
-    {
-        $data = $this->getInstances($request->validated());
-
-=======
     public $config = [
         'model_name' => 'App\Teacher',
         'instance_name' => 'teacher',
@@ -54,7 +37,8 @@ class TeacherController extends Controller
         'eager_loading_fields' => ['faculty', 'department', 'professional_level', 'position'],
         'other_lesson_participant' => 'group',
         'other_lesson_participant_name' => 'groups_name',
-        'boolean_attridutes' => [],
+        'boolean_attributes' => [],
+        'many_to_many_attributes' => [],
     ];
 
     public function getTeachers (FilterTeacherRequest $request)
@@ -62,7 +46,6 @@ class TeacherController extends Controller
         $request->validated();
         $data = ModelHelpers::getInstances(request()->all(), $this->config);
 
->>>>>>> develop
         return view("teacher.teachers")->with('data', $data);
     }
 
@@ -75,17 +58,12 @@ class TeacherController extends Controller
 
     public function addOrUpdateTeacher (StoreTeacherRequest $request)
     {
-<<<<<<< HEAD
-        $data = $this->addOrUpdateInstance($request->validated());
-                
-=======
         $data = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
 
->>>>>>> develop
         if (isset($data['updated_instance_name'])) {
             return redirect()->route("teachers", ['updated_instance_name' => $data['updated_instance_name']]);
         } elseif (isset($data['new_instance_name'])) {
-            return redirect()->route("teacher-form", ['new_instance_name' => $data['new_instance_name']]);
+            return redirect()->route("teacher-add-form", ['new_instance_name' => $data['new_instance_name']]);
         }
     }
 
@@ -103,53 +81,29 @@ class TeacherController extends Controller
 
     public function getTeacherSchedule (ScheduleTeacherRequest $request)
     {
-<<<<<<< HEAD
-        
-        $validator = Validator::make($request->all(), [
-            "schedule_teacher_id" => "required|integer|exists:App\Teacher,id",
-            'week_number' => 'nullable|string'
-        ]);
-        
-        if ($validator->fails()) {
-            return back()->with('shedule_validation_errors', true); 
-        }
-
-        $data = $this->getSchedule($request);
-=======
         $data = ModelHelpers::getSchedule($request->validated(), $this->config);
->>>>>>> develop
-
+        // request()->flash();
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }
-<<<<<<< HEAD
-       
-        return view("{$this->instance_name}.{$this->instance_name}_schedule")->with('data', $data);
-=======
 
         return view("teacher.teacher_schedule")->with('data', $data);
->>>>>>> develop
+    }
+
+    public function getMonthTeacherSchedule (MonthScheduleTeacherRequest $request)
+    {
+        $data = ModelHelpers::getMonthSchedule($request->validated(), $this->config);
+        request()->flash();
+        if (isset($data['duplicated_lesson'])) {
+            return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+        }
+
+        return view("teacher.teacher_month_schedule")->with('data', $data);
     }
 
     public function getTeacherReschedule (Request $request)
     {
         $request->flash();
-<<<<<<< HEAD
-        $validator = Validator::make($request->all(), [
-            'teacher_id' => 'required|integer|exists:App\Teacher,id',
-            'lesson_id' => 'required|integer|exists:App\Lesson,id',
-            'week_number' => 'nullable|string'
-        ]);
-        if ($validator->fails()) {
-            $prev_data = json_decode($request->input('prev_data'), true);        
-            return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validator); 
-        }
-        
-        $reschedule_data = LessonHelpers::getReschedulingData($request->all());
-        $data = $this->getModelRechedulingData($request, $reschedule_data['free_periods']);
-        
-        return view("{$this->instance_name}.{$this->instance_name}_reschedule")->with('data', $data);
-=======
         $validation = ValidationHelpers::getTeacherRescheduleValidation($request->all());
         if (! $validation['success']) {
             $prev_data = json_decode($request->input('prev_data'), true);
@@ -157,22 +111,16 @@ class TeacherController extends Controller
         }
 
         $reschedule_data = LessonHelpers::getReschedulingData($validation['validated']);
-        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data['free_periods'], $this->config);
+        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data, $this->config);
 
         return view("teacher.teacher_reschedule")->with('data', $data);
->>>>>>> develop
     }
 
     public function exportScheduleToDoc (ExportScheduleToDocTeacherRequest $request)
     {
         $data = $request->validated();
-<<<<<<< HEAD
-        $data['other_participant'] = $this->other_lesson_participant;
-        
-=======
         $data['other_participant'] = $this->config['other_lesson_participant'];
 
->>>>>>> develop
         $filename = "teacher_schedule.docx";
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
@@ -181,21 +129,28 @@ class TeacherController extends Controller
         $objWriter->save("php://output");
     }
 
-    public function exportRescheduleToDoc (Request $request)
+    public function exportMonthScheduleToDoc (Request $request)
     {
-<<<<<<< HEAD
-        $validator = Validator::make($request->all(), [
-            'lessons' => 'required|string',
-            'teacher_name' => 'required|string',
-            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
-        ]);
-        if ($validator->fails()) {
-            $prev_data = json_decode($request->all()['prev_data'], true);
-            return redirect()->route('teacher-reschedule', $prev_data)->withErrors($validator);
+        $request->flash();
+        $validation = ValidationHelpers::exportMonthTeacherScheduleToDocValidation($request->all());
+        if (! $validation['success']) {
+            $prev_data = json_decode($request->input('prev_data'), true);
+            return redirect()->route('teacher-month-schedule', $prev_data)->withErrors($validation['validator']);
         }
 
-        $data = $validator->validated();
-=======
+        $data = $validation['validated'];
+        $data['other_participant'] = $this->config['other_lesson_participant'];
+
+        $filename = "teacher_month_schedule.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
+        $objWriter = DocExportHelpers::monthScheduleExport($data);
+        $objWriter->save("php://output");
+    }
+
+    public function exportRescheduleToDoc (Request $request)
+    {
         $validation = ValidationHelpers::exportTeacherRescheduleToDocValidation($request->all());
         if (! $validation['success']) {
             $prev_data = json_decode($request->all()['prev_data'], true);
@@ -203,15 +158,10 @@ class TeacherController extends Controller
         }
 
         $data = $validation['validated'];
->>>>>>> develop
         $data['participant'] = $request->teacher_name;
         $data['other_participant'] = $this->config['other_lesson_participant'];
         $data['is_reschedule_for'] = 'teacher';
-<<<<<<< HEAD
-        
-=======
 
->>>>>>> develop
         $filename = "teacher_reschedule.docx";
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);

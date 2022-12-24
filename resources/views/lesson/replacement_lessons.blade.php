@@ -101,10 +101,20 @@
                 </form>
             </div>
             <div class="getAllRight">
-                @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))
-                    <h1>Варианты замены занятия с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }}</h1>   
+                @if(isset($data['week_data']) && isset($data['is_red_week']))
+                    @php
+                        $is_red_week = 0;
+                        $week_color = "синяя";
+                        $bg_color = '#ace7f2';
+                        if ($data['is_red_week']) {
+                            $is_red_week = 1;
+                            $week_color = "красная";
+                            $bg_color = '#ffb3b9';
+                        }
+                    @endphp
+                    <h1 class="top-header">Варианты замены занятия с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }} <span style="background-color: {{ $bg_color }};">( {{ $week_color }} неделя )</span></h1>   
                 @else
-                    <h1>Регулярные варианты замены занятия</h1>
+                    <h1 class="top-header">Регулярные варианты замены занятия</h1>
                 @endif
                 <h5>Заменяемое занятие: {{ $data['header_data']['class_period'] }} пара, {{ $data['header_data']['week_day'] }}, {{ $data['header_data']['weekly_period'] }}</h5>
                 <h5>Преподавателя: {{ $data['header_data']['teacher'] }}</h5>
@@ -116,6 +126,8 @@
                             <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
                             <input type="hidden" name="replacement_lessons" value="{{ json_encode($data['replacement_lessons']) }}">
                             <input type="hidden" name="header_data" value="{{ json_encode($data['header_data']) }}">
+                            <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
+                            <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                             <button type="submit" class="btn btn-primary top-right-button">В Word</button>
                         </form>
                     </div>
@@ -161,6 +173,8 @@
                         <input type="hidden" name="header_data" value="{{ json_encode($data['header_data']) }}">
                         <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
                         <input type="hidden" name="replaceable_lesson_id" value="{{ $data['prev_replace_rules']['lesson_id'] }}">
+                        <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                        <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                         <button type="submit" class="btn btn-primary replacement-doc-export-button">В Word</button>
                     </form>
                 </div>
@@ -169,15 +183,18 @@
                         <table class="table table-bordered text-center schedule-table">
                             <thead>
                                 <tr class="bg-light-gray">
-                                    <th class="text-uppercase">Пара
-                                    </th>
-                                    <th class="text-uppercase">Понедельник</th>
-                                    <th class="text-uppercase">Вторник</th>
-                                    <th class="text-uppercase">Среда</th>
-                                    <th class="text-uppercase">Четверг</th>
-                                    <th class="text-uppercase">Пятница</th>
-                                    @if(isset($data['week_data']['week_number']))
-                                        <th class="text-uppercase">Суббота</th>
+                                    <th class="text-uppercase">Пара</th>
+                                    @if(isset($data['week_dates']))
+                                        @foreach($data['week_dates'] as $name => $date)
+                                            <th class="text-uppercase">{{ $name }} ({{ $date }})</th>
+                                        @endforeach
+                                    @else
+                                        <th class="text-uppercase">Понедельник</th>
+                                        <th class="text-uppercase">Вторник</th>
+                                        <th class="text-uppercase">Среда</th>
+                                        <th class="text-uppercase">Четверг</th>
+                                        <th class="text-uppercase">Пятница</th>
+                                        {{-- <th class="text-uppercase">Суббота</th> --}}
                                     @endif
                                 </tr>
                             </thead>

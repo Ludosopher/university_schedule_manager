@@ -4,7 +4,7 @@ namespace App\Http\Requests\group;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ExportScheduleToDocGroupRequest extends FormRequest
+class MonthScheduleGroupRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,11 +24,8 @@ class ExportScheduleToDocGroupRequest extends FormRequest
     public function rules()
     {
         return [
-            'lessons' => 'required|string',
-            'group_name' => 'required|string',
-            'week_data' => 'nullable|string',
-            'week_dates' => 'nullable|string',
-            'is_red_week' => 'nullable|boolean',
+            'month_number' => 'required|string',
+            'schedule_group_id' => 'required|integer|exists:App\Group,id',
         ];
     }
 }

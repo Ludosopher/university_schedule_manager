@@ -166,6 +166,14 @@ h3 {
     justify-content: right;
 }
 
+.month-schedule-button {
+    /* background-color: rgb(87, 130, 185) !important; */
+}
+
+.month-schedule-form {
+    margin-right: 20px;
+}
+
 .top-right-button {
     margin-left: 10px;
 }
@@ -374,5 +382,63 @@ h3 {
     color: Grey;
     font-style: italic;
     letter-spacing: 2px;
+}
+
+/* Month schedule */
+
+/* .month-schedule-table {
+    width: 100% !important;
+} */
+
+.month-schedule-header-th {
+    padding: 0 !important;
+    height: 25px !important;
+    font-size: 12px;
+}
+
+.month-schedule-period {
+    width: 10%;
+    height: 70px !important;
+}
+
+.month-schedule-period-name {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.month-schedule-period-time {
+    font-size: 12px;
+}
+
+.month-schedule-cell {
+    position: relative;
+    padding: 0rem !important;
+    width: 15% !important;
+    height: 70px !important;
+}
+
+.month-schedule-subject {
+    font-size: 14px;
+    /* font-weight: bold; */
+    line-height: 90%;
+}
+
+.month-schedule-room {
+    font-size: 11px;
+    /* font-weight: bold; */
+    letter-spacing: 1.5px;
+    line-height: 120%;
+}
+
+.month-schedule-group {
+    font-size: 11px;
+    /* font-weight: bold; */
+    letter-spacing: 1.5px;
+    line-height: 120%;
+}
+
+.month-schedule-actions-div {
+    margin-top: 5px;
+    padding: 0px 0px 0px 5px;
 }
 

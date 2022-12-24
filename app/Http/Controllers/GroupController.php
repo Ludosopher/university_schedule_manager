@@ -13,6 +13,7 @@ use App\Http\Requests\group\FilterGroupRequest;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\group\ExportScheduleToDocGroupRequest;
 use App\Http\Requests\group\FilterGroupRequest;
+use App\Http\Requests\group\MonthScheduleGroupRequest;
 use App\Http\Requests\group\ScheduleGroupRequest;
 >>>>>>> develop
 use App\Http\Requests\group\StoreGroupRequest;
@@ -30,7 +31,8 @@ class GroupController extends Controller
         'eager_loading_fields' => ['faculty', 'study_program', 'study_orientation', 'study_degree', 'study_form', 'course'],
         'other_lesson_participant' => 'teacher',
         'other_lesson_participant_name' => ['teacher', 'profession_level_name'],
-        'boolean_attridutes' => [],
+        'boolean_attributes' => [],
+        'many_to_many_attributes' => [],
     ];
 
     public function getGroups (FilterGroupRequest $request)
@@ -65,7 +67,7 @@ class GroupController extends Controller
             if (isset($data['updated_instance_name'])) {
                 return redirect()->route("groups", ['updated_instance_name' => $data['updated_instance_name']]);
             } elseif (isset($data['new_instance_name'])) {
-                return redirect()->route("group-form", ['new_instance_name' => $data['new_instance_name']]);
+                return redirect()->route("group-add-form", ['new_instance_name' => $data['new_instance_name']]);
             }
         }
     }
@@ -108,6 +110,17 @@ class GroupController extends Controller
         return view("group.group_schedule")->with('data', $data);
     }
 
+    public function getMonthGroupSchedule (MonthScheduleGroupRequest $request)
+    {
+        $data = ModelHelpers::getMonthSchedule($request->validated(), $this->config);
+        request()->flash();
+        if (isset($data['duplicated_lesson'])) {
+            return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+        }
+
+        return view("group.group_month_schedule")->with('data', $data);
+    }
+
     public function getGroupReschedule (Request $request)
     {
         $request->flash();
@@ -130,7 +143,7 @@ class GroupController extends Controller
 >>>>>>> develop
 
         $reschedule_data = LessonHelpers::getReschedulingData($validation['validated']);
-        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data['free_periods'], $this->config);
+        $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data, $this->config);
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
@@ -154,6 +167,26 @@ class GroupController extends Controller
         header( 'Content-Disposition: attachment; filename='.$filename);
 
         $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter->save("php://output");
+    }
+
+    public function exportMonthScheduleToDoc (Request $request)
+    {
+        $request->flash();
+        $validation = ValidationHelpers::exportMonthGroupScheduleToDocValidation($request->all());
+        if (! $validation['success']) {
+            $prev_data = json_decode($request->input('prev_data'), true);
+            return redirect()->route('group-month-schedule', $prev_data)->withErrors($validation['validator']);
+        }
+
+        $data = $validation['validated'];
+        $data['other_participant'] = $this->config['other_lesson_participant'];
+
+        $filename = "teacher_month_schedule.docx";
+        header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
+        header( 'Content-Disposition: attachment; filename='.$filename);
+
+        $objWriter = DocExportHelpers::monthScheduleExport($data);
         $objWriter->save("php://output");
     }
 

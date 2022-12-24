@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\group;
+namespace App\Http\Requests\teacher;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ExportScheduleToDocGroupRequest extends FormRequest
+class MonthScheduleTeacherRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +23,10 @@ class ExportScheduleToDocGroupRequest extends FormRequest
      */
     public function rules()
     {
+// dd($this->all());        
         return [
-            'lessons' => 'required|string',
-            'group_name' => 'required|string',
-            'week_data' => 'nullable|string',
-            'week_dates' => 'nullable|string',
-            'is_red_week' => 'nullable|boolean',
+            'schedule_teacher_id' => 'required|integer|exists:App\Teacher,id',
+            'month_number' => 'required|string',
         ];
     }
 }

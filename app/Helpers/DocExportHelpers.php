@@ -30,9 +30,10 @@ class DocExportHelpers
         ));
 
         $week_period_string = '';
-        if (isset($data['week_data']['start_date']) && isset($data['week_data']['end_date'])) {
+        if (isset($data['week_data']) && isset($data['is_red_week'])) {
             $week_data = json_decode($data['week_data'], true);
-            $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']}"; 
+            $week_color = $data['is_red_week'] ? 'красная' : 'синяя';
+            $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']} ( {$week_color} неделя )"; 
         }
         
         $section->addTextBreak(1);
@@ -94,13 +95,19 @@ class DocExportHelpers
         $table = $section->addTable('Schedule');
         $table->addRow(null, array('tblHeader' => true));
         $table->addCell(1300, $headerCellStyle)->addText('Пары', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Понедельник', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Вторник', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Среда', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Четверг', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Пятница', $headerFontStyle, $headerParagraphStyle);
-        $table->addCell(2000, $headerCellStyle)->addText('Суббота', $headerFontStyle, $headerParagraphStyle);
-
+        if (isset($data['week_dates'])) {
+            $week_dates = json_decode($data['week_dates']);
+            foreach ($week_dates as $name => $date) {
+                $table->addCell(2000, $headerCellStyle)->addText("{$name} ({$date})", $headerFontStyle, $headerParagraphStyle);
+            }
+        } else {
+            $table->addCell(2000, $headerCellStyle)->addText('Понедельник', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Вторник', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Среда', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Четверг', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Пятница', $headerFontStyle, $headerParagraphStyle);
+            $table->addCell(2000, $headerCellStyle)->addText('Суббота', $headerFontStyle, $headerParagraphStyle);
+        }
         foreach($class_period_ids as $lesson_name => $class_period_id) {
             $table->addRow(1200);
             $left_header_cell = $table->addCell(1300, $headerCellStyle);
@@ -111,7 +118,6 @@ class DocExportHelpers
                     $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
                     $lesson_n = $lesson['name'];
                     $lesson_type = "({$lesson['type']})";
-                    $lesson_date = isset($lesson['date']) ? "//{$lesson['date']}// " : "";
                     $lesson_room = " ауд. {$lesson['room']}";
                     $lesson_other_participant = $lesson[$other_partic];
                     $everyWeekFontStyle = array('size' => 8);
@@ -129,16 +135,19 @@ class DocExportHelpers
                         $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
                         $lesson_n = '';
                         $lesson_type = '';
-                        $lesson_date = '';
                         $lesson_room = '';
                         $lesson_other_participant = 'Вариант переноса';
                     } elseif (isset($lesson['id']) && isset($data['rescheduling_lesson_id']) && $lesson['id'] == $data['rescheduling_lesson_id']) {
                         $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['bold' => true]);
                         $reschedule_massage = true;
                     }
-                    $sell = $table->addCell(2000, $everyWeekCellStyle);
+                    $currentEveryWeekCellStyle = $everyWeekCellStyle;
+                    if (isset($lesson['date'])) {
+                        $currentEveryWeekCellStyle = array_merge($everyWeekCellStyle, ['borderStyle' => 'double', 'borderSize' => 8]);
+                    }
+                    $sell = $table->addCell(2000, $currentEveryWeekCellStyle);
                     $sell->addText("{$lesson_n} {$lesson_type}", $everyWeekFontStyle, $everyWeekParagraphStyle);
-                    $sell->addText("{$lesson_date}{$lesson_room}", $everyWeekFontStyle, $everyWeekParagraphStyle);
+                    $sell->addText("{$lesson_room}", $everyWeekFontStyle, $everyWeekParagraphStyle);
                     $sell->addText($lesson_other_participant, $everyWeekFontStyle, $everyWeekParagraphStyle);
                     $reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 8, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
                     $replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
@@ -247,6 +256,98 @@ class DocExportHelpers
         return \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
     }
 
+    public static function monthScheduleExport($data) {
+        
+        $weeks = json_decode($data['weeks'], true);
+        $week_day_ids = config('enum.week_day_ids');
+        $weekly_period_id = config('enum.weekly_period_ids');
+        $class_period_ids = config('enum.class_period_ids');
+        $class_periods = ClassPeriod::get();
+        $class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
+        $other_partic = $data['other_participant'];
+        //------------------------------------------------------
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+       
+        $section = $phpWord->addSection(array(
+            // 'orientation' => 'landscape',
+            'marginLeft'   => 600,
+            'marginRight'  => 600,
+            'marginTop'    => 600,
+            'marginBottom' => 600,
+        ));
+
+        if (isset($data['teacher_name'])) {
+            $participant_header = 'Преподаватель';
+            $participant = $data['teacher_name'];
+        } elseif (isset($data['group_name'])) {
+            $participant_header = 'Группа';
+            $participant = $data['group_name'];
+        } else {
+            $participant_header = '';
+            $participant = '';
+        }
+        $section->addText('Расписание занятий на '.$data['month_name'], ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+        $section->addText("{$participant_header}: {$participant}");
+        
+        $styleTable = array('borderSize' => 6, 'borderColor' => '999999');
+                
+        $headerCellStyle = array('valign' => 'center');
+        $headerFontStyle = array('size' => 8);
+        $headerParagraphStyle = array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0);
+
+        $everyWeekCellStyle = array('valign' => \PhpOffice\PhpWord\SimpleType\VerticalJc::CENTER);
+        $everyWeekParagraphStyle = array('spaceBefore' => 0, 'spaceAfter' => 0, 'align' => 'center');
+        
+        $phpWord->addTableStyle('Schedule', $styleTable);
+        
+        foreach ($weeks as $week) {
+            $lessons = $week['lessons'];
+            $week_dates = $week['week_dates'];
+            $week_color_name = $week['is_red_week'] ? 'Красная неделя' : 'Синяя неделя';
+            $table = $section->addTable('Schedule');
+            $table->addRow(null, array('tblHeader' => true));
+            $table->addCell(1300, $headerCellStyle)->addText($week_color_name, $headerFontStyle, $headerParagraphStyle);
+            
+            foreach ($week_dates as $name => $date) {
+                $table->addCell(2000, $headerCellStyle)->addText("{$name} ({$date})", $headerFontStyle, $headerParagraphStyle);
+            }
+            
+            foreach ($class_period_ids as $lesson_name => $class_period_id) {
+                $section->addTextBreak(1);
+                $table->addRow(1200);
+                $left_header_cell = $table->addCell(1300, $headerCellStyle);
+                $left_header_cell->addText($class_period_id, $headerFontStyle, $headerParagraphStyle);
+                $left_header_cell->addText(date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])).' - '.date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])), $headerFontStyle, $headerParagraphStyle);
+                
+                foreach ($week_day_ids as $wd_name => $week_day_id) {
+                    if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])) {
+                        $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                        $lesson_n = $lesson['name'];
+                        $lesson_type = "({$lesson['type']})";
+                        $lesson_room = " ауд. {$lesson['room']}";
+                        $lesson_other_participant = $lesson[$other_partic];
+                        $everyWeekFontStyle = array('size' => 8);
+                        
+                        $currentEveryWeekCellStyle = $everyWeekCellStyle;
+                        if (isset($lesson['date'])) {
+                            $currentEveryWeekCellStyle = array_merge($everyWeekCellStyle, ['borderStyle' => 'double', 'borderSize' => 8]);
+                        }
+                        $sell = $table->addCell(2000, $currentEveryWeekCellStyle);
+                        $sell->addText("{$lesson_n} {$lesson_type}", $everyWeekFontStyle, $everyWeekParagraphStyle);
+                        $sell->addText("{$lesson_room}", $everyWeekFontStyle, $everyWeekParagraphStyle);
+                        $sell->addText($lesson_other_participant, $everyWeekFontStyle, $everyWeekParagraphStyle);
+                        
+                    } else {
+                        $table->addCell(2000, $everyWeekCellStyle);
+                    }
+                }
+            }
+        }
+        
+
+        return \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+    }
+
     public static function replacementExport($data) {
         
         $table_properties = config('tables.replacement_variants');
@@ -263,7 +364,14 @@ class DocExportHelpers
             'marginBottom' => 600,
         ));
         
-        $section->addText('Варианты замены занятия', ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+        $week_period_string = '';
+        if (isset($data['week_data']) && isset($data['is_red_week'])) {
+            $week_data = json_decode($data['week_data'], true);
+            $week_color = $data['is_red_week'] ? 'красная' : 'синяя';
+            $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']} ( {$week_color} неделя )"; 
+        }
+        
+        $section->addText('Варианты замены занятия'.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText("Заменяемое занятие: {$header_data['class_period']} пара, {$header_data['week_day']}, {$header_data['weekly_period']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText("Преподавателя: {$header_data['teacher']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText("Группы: {$header_data['group']}", null, array('spaceBefore' => 0, 'spaceAfter' => 100));
@@ -283,6 +391,9 @@ class DocExportHelpers
         $table = $section->addTable('Replacement');
         $table->addRow(null, array('tblHeader' => true));
         foreach ($table_properties as $property) {
+            if (isset($data['is_red_week']) && $property['header'] == 'Недельная периодичность') {
+                continue;
+            }
             $table->addCell(2000, $headerCellStyle)->addText($property['header'], $headerFontStyle, $headerParagraphStyle); 
         }
         foreach($replacement_lessons as $lesson) {
@@ -290,7 +401,9 @@ class DocExportHelpers
             
             foreach($table_properties as $property) {
                 $field = $property['field'];
-                if ($field == 'week_day_id' && isset($lesson['date'])) {
+                if (isset($data['is_red_week']) && $field == 'weekly_period_id') {
+                    continue;
+                } elseif ($field == 'week_day_id' && isset($lesson['date'])) {
                     $content = "{$lesson[$field]['name']} ({$lesson['date']})";
                 } elseif (is_array($lesson[$field])) {
                     $content = $lesson[$field]['name'];
