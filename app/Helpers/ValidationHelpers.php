@@ -159,7 +159,7 @@ class ValidationHelpers
     public static function exportMonthTeacherScheduleToDocValidation($data) {
         
         $rules = [
-            "month_name" => "required|array",
+            "month_name" => "required|string",
             "teacher_name" => "required|string",
             "weeks" => "required|string", 
         ];
@@ -170,7 +170,7 @@ class ValidationHelpers
     public static function exportMonthGroupScheduleToDocValidation($data) {
         
         $rules = [
-            "month_name" => "required|array",
+            "month_name" => "required|string",
             "group_name" => "required|string",
             "weeks" => "required|string", 
         ];
