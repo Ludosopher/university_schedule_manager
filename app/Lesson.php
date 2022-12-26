@@ -53,6 +53,16 @@ class Lesson extends Model
         return $this->belongsTo(LessonType::class);
     }
 
+    public function replaceable_variants()
+    {
+        return $this->hasMany('App\ReplacementRequests', 'replaceable_lesson_id');
+    }
+
+    public function replacing_variants()
+    {
+        return $this->hasMany('App\ReplacementRequests', 'replacing_lesson_id');
+    }
+
     public $additional_attributes = ['groups_name'];
 
     public function getGroupsNameAttribute()
