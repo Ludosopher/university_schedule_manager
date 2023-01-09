@@ -45,5 +45,12 @@ return [
     // additionally only user attributes
     'is_moderator' => '"Moderator"',
     'is_admin' => '"Administrator"',
+    'user_id' => '"User"',
+    // additionally only replacement requests attributes
+    'date_from' => '"The lower limit of the date"',
+    'date_to' => '""The upper limit of the date""',
+    'is_regular' => '"Regular replacement"',
+    'initiator_id' => '"Initiator"',
+    'status_id' => '"Status"',
             
 ];

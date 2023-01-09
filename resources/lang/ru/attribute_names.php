@@ -16,8 +16,8 @@ return [
     'academic_degree_id' => '"Научная степень"',
     'updating_id' => 'редактируемое',
     'full_name' => '"Фамилия, Имя или Отчество"',
-    'age_from' => '"От"',
-    'age_to' => '"До"',
+    'age_from' => '"Нижняя граница возраста"',
+    'age_to' => '"Верхняя граница возраста"',
     // additionally only group attributes
     'name' => '"Предмет"',
     'study_program_id' => '"Учебная программа"',
@@ -45,5 +45,12 @@ return [
     // additionally only user attributes
     'is_moderator' => '"Модератор"',
     'is_admin' => '"Администратор"',
+    'user_id' => '"Пользователь"',
+    // additionally only replacement requests attributes
+    'date_from' => '"Нижняя граница даты"',
+    'date_to' => '"Верхняя граница даты"',
+    'is_regular' => '"Регулярная замена"',
+    'initiator_id' => '"Инициатор"',
+    'status_id' => '"Статус"',
             
 ];

@@ -19,10 +19,12 @@ use App\Http\Requests\teacher\RescheduleTeacherRequest;
 use App\Http\Requests\teacher\ScheduleTeacherRequest;
 use App\Http\Requests\teacher\StoreTeacherRequest;
 use App\Lesson;
+use App\ReplacementRequest;
 use App\Teacher;
 use App\User;
 use App\WeekDay;
 use App\WeeklyPeriod;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -43,6 +45,13 @@ class TeacherController extends Controller
 
     public function getTeachers (FilterTeacherRequest $request)
     {
+        // $replacement_requests = ReplacementRequest::where(function($query) {
+        //     $query = $query->orWhere('replaceable_date', '>', '2022-12-31');
+        //     $query = $query->orWhere('replacing_date', '>', '2022-12-31');
+        // })->get();
+
+        // dd($replacement_requests);
+        
         $request->validated();
         $data = ModelHelpers::getInstances(request()->all(), $this->config);
 

@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Lesson;
 use App\Teacher;
+use Illuminate\Database\Eloquent\Builder;
 
 class FilterHelpers
 {
@@ -17,12 +18,18 @@ class FilterHelpers
                     $query = $query->$method(function($q) use ($data, $conditions, $field) {
                         foreach ($conditions['operator'] as $sub_field => $sub_conditions) {
                             $sub_method = $sub_conditions['method'];
-                            $is_like = $sub_conditions['operator'] == 'like';
-                            if (isset($sub_conditions['db_field'])) {
-                                $db_field = $sub_conditions['db_field'];
-                                $q = $q->$sub_method($db_field, $sub_conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));
+                            if ($sub_method === 'whereHas' || $sub_method === 'orWhereHas') {
+                                $q = $q->$sub_method($sub_field, function(Builder $que) use ($sub_conditions, $sub_method, $sub_field, $data, $field) {
+                                    $que = $que->where($sub_conditions['final_field'], $sub_conditions['operator'], $data[$field]);
+                                });    
                             } else {
-                                $q = $q->$sub_method($sub_field, $sub_conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));
+                                $is_like = $sub_conditions['operator'] == 'like';
+                                if (isset($sub_conditions['db_field'])) {
+                                    $db_field = $sub_conditions['db_field'];
+                                    $q = $q->$sub_method($db_field, $sub_conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));
+                                } else {
+                                    $q = $q->$sub_method($sub_field, $sub_conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));
+                                }
                             }
                         }
                         $q;
@@ -41,7 +48,7 @@ class FilterHelpers
             } elseif ($conditions['method'] == 'whereHas' && is_array($conditions['operator'])) {
                 if (isset($data[$field])) {
                     $method = $conditions['method'];
-                    $query = $query->$method($conditions['eager_field'], function($q) use ($conditions, $data, $field) {
+                    $query = $query->$method($conditions['eager_field'], function(Builder $q) use ($conditions, $data, $field) {
                         foreach ($conditions['operator'] as $sub_field => $sub_conditions) {
                             $sub_method = $sub_conditions['method'];
                             $q = $q->$sub_method($sub_field, $sub_conditions['operator'], $data[$field]);

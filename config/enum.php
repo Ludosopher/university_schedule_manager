@@ -45,6 +45,15 @@ return [
       'saturday' => 6
    ],
 
+   'week_days_ru' => [
+      1 => 'понедельник',
+      2 => 'вторник',
+      3 => 'среда',
+      4 => 'четверг',
+      5 => 'пятница',
+      6 => 'суббота'
+   ],
+
    'weekly_periods' => [
       1 => 'every_week',
       2 => 'red_week',
@@ -110,4 +119,26 @@ return [
       '11' => 'ноябрь',
       '12' => 'декабрь',
    ],
+
+   'replacement_request_statuses' => [
+      1 => 'В подготовке',
+      2 => 'В ожидании согласия',
+      3 => 'В ожидании разрешения',
+      4 => 'Разрешено',
+      5 => 'В реализации',
+      6 => 'Завершено',
+      7 => 'Отменено',
+      8 => 'Отклонено',
+   ],
+
+   'replacement_request_status_ids' => [
+      'in drafting' => 1,
+      'in_consent_waiting' => 2,
+      'in_permission_waiting' => 3,
+      'permitted' => 4,
+      'in_realization' => 5,
+      'completed' => 6,
+      'cancelled' => 7,
+      'declined' => 8,
+   ]
 ];

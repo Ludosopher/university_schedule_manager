@@ -38,7 +38,7 @@
                                 <div class="birthYear">
                                     <div class="integer-input-div">
                                         <label for="{{$field_name}}_from" class="form-label">От</label>
-                                        <input name="{{$field_name}}_from" type="number" min="{{ $field['min_value'] }}" max="{{ $field['max_value'] }}" step="{{ $field['step'] }}" class="form-control form-control-sm integer-input" id="{{$field_name}}_from" value="{{ old($field_name.'_from') !== null && count(request()->all()) ? old($field_name.'_from') : '' }}">
+                                        <input name="{{$field_name}}_from" type="{{ $field['input_type'] }}" min="{{ $field['min_value'] }}" max="{{ $field['max_value'] }}" step="{{ $field['step'] }}" class="form-control form-control-sm integer-input" id="{{$field_name}}_from" value="{{ old($field_name.'_from') !== null && count(request()->all()) ? old($field_name.'_from') : '' }}">
                                         @if ($errors !== null && $errors->has($field_name.'_from'))
                                             @foreach($errors->get($field_name.'_from') as $error)
                                                 <div class="validationErrorText">{{ $error }}</div>
@@ -47,7 +47,7 @@
                                     </div>
                                     <div class="integer-input-div">
                                         <label for="{{$field_name}}_to" class="form-label">До</label>
-                                        <input name="{{$field_name}}_to" type="number" min="{{ $field['min_value'] }}" max="{{ $field['max_value'] }}" step="{{ $field['step'] }}" class="form-control form-control-sm integer-input" id="{{$field_name}}_to" value="{{ old($field_name.'_to') !== null && count(request()->all()) ? old($field_name.'_to') : '' }}">
+                                        <input name="{{$field_name}}_to" type="{{ $field['input_type'] }}" min="{{ $field['min_value'] }}" max="{{ $field['max_value'] }}" step="{{ $field['step'] }}" class="form-control form-control-sm integer-input" id="{{$field_name}}_to" value="{{ old($field_name.'_to') !== null && count(request()->all()) ? old($field_name.'_to') : '' }}">
                                         @if ($errors !== null && $errors->has($field_name.'_to'))
                                             @foreach($errors->get($field_name.'_to') as $error)
                                                 <div class="validationErrorText">{{ $error }}</div>

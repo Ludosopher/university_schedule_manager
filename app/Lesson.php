@@ -9,7 +9,7 @@ use Kyslik\ColumnSortable\Sortable;
 class Lesson extends Model
 {
     use Sortable;
-    public $sortable = ['name', 'lesson_type_id', 'week_day_id','weekly_period_id', 'class_period_id', 'group_id', 'teacher_id', 'profession_level_name'];
+    public $sortable = ['name', 'lesson_type_id', 'week_day_id', 'weekly_period_id', 'class_period_id', 'group_id', 'teacher_id', 'profession_level_name'];
 
     public function professionLevelNameSortable($query, $direction)
     {

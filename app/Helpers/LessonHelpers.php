@@ -474,7 +474,7 @@ class LessonHelpers
             }
         }
 
-        $data['week_dates'] = $incom_replacement_data['week_dates'];
+        $data['week_dates'] = (array)$incom_replacement_data['week_dates'];
         $data['is_red_week'] = $incom_replacement_data['is_red_week'];
 
         return $data;

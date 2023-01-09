@@ -98,6 +98,7 @@ return [
          'type' => 'between',
          'name' => 'age',
          'header' => 'Возраст',
+         'input_type' => 'number',
          'min_value' => '',
          'max_value' => '',
          'step' => '1'
@@ -284,6 +285,7 @@ return [
          'type' => 'between',
          'name' => 'size',
          'header' => 'Численность',
+         'input_type' => 'number',
          'min_value' => '1',
          'max_value' => '50',
          'step' => '1'
@@ -624,5 +626,73 @@ return [
             'is_required' => true,
          ],
       ],
+      'replacement_request_filter' => [
+         [
+            'type' => 'objects-select',
+            'multiple_options' => [
+                'is_multiple' => true,
+                'size' => 3,
+                'explanation' => "Для выбора нескольких групп нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+            ],
+            'plural_name' => 'groups',
+            'name' => 'group',
+            'header' => 'Группа(ы)',
+            'is_required' => true,
+         ],
+         [
+            'type' => 'objects-select',
+            'multiple_options' => [
+                'is_multiple' => true,
+                'size' => 3,
+                'explanation' => "Для выбора нескольких преподавателей нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+            ],
+            'plural_name' => 'teachers',
+            'name' => 'teacher',
+            'header' => 'Преподаватель(и)',
+            'is_required' => true,
+         ],
+         [
+            'type' => 'between',
+            'name' => 'date',
+            'header' => 'Дата',
+            'input_type' => 'date',
+            'min_value' => '',
+            'max_value' => '',
+            'step' => '1'
+         ],
+         [
+            'type' => 'switch',
+            'input_type' => null,
+            'name' => 'is_regular',
+            'header' => 'Постоянная замена',
+            'is_required' => true,
+         ],
+         [
+            'type' => 'objects-select',
+            'multiple_options' => [
+                'is_multiple' => true,
+                'size' => 3,
+                'explanation' => "Для выбора нескольких инициаторов нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+            ],
+            'plural_name' => 'users',
+            'name' => 'user',
+            'header' => 'Инициатор(ы)',
+            'is_required' => true,
+         ],
+         [
+            'type' => 'objects-select',
+            'multiple_options' => [
+                'is_multiple' => true,
+                'size' => 3,
+                'explanation' => "Для выбора нескольких статусов нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора."
+            ],
+            'plural_name' => 'statuses',
+            'name' => 'status',
+            'header' => 'Статус(ы)',
+            'is_required' => true,
+         ],
+         
+      ],
+
 
 ];

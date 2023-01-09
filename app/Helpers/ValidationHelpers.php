@@ -48,6 +48,7 @@ class ValidationHelpers
             'replace_rules.*.weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
             'replace_rules.*.class_period_id' => 'nullable|integer|exists:App\ClassPeriod,id',
             'replace_rules.*.teacher_id' => 'nullable|integer|exists:App\Teacher,id',
+            'replace_rules.*.date' => 'nullable|date',
         ];
         
         $messages = [
@@ -136,6 +137,7 @@ class ValidationHelpers
             'replacement_lessons' => 'required|string',
             'header_data' => 'required|string',
             'week_data' => 'nullable|string',
+            'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
         ];
         
@@ -175,6 +177,30 @@ class ValidationHelpers
             "weeks" => "required|string", 
         ];
         
+        return self::validation($data, $rules);
+    }
+
+    public static function addReplacementRequestValidation($data) {
+        
+        $min_replacement_period = config('site.min_replacement_period');
+                
+        $rules = [
+            'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'replacing_lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'replaceable_date' => 'nullable|string',
+            'replaceable_date' => function ($attribute, $value, $fail) use ($min_replacement_period) {
+                $replaceable_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
+                if ($replaceable_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+            },
+            'replacing_date' => 'nullable|string',
+            'replacing_date' => function ($attribute, $value, $fail) use ($min_replacement_period) {
+                $replacing_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
+                if ($replacing_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+            },
+            'is_regular' => 'required|boolean',
+            'initiator_id' => 'required|integer|exists:App\User,id', 
+        ];
+
         return self::validation($data, $rules);
     }
 

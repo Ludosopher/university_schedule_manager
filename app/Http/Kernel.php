@@ -53,6 +53,7 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
+        'replacer' => \App\Http\Middleware\CheckReplacementRequestPermission::class,
         'moderator' => \App\Http\Middleware\CheckModeratorPermission::class,
         'admin' => \App\Http\Middleware\CheckAdminPermission::class,
         'auth' => \App\Http\Middleware\Authenticate::class,

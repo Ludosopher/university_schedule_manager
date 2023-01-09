@@ -16,5 +16,7 @@ return [
 
    'red_week_is_odd' => true,
 
+   'min_replacement_period' => 18,
+
    
 ];

@@ -82,9 +82,23 @@
                                 <a class="nav-link main-nav-link" href="{{ route('users') }}">Пользователи</a>
                             </li>
                         @endif
+                        @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Запросы
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="nav-link" href="{{ route('replacement_requests') }}">На замену</a>
+                                    <a class="nav-link" href="#">На перенос</a>
+                                </div>
+                            </li>
+                        @endif
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link" href="{{ route('user-account-main') }}">Личный кабинет</a>
+                        </li>
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">

@@ -302,8 +302,6 @@ class ModelHelpers
         $instance_name_field = $config['instance_name_field'];
         $model_name = $config['model_name'];
 
-        
-
         $instance = self::addOrUpdate($data, $model_name);
         if (isset($data['updating_id'])) {
             return ['id' => $instance->id, 'updated_instance_name' => $instance->$instance_name_field];

@@ -190,6 +190,18 @@ h3 {
     font-weight: bold;
 }
 
+.schedule-replace-link {
+    border: none;
+    outline: none;
+    background: none;
+    cursor: pointer;
+    color: #0000EE;
+    padding: 0;
+    text-decoration: none;
+    font-family: inherit;
+    font-size: inherit;
+}
+
 .schedule-date-text {
     border: 1px solid black;
     padding: 0px 1px 0px 1px;

@@ -30,7 +30,7 @@ class CreateReplacementRequestTable extends Migration
             $table->boolean('is_permitted')->default(false);
             $table->boolean('is_cancelled')->default(false);
             $table->boolean('is_declined')->default(false);
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('status_id')->default(1);
             $table->unsignedBigInteger('initiator_id');
             $table->foreign('replaceable_lesson_id')->references('id')->on('lessons')->onDelete('cascade');
             $table->foreign('replacing_lesson_id')->references('id')->on('lessons')->onDelete('cascade');

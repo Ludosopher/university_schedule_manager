@@ -17,6 +17,7 @@ use App\Teacher;
 use App\WeekDay;
 use App\WeeklyPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class LessonController extends Controller
@@ -88,7 +89,12 @@ class LessonController extends Controller
 
             $validation = ValidationHelpers::getReplacementVariantsValidation($request->all());
             if (! $validation['success']) {
-                return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator'])->withInput();
+                return redirect()->route("lesson-replacement", [
+                    'replace_rules' => $replace_rules,
+                    'week_data' => $request->week_data,
+                    'week_dates' => $request->week_dates,
+                    'is_red_week' => $request->is_red_week,
+                ])->withInput()->withErrors($validation['validator']);
             }
             $teacher_id = $replace_rules['teacher_id'];
         } else {
@@ -97,6 +103,7 @@ class LessonController extends Controller
 
         $data = LessonHelpers::getReplacementData($request->all());
         $data['in_schedule'] = LessonHelpers::getReplacementSchedule($teacher_id, $data, $request->all());
+        $data['initiator_id'] = Auth::user()->id;
 
         return view("lesson.replacement_lessons")->with('data', $data);
     }
@@ -111,10 +118,16 @@ class LessonController extends Controller
 
     public function exportReplacementToDoc (Request $request)
     {
+        // dd($request->all());
         $validation = ValidationHelpers::exportReplacementToDocValidation($request->all());
         if (! $validation['success']) {
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator']);
+            return redirect()->route("lesson-replacement", [
+                'replace_rules' => $replace_rules,
+                'week_data' => $request->week_data,
+                'week_dates' => $request->week_dates,
+                'is_red_week' => $request->is_red_week,
+            ])->withErrors($validation['validator']);
         }
 
         $filename = "replacement.docx";
@@ -130,7 +143,12 @@ class LessonController extends Controller
         $validation = ValidationHelpers::exportReplacementScheduleToDocValidation($request->all());
         if (! $validation['success']) {
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            return redirect()->route("lesson-replacement", ['replace_rules' => $replace_rules])->withErrors($validation['validator']);
+            return redirect()->route("lesson-replacement", [
+                'replace_rules' => $replace_rules,
+                'week_data' => $request->week_data,
+                'week_dates' => $request->week_dates,
+                'is_red_week' => $request->is_red_week,
+            ])->withErrors($validation['validator']);
         }
 
         $data = $validation['validated'];

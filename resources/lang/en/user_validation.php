@@ -11,4 +11,5 @@ return [
     'array_is_empty' => 'The :attribute array cannot be empty.',
     'invalid_input_data' => 'The input data does not match the requirements. Please contact administrator.',
     'permission_error' => 'You do not have permission to access this section.',
+    'not_time_for_replacement_request_process' => 'Not enough time to process a replacement request.',
 ];
