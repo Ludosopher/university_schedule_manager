@@ -24,23 +24,6 @@
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-<<<<<<< HEAD
-    @php
-        $no_admin_style = '';
-        $no_admin_title = '';
-        $no_admin_add_teacher_route = route('teacher-form');
-        $no_admin_add_group_route = route('group-form');
-        $no_admin_add_lesson_route = route('lesson-form');
-        if (Auth::check() && !Auth::user()->is_admin) {
-            $no_admin_style = 'color: Silver;';
-            $no_admin_title = 'Доступно только администратору';
-            $no_admin_add_teacher_route = '';
-            $no_admin_add_group_route = '';
-            $no_admin_add_lesson_route = '';
-        }
-    @endphp
-=======
->>>>>>> develop
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
@@ -99,9 +82,23 @@
                                 <a class="nav-link main-nav-link" href="{{ route('users') }}">Пользователи</a>
                             </li>
                         @endif
+                        @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Запросы
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="nav-link" href="{{ route('replacement_requests') }}">На замену</a>
+                                    <a class="nav-link" href="#">На перенос</a>
+                                </div>
+                            </li>
+                        @endif
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link main-nav-link" href="{{ route('user-account-main') }}">Личный кабинет</a>
+                        </li>
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">

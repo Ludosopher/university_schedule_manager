@@ -9,7 +9,7 @@ use Kyslik\ColumnSortable\Sortable;
 class Lesson extends Model
 {
     use Sortable;
-    public $sortable = ['name', 'lesson_type_id', 'week_day_id','weekly_period_id', 'class_period_id', 'group_id', 'teacher_id', 'profession_level_name'];
+    public $sortable = ['name', 'lesson_type_id', 'week_day_id', 'weekly_period_id', 'class_period_id', 'group_id', 'teacher_id', 'profession_level_name'];
 
     public function professionLevelNameSortable($query, $direction)
     {
@@ -51,6 +51,16 @@ class Lesson extends Model
     public function lesson_type()
     {
         return $this->belongsTo(LessonType::class);
+    }
+
+    public function replaceable_variants()
+    {
+        return $this->hasMany('App\ReplacementRequests', 'replaceable_lesson_id');
+    }
+
+    public function replacing_variants()
+    {
+        return $this->hasMany('App\ReplacementRequests', 'replacing_lesson_id');
     }
 
     public $additional_attributes = ['groups_name'];

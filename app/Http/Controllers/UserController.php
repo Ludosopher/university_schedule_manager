@@ -10,6 +10,7 @@ use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
 use App\Helpers\UniversalHelpers;
+use App\Helpers\UserHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\FilterTeacherRequest;
@@ -23,6 +24,7 @@ use App\Teacher;
 use App\WeekDay;
 use App\WeeklyPeriod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -83,6 +85,13 @@ class UserController extends Controller
         $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
         $instance_name_field = $this->config['instance_name_field'];
         return redirect()->route("users", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+    }
+
+    public function getAccountMain (Request $request)
+    {
+        $data = UserHelpers::getAccountMain(Auth::user());
+
+        return view("user.account_main")->with('data', $data);
     }
 
 }

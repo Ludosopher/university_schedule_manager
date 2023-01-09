@@ -6,16 +6,11 @@ use App\Helpers\DocExportHelpers;
 use App\Helpers\GroupHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
-<<<<<<< HEAD
-use App\Http\Requests\group\ExportScheduleToDocGroupRequest;
-use App\Http\Requests\group\FilterGroupRequest;
-=======
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\group\ExportScheduleToDocGroupRequest;
 use App\Http\Requests\group\FilterGroupRequest;
 use App\Http\Requests\group\MonthScheduleGroupRequest;
 use App\Http\Requests\group\ScheduleGroupRequest;
->>>>>>> develop
 use App\Http\Requests\group\StoreGroupRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -37,12 +32,8 @@ class GroupController extends Controller
 
     public function getGroups (FilterGroupRequest $request)
     {
-<<<<<<< HEAD
-        $data = $this->getInstances($request->validated());
-=======
         $request->validated();
         $data = ModelHelpers::getInstances(request()->all(), $this->config);
->>>>>>> develop
 
         return view("group.groups")->with('data', $data);
     }
@@ -56,12 +47,7 @@ class GroupController extends Controller
 
     public function addOrUpdateGroup (StoreGroupRequest $request)
     {
-<<<<<<< HEAD
-
-        $data = $this->addOrUpdateInstance($request->validated());
-=======
         $data = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
->>>>>>> develop
 
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
@@ -89,19 +75,7 @@ class GroupController extends Controller
 
     public function getGroupSchedule (ScheduleGroupRequest $request)
     {
-<<<<<<< HEAD
-        $validator = Validator::make($request->all(), [
-            "schedule_group_id" => "required|integer|exists:App\Group,id",
-            'week_number' => 'nullable|string'
-        ]);
-        if ($validator->fails()) {
-            return back()->with('shedule_validation_errors', true);
-        }
-
-        $data = $this->getSchedule($request);
-=======
         $data = ModelHelpers::getSchedule($request->validated(), $this->config);
->>>>>>> develop
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
@@ -124,23 +98,11 @@ class GroupController extends Controller
     public function getGroupReschedule (Request $request)
     {
         $request->flash();
-<<<<<<< HEAD
-        $validator = Validator::make($request->all(), [
-            'group_id' => 'required|integer|exists:App\Group,id',
-            'teacher_id' => 'required|integer|exists:App\Teacher,id',
-            'lesson_id' => 'required|integer|exists:App\Lesson,id'
-        ]);
-            if ($validator->fails()) {
-                $prev_data = json_decode($request->input('prev_data'), true);        
-                return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validator);
-            }
-=======
         $validation = ValidationHelpers::getGroupRescheduleValidation($request->all());
         if (! $validation['success']) {
             $prev_data = json_decode($request->input('prev_data'), true);
             return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validation['validator']);
         }
->>>>>>> develop
 
         $reschedule_data = LessonHelpers::getReschedulingData($validation['validated']);
         $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data, $this->config);
@@ -155,13 +117,8 @@ class GroupController extends Controller
     public function exportScheduleToDoc (ExportScheduleToDocGroupRequest $request)
     {
         $data = $request->validated();
-<<<<<<< HEAD
-        $data['other_participant'] = $this->other_lesson_participant;
-        
-=======
         $data['other_participant'] = $this->config['other_lesson_participant'];
 
->>>>>>> develop
         $filename = "group_schedule.docx";
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
@@ -192,19 +149,6 @@ class GroupController extends Controller
 
     public function exportRescheduleToDoc (Request $request)
     {
-<<<<<<< HEAD
-        $validator = Validator::make($request->all(), [
-            'lessons' => 'required|string',
-            'group_name' => 'required|string',
-            'rescheduling_lesson_id' => 'required|integer|exists:App\Lesson,id'
-        ]);
-        if ($validator->fails()) {
-            $prev_data = json_decode($request->all()['prev_data'], true);
-            return redirect()->route('teacher-reschedule', $prev_data)->withErrors($validator); 
-        }
-
-        $data = $validator->validated();
-=======
         $validation = ValidationHelpers::exportGroupRescheduleToDocValidation($request->all());
         if (! $validation['success']) {
             $prev_data = json_decode($request->all()['prev_data'], true);
@@ -212,7 +156,6 @@ class GroupController extends Controller
         }
 
         $data = $validation['validated'];
->>>>>>> develop
         $data['participant'] = $request->group_name;
         $data['other_participant'] = $this->config['other_lesson_participant'];
         $data['is_reschedule_for'] = 'group';

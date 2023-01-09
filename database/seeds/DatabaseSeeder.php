@@ -4849,7 +4849,7 @@ class DatabaseSeeder extends Seeder
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
-                'class_period_id' => 2,
+                'class_period_id' => 1,
                 'teacher_id' => 23,
                 'lesson_room_id' => 5,
                 'date' => '2022-12-26',
@@ -4860,12 +4860,12 @@ class DatabaseSeeder extends Seeder
                 'id' => 218,
                 'name' => 'Маркетинг',
                 'lesson_type_id' => 2,
-                'week_day_id' => 2,
+                'week_day_id' => 1,
                 'weekly_period_id' => 1,
-                'class_period_id' => 2,
+                'class_period_id' => 5,
                 'teacher_id' => 23,
                 'lesson_room_id' => 6,
-                'date' => '2022-12-27',
+                'date' => '2022-12-26',
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
@@ -5756,6 +5756,57 @@ class DatabaseSeeder extends Seeder
             [
                 'lesson_id' => 219,
                 'group_id' => 28,
+            ],
+        ]);
+
+        \DB::table('replacement_request_statuses')->insert([
+            [
+                'id' => 1,
+                'name' => 'В подготовке',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
+            ],
+            [
+                'id' => 2,
+                'name' => 'В ожидании согласия',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
+            ],
+            [
+                'id' => 3,
+                'name' => 'В ожидании разрешения',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
+            ],
+            [
+                'id' => 4,
+                'name' => 'Разрешено',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
+            ],
+            [
+                'id' => 5,
+                'name' => 'В реализации',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
+            ],
+            [
+                'id' => 6,
+                'name' => 'Завершено',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
+            ],
+            [
+                'id' => 7,
+                'name' => 'Отменено',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
+            ],
+            [
+                'id' => 8,
+                'name' => 'Отклонено',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
             ],
         ]);
     }

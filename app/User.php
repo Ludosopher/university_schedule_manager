@@ -51,6 +51,21 @@ class User extends Authenticatable
         return $this->belongsToMany(Teacher::class);
     }
 
+    public function replacement_requests()
+    {
+        return $this->hasMany('App\ReplacementRequest', 'initiator_id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany('App\Message', 'author_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany('App\Notification', 'addressee_id');
+    }
+
     public $additional_attributes = ['group_names', 'teacher_names', 'moderator', 'admin'];
 
     public function getTeacherNamesAttribute()

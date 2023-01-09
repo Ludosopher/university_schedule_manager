@@ -37,12 +37,12 @@ class UniversalHelpers
     public static function getWeekDates($year, $week)
     {
         return [
-            'Понедельник' => (new DateTime())->setISODate($year, $week)->format('d.m'),
-            'Вторник' => (new DateTime())->setISODate($year, $week, 2)->format('d.m'),
-            'Среда' => (new DateTime())->setISODate($year, $week, 3)->format('d.m'),
-            'Четверг' => (new DateTime())->setISODate($year, $week, 4)->format('d.m'),
-            'Пятница' => (new DateTime())->setISODate($year, $week, 5)->format('d.m'),
-            'Суббота' => (new DateTime())->setISODate($year, $week, 6)->format('d.m'),
+            1 => (new DateTime())->setISODate($year, $week, 1)->format('Y-m-d H:i:s'),
+            2 => (new DateTime())->setISODate($year, $week, 2)->format('Y-m-d H:i:s'),
+            3 => (new DateTime())->setISODate($year, $week, 3)->format('Y-m-d H:i:s'),
+            4 => (new DateTime())->setISODate($year, $week, 4)->format('Y-m-d H:i:s'),
+            5 => (new DateTime())->setISODate($year, $week, 5)->format('Y-m-d H:i:s'),
+            6 => (new DateTime())->setISODate($year, $week, 6)->format('Y-m-d H:i:s'),
             // 'Воскресенье' => (new DateTime())->setISODate($year, $week, 7)->format('d.m.y') 
         ];
     }

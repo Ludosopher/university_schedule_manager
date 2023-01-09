@@ -284,4 +284,120 @@ return [
          'sorting' => false
       ],
    ],
+   'replacement_requests' => [
+      [
+         'field' => [
+            'replaceable_lesson',
+            'groups_name'
+         ],
+         'header' => 'Группа(ы)',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'regular',
+         ],
+         'sort_name' => 'is_regular',
+         'header' => 'Постоянная замена',
+         'sorting' => false
+      ],
+      [
+         'field' => 'replaceable_date',
+         'header' => 'Дата',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'replaceable_lesson',
+            'week_day',
+            'name'
+         ],
+         'header' => 'День недели',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'replaceable_lesson',
+            'class_period',
+            'id'
+         ],
+         'header' => 'Пара',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'replaceable_lesson',
+            'lesson_room',
+            'number'
+         ],
+         'header' => 'Аудитория',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'replaceable_lesson',
+            'teacher',
+            'profession_level_name'
+         ],
+         'header' => 'Преподаватель',
+         'sorting' => false
+      ],
+      [
+         'field' => 'replacing_date',
+         'header' => 'Дата',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'replacing_lesson',
+            'week_day',
+            'name'
+         ],
+         'header' => 'День недели',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'replacing_lesson',
+            'class_period',
+            'id'
+         ],
+         'header' => 'Пара',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'replacing_lesson',
+            'lesson_room',
+            'number'
+         ],
+         'header' => 'Аудитория',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'replacing_lesson',
+            'teacher',
+            'profession_level_name'
+         ],
+         'header' => 'Преподаватель',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'status',
+            'name'
+         ],
+         'header' => 'Статус',
+         'sorting' => false
+      ],
+      [
+         'field' => [
+            'initiator',
+            'name'
+         ],
+         'header' => 'Инициатор',
+         'sorting' => false
+      ],
+   ],
 ];

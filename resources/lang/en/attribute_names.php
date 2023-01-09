@@ -42,11 +42,15 @@ return [
     'replace_rules_weekly_period_id' => 'Weekly period (replacement filter rules)',
     'replace_rules_class_period_id' => 'Class period (replacement filter rules)',
     'replace_rules_teacher_id' => 'Teacher (replacement filter rules)',
-<<<<<<< HEAD
-=======
     // additionally only user attributes
     'is_moderator' => '"Moderator"',
     'is_admin' => '"Administrator"',
->>>>>>> develop
+    'user_id' => '"User"',
+    // additionally only replacement requests attributes
+    'date_from' => '"The lower limit of the date"',
+    'date_to' => '""The upper limit of the date""',
+    'is_regular' => '"Regular replacement"',
+    'initiator_id' => '"Initiator"',
+    'status_id' => '"Status"',
             
 ];

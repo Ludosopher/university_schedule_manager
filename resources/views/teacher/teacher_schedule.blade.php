@@ -54,8 +54,11 @@
                     <tr class="bg-light-gray">
                         <th class="text-uppercase">Пара</th>
                         @if(isset($data['week_dates']))
-                            @foreach($data['week_dates'] as $name => $date)
-                                <th class="text-uppercase">{{ $name }} ({{ $date }})</th>
+                            @php
+                                $week_days_ru = config('enum.week_days_ru');
+                            @endphp
+                            @foreach($data['week_dates'] as $week_day_id => $date)
+                                <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
                             @endforeach
                         @else
                             <th class="text-uppercase">Понедельник</th>
@@ -80,10 +83,14 @@
                         @endphp
                         @foreach($class_period_ids as $lesson_name => $class_period_id)
                             <tr>
+                                @php
+                                    $class_period_start_time = date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start']));
+                                    $class_period_end_time = date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])); 
+                                @endphp
                                 <td class="align-middle schedule-period">
                                     <div class="schedule-period-name">{{ $class_period_id }}</div>
                                     <div class="schedule-period-time">
-                                        {{ date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])) }} - {{ date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])) }}
+                                        {{ $class_period_start_time }} - {{ $class_period_end_time }}
                                     </div>
                                 </td>
 
@@ -110,6 +117,13 @@
                                                         <input type="hidden" name="replace_rules[class_period_id]" value="{{ $lesson['class_period_id'] }}">
                                                         <input type="hidden" name="replace_rules[weekly_period_id]" value="{{ $lesson['weekly_period_id'] }}">
                                                         <input type="hidden" name="replace_rules[week_day_id]" value="{{ $lesson['week_day_id'] }}">
+                                                        @php
+                                                            $lesson_date = '';
+                                                            if (isset($data['week_dates'])) {
+                                                                $lesson_date = date('Y-m-d '.$class_period_start_time, strtotime(str_replace('"', '', json_encode($data['week_dates'][$week_day_id]))));
+                                                            }
+                                                        @endphp
+                                                        <input type="hidden" name="replace_rules[date]" value="{{ $lesson_date }}">
                                                         <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                         <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                         <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">

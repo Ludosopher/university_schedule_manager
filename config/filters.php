@@ -154,9 +154,6 @@ return [
          'operator' => 'multi_not_equal'
       ]
    ],
-<<<<<<< HEAD
-
-=======
    'user' => [
       'name' => [
          'method' => 'where',
@@ -191,6 +188,71 @@ return [
          'operator' => '='
       ],
    ],
->>>>>>> develop
+   'replacement_request' => [
+      'group_id' => [
+         'method' => 'whereHas',
+         'operator' => [
+             'id' => [
+                 'method' => 'where',
+                 'operator' => '='
+             ],
+         ],
+         'eager_field' => 'replaceable_lesson.groups',
+      ],
+      'teacher_id' => [
+         'method' => 'where',
+         'operator' => [
+            'replaceable_lesson.teacher' => [
+               'final_field' => 'id', 
+               'method' => 'orWhereHas',
+               'operator' => '='
+            ],
+            'replacing_lesson.teacher' => [
+               'final_field' => 'id', 
+               'method' => 'orWhereHas',
+               'operator' => '='
+            ],
+         ]
+      ],
+      'date_from' => [
+         'method' => 'where',
+         'operator' => [
+            'replaceable_date' => [
+               'method' => 'orWhere',
+               'operator' => '>'
+            ],
+            'replacing_date' => [
+               'method' => 'orWhere',
+               'operator' => '>'
+            ],
+         ]
+      ],
+      'date_to' => [
+         'method' => 'where',
+         'operator' => [
+            'replaceable_date' => [
+               'method' => 'orWhere',
+               'operator' => '<'
+            ],
+            'replacing_date' => [
+               'method' => 'orWhere',
+               'operator' => '<'
+            ],
+         ]
+      ],
+      'is_regular' => [
+         'method' => 'where',
+         'operator' => '='
+      ],
+      'user_id' => [
+         'db_field' => 'initiator_id',
+         'method' => 'where',
+         'operator' => '='
+      ],
+      'status_id' => [
+         'method' => 'where',
+         'operator' => '='
+      ],
+   ],
   
 ];
