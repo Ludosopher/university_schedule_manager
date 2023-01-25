@@ -40,7 +40,7 @@ class DocExportHelpers
         if (isset($data['header_data'])) {
             $header_data = json_decode($data['header_data'], true);
             $section->addText('Варианты замены занятия'.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
-            $section->addText("Заменяемое занятие: {$header_data['class_period']} пара, {$header_data['week_day']}, {$header_data['weekly_period']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
+            $section->addText("Заменяемое занятие: {$header_data['class_period']} пара, {$header_data['week_day']}, {$data['date_or_weekly_period']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
             $section->addText("Преподавателя: {$header_data['teacher']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
             $section->addText("Группы: {$header_data['group']}", null, array('spaceBefore' => 0, 'spaceAfter' => 100));
         } else {
@@ -96,9 +96,12 @@ class DocExportHelpers
         $table->addRow(null, array('tblHeader' => true));
         $table->addCell(1300, $headerCellStyle)->addText('Пары', $headerFontStyle, $headerParagraphStyle);
         if (isset($data['week_dates'])) {
-            $week_dates = json_decode($data['week_dates']);
-            foreach ($week_dates as $name => $date) {
-                $table->addCell(2000, $headerCellStyle)->addText("{$name} ({$date})", $headerFontStyle, $headerParagraphStyle);
+            $week_dates = json_decode($data['week_dates'], true);
+            $week_days_ru = config('enum.week_days_ru');
+
+            foreach ($week_dates as $key => $date) {
+                $date = date('d.m.y', strtotime($date));
+                $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$key]} ({$date})", $headerFontStyle, $headerParagraphStyle);
             }
         } else {
             $table->addCell(2000, $headerCellStyle)->addText('Понедельник', $headerFontStyle, $headerParagraphStyle);
@@ -313,7 +316,7 @@ class DocExportHelpers
             }
             
             foreach ($class_period_ids as $lesson_name => $class_period_id) {
-                $section->addTextBreak(1);
+                $section->addText('');
                 $table->addRow(1200);
                 $left_header_cell = $table->addCell(1300, $headerCellStyle);
                 $left_header_cell->addText($class_period_id, $headerFontStyle, $headerParagraphStyle);

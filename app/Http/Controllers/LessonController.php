@@ -84,26 +84,25 @@ class LessonController extends Controller
     {
         if (isset($request->prev_replace_rules)) {
             $request->flash();
-            $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
+            $replace_rules = json_decode($request->prev_replace_rules, true);
 
             $validation = ValidationHelpers::getReplacementVariantsValidation($request->all());
             if (! $validation['success']) {
                 return redirect()->route("lesson-replacement", [
                     'replace_rules' => $replace_rules,
-                    'week_data' => $request->week_data,
-                    'week_dates' => $request->week_dates,
-                    'is_red_week' => $request->is_red_week,
+                    'week_data' => $request->prev_week_data,
+                    'week_dates' => $request->prev_week_dates,
+                    'is_red_week' => $request->prev_is_red_week,
                 ])->withInput()->withErrors($validation['validator']);
             }
             $teacher_id = $replace_rules['teacher_id'];
         } else {
-            $teacher_id = $request->all()['replace_rules']['teacher_id'];
+            $teacher_id = $request->replace_rules['teacher_id'];
         }
 
         $data = LessonHelpers::getReplacementData($request->all());
         $data['in_schedule'] = LessonHelpers::getReplacementSchedule($teacher_id, $data, $request->all());
-        $data['initiator_id'] = Auth::user()->id;
-
+        
         return view("lesson.replacement_lessons")->with('data', $data);
     }
 
@@ -117,7 +116,6 @@ class LessonController extends Controller
 
     public function exportReplacementToDoc (Request $request)
     {
-        // dd($request->all());
         $validation = ValidationHelpers::exportReplacementToDocValidation($request->all());
         if (! $validation['success']) {
             $replace_rules = json_decode($request->all()['prev_replace_rules'], true);

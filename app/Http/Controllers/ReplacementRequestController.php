@@ -16,7 +16,7 @@ class ReplacementRequestController extends Controller
         'model_name' => 'App\ReplacementRequest',
         'instance_name' => 'replacement_request',
         'instance_plural_name' => 'replacement_requests',
-        'instance_name_field' => null,
+        'instance_name_field' => 'name',
         'profession_level_name_field' => null,
         'eager_loading_fields' => ['status', 'replaceable_lesson', 'replacing_lesson', 'initiator', 'messages'],
         'other_lesson_participant' => null,
@@ -52,18 +52,18 @@ class ReplacementRequestController extends Controller
                 'is_red_week' => $request->is_red_week,
             ])->withErrors($validation['validator']);
         }
-        
-        ModelHelpers::addOrUpdateInstance($validation['validated'], $this->config);
 
-        return redirect()->route("my_replacement_requests");
+        $new_request = ModelHelpers::addOrUpdateInstance($validation['validated'], $this->config);
+
+        return redirect()->route("my_replacement_requests")->with('new_instance_name', $new_request['new_instance_name']);
     }
 
-    // public function updateReplacementRequest (Request $request)
-    // {
-    //     ModelHelpers::addOrUpdateInstance($validation['validated'], $this->config);
+    public function updateReplacementRequest (StoreReplacementReqRequest $request)
+    {
+        $replacement_request = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
 
-    //     return redirect()->route("my_replacement_requests");
-    // }
+        return redirect()->back()->with('updated_instance_name', $replacement_request['updated_instance_name']);
+    }
 
     // public function deleteTeacher (Request $request)
     // {

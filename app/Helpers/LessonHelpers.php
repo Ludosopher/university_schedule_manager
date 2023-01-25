@@ -10,15 +10,18 @@ use App\Teacher;
 use App\WeekDay;
 use App\WeeklyPeriod;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
 class LessonHelpers
 {
-    public static function getLessonsForReplacement($data, $week_number)
+    public static function getLessonsForReplacement($data, $week_number, $week_dates)
     {
         $weekly_period_ids = config('enum.weekly_period_ids');
         $replacement_lessons = [];
         $groups_lessons = [];
+        $class_periods = ClassPeriod::get();
+        $normalaze_class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
 
         $replacing_lesson = Lesson::where('id', $data['lesson_id'])->first();
         $seeking_teacher = Teacher::where('id', $data['teacher_id'])->with(['lessons'])->first();
@@ -43,30 +46,8 @@ class LessonHelpers
         $is_suitable_lesson = true;
         $looked_teachers = [$seeking_teacher->id];
         foreach ($groups_lessons as $g_lesson) {
-            if (!UniversalHelpers::testLessonDate($week_number, $g_lesson)) {
-                continue;
-            };
-            $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $g_lesson);
-            if (isset($week_schedule_lesson)) {
-                if ($week_schedule_lesson) {
-                    $g_lesson = $week_schedule_lesson;
-                } else {
-                    continue;
-                }
-            }
             if (!in_array($g_lesson->teacher->id, $looked_teachers)) {
-                foreach ($g_lesson->teacher->lessons as $dt_lesson) {
-                    if (!UniversalHelpers::testLessonDate($week_number, $dt_lesson)) {
-                        continue;
-                    };
-                    $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $dt_lesson);
-                    if (isset($week_schedule_lesson)) {
-                        if ($week_schedule_lesson) {
-                            $dt_lesson = $week_schedule_lesson;
-                        } else {
-                            continue;
-                        }
-                    }
+                foreach ($g_lesson->teacher->lessons as $key => $dt_lesson) {
                     if ($dt_lesson->week_day_id == $data['week_day_id']
                         && ($dt_lesson->weekly_period_id == $data['weekly_period_id'] || $dt_lesson->weekly_period_id == $weekly_period_ids['every_week'])
                         && $dt_lesson->class_period_id == $data['class_period_id'])
@@ -115,8 +96,19 @@ class LessonHelpers
                                 }
                             }
                             if ($is_suitable_lesson) {
+                                
+                                $replacing_date_time = null;
+                                $replacing_hours_diff = null;
+                                if (isset($week_dates)) {
+                                    $lesson_date = $week_dates[$dt_lesson->week_day->id];
+                                    $replacing_date = date('Y-m-d', strtotime(str_replace('"', '', $lesson_date)));
+                                    $class_period_start_time = date('H:i', strtotime($normalaze_class_periods[$dt_lesson->class_period->id]['start']));
+                                    $replacing_date_time = date('Y-m-d '.$class_period_start_time, strtotime(str_replace('"', '', $lesson_date)));
+                                    $replacing_hours_diff = round((strtotime($replacing_date_time) - strtotime(now()))/3600);
+                                }
+                                                                
                                 $replacement_lessons[] = [
-                                    'lesson_id' => $g_lesson->id,
+                                    'lesson_id' => $dt_lesson->id,
                                     'subject' => $dt_lesson->name,
                                     'week_day_id' => ['id' => $dt_lesson->week_day->id, 'name' => $dt_lesson->week_day->name],
                                     'date' => $g_lesson->date ?? null,
@@ -125,14 +117,16 @@ class LessonHelpers
                                     'lesson_room_id' => ['id' => $dt_lesson->lesson_room->id, 'name' => $dt_lesson->lesson_room->number],
                                     'department_id' => ['id' => $g_lesson->teacher->department->id, 'name' => $g_lesson->teacher->department->name],
                                     'position_id' => ['id' => $g_lesson->teacher->position->id, 'name' => $g_lesson->teacher->position->name],
-                                    'lesson_type' => $g_lesson->lesson_type->short_notation,
-                                    'lesson_room' => $g_lesson->lesson_room->number,
-                                    'groups_name' => $g_lesson->groups_name,
+                                    'lesson_type' => $dt_lesson->lesson_type->short_notation,
+                                    'lesson_room' => $dt_lesson->lesson_room->number,
+                                    'groups_name' => $dt_lesson->groups_name,
                                     'teacher_id' => $g_lesson->teacher->id,
                                     'profession_level_name' => $g_lesson->teacher->profession_level_name,
                                     'phone' => $g_lesson->teacher->phone,
                                     'age' => $g_lesson->teacher->age,
                                     'schedule_position_id' => self::getLessonSchedulePosition($replacing_lesson, $g_lesson->teacher),
+                                    'replacing_date_time' => $replacing_date_time, 
+                                    'replacing_hours_diff' => $replacing_hours_diff,
                                 ];
                             }
                             $is_suitable_lesson = true;
@@ -175,11 +169,13 @@ class LessonHelpers
     public static function getReplacementData($incoming_data)
     {
         $replacement_lessons = [];
+        $header_data = [];
+        $date_or_weekly_period = '';
 
         if (isset($incoming_data['week_data'])) {
             $week_data = json_decode($incoming_data['week_data'], true);
             $week_number = $week_data['week_number'];
-            $week_dates = json_decode($incoming_data['week_dates']);
+            $week_dates = json_decode($incoming_data['week_dates'], true);
             $is_red_week = $incoming_data['is_red_week'];
         } elseif (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
@@ -201,10 +197,10 @@ class LessonHelpers
         if (!isset($incoming_data['replace_rules'])) {
             if (isset($incoming_data['prev_replace_rules'])) {
                 $prev_replace_rules = json_decode($incoming_data['prev_replace_rules'], true);
-                $replacement_lessons = LessonHelpers::getLessonsForReplacement($prev_replace_rules, $week_number);
+                $replacement_lessons = LessonHelpers::getLessonsForReplacement($prev_replace_rules, $week_number, $week_dates);
             }
         } else {
-            $replacement_lessons = LessonHelpers::getLessonsForReplacement($incoming_data['replace_rules'], $week_number);
+            $replacement_lessons = LessonHelpers::getLessonsForReplacement($incoming_data['replace_rules'], $week_number, $week_dates);
             $prev_replace_rules = $incoming_data['replace_rules'];
         }
 
@@ -219,6 +215,15 @@ class LessonHelpers
                 'teacher' => $replacemented_lesson->teacher->profession_level_name,
                 'group' => $replacemented_lesson->groups_name,
             ];
+            $date_or_weekly_period = mb_strtolower($replacemented_lesson->weekly_period->name);
+        }
+
+        $replaceable_date_time = null;
+        $replaceable_hours_diff = null;
+        if (isset($prev_replace_rules['date'])) {
+            $date_or_weekly_period = date('d.m.y', strtotime(str_replace('"', '', $prev_replace_rules['date'])));
+            $replaceable_date_time = date('Y-m-d H:i', strtotime(str_replace('"', '', $prev_replace_rules['date'])));
+            $replaceable_hours_diff = round((strtotime($replaceable_date_time) - strtotime(now()))/3600);
         }
 
         $data = [
@@ -230,6 +235,11 @@ class LessonHelpers
             'week_data' => $week_data,
             'week_dates' => $week_dates,
             'is_red_week' => $is_red_week,
+            'initiator_id' => Auth::user()->id,
+            'user_teachers_ids' => Auth::user()->teachers->pluck('id')->toArray(),
+            'date_or_weekly_period' => $date_or_weekly_period,
+            'replaceable_date_time' => $replaceable_date_time,
+            'replaceable_hours_diff' => $replaceable_hours_diff,
         ];
 
         return array_merge($data, Lesson::getReplacementProperties());
@@ -286,24 +296,9 @@ class LessonHelpers
         $result = $weekly_period_ids['every_week'];
         foreach ($week_days as $week_day) {
             if ($week_day->id <= $week_days_limit) {
-                // echo '<pre>';
-                // echo "***************************************************";
-                // print_r(['week_day' => $week_day->name]);
-                // echo "****************************************************";
-                // echo '</pre>';
                 foreach ($class_periods as $class_period) {
                     if ($class_period->id <= $class_periods_limit) {
-                        // echo '<pre>';
-                        // echo '////////////////////////////////////////////////';
-                        // print_r(['class_period' => $class_period->name]);
-                        // echo '////////////////////////////////////////////////';
-                        // echo '</pre>';
                         foreach ($schedule_subjects as $key => $subject_lessons) {
-                            // echo '<pre>';
-                            // echo '|||||||||||||||||||||||||||||||||||||||||||||||||';
-                            // print_r(['schedule_subject' => $key]);
-                            // echo '|||||||||||||||||||||||||||||||||||||||||||||||||';
-                            // echo '</pre>';
                             foreach ($subject_lessons as $sub_lesson) {
                                 if (!UniversalHelpers::testLessonDate($week_number, $sub_lesson)) {
                                     continue;
@@ -316,19 +311,9 @@ class LessonHelpers
                                         continue;
                                     }
                                 }
-                                // echo '<pre>';
-                                // echo '--------------------------------------------------';
-                                // print_r(['lesson' => $sub_lesson->id, 'class_period' => $sub_lesson->class_period->name, 'week_day' => $sub_lesson->week_day->name, 'subject' => $sub_lesson->name]);
-                                // echo '---------------------------------------------------';
-                                // echo '</pre>';
                                 if ($sub_lesson->week_day_id == $week_day->id
                                     && $sub_lesson->class_period_id == $class_period->id)
                                 {
-                                    // echo '<pre>';
-                                    // echo '====================================================';
-                                    // print_r(['busy_lesson' => $sub_lesson->id]);
-                                    // echo '====================================================';
-                                    // echo '</pre>';
                                     if ($sub_lesson->weekly_period_id == $weekly_period_ids['every_week']) {
                                         $is_free = 'no';
                                         break;
@@ -339,9 +324,6 @@ class LessonHelpers
                                     }
                                 }
                             }
-                            // echo '<pre>';
-                            // print_r(['is_free' => $is_free]);
-                            // echo '</pre>';
                             if ($is_free == 'no'
                                 || $is_free == $weekly_period_ids['blue_week'] && $result == $weekly_period_ids['red_week']
                                 || $is_free == $weekly_period_ids['red_week'] && $result == $weekly_period_ids['blue_week'])
@@ -354,21 +336,10 @@ class LessonHelpers
                                     $result = $is_free;
                                 }
                                 $is_free = $weekly_period_ids['every_week'];
-                                // echo '<pre>';
-                                // print_r(['new_is_free' => $is_free, 'result' => $result]);
-                                // echo '</pre>';
                             }
                         }
-                        // echo '<pre>';
-                        // echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
-                        // print_r(['class_period' => $class_period->id, 'week_day' => $week_day->id, 'result' => $result]);
-                        // echo '!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
-                        // echo '</pre>';
                         if ($result) {
                             $free_periods[$class_period->id][$week_day->id][$result] = true;
-                            // echo '<pre>';
-                            // print_r(['free_periods' => $free_periods]);
-                            // echo '</pre>';
                         }
                         $is_free = $weekly_period_ids['every_week'];
                         $result = $weekly_period_ids['every_week'];
@@ -377,7 +348,7 @@ class LessonHelpers
 
             }
         }
-// dd($free_periods);
+
         $data = [
             'free_periods' => $free_periods,
             'teacher_id' => $teacher->id,
@@ -397,35 +368,6 @@ class LessonHelpers
 
         return $data;
     }
-
-    // public static function addOrUpdateLessonGroups($group_ids, $id) {
-
-    //     $lesson = Lesson::find($id);
-    //     $lesson->groups()->sync($group_ids);
-
-    //     return true;
-    // }
-
-    // public static function getGroupsData($data) {
-
-    //     $updating_lesson = $data['updating_instance'];
-    //     foreach ($updating_lesson->groups as $group) {
-    //         $group_ids[] = $group->id;
-    //     }
-    //     $data['updating_instance']->group_id = $group_ids;
-
-    //     return $data;
-    // }
-
-    // public static function deleteLessonGroupsRelation($id) {
-    //     $lesson = Lesson::with(['groups'])->find($id);
-    //     if ($lesson) {
-    //         $lesson->groups()->detach();
-    //         return true;
-    //     }
-
-    //     return false;
-    // }
 
     public static function getReplacementSchedule($teacher_id, $incom_replacement_data, $incom_data) {
 
@@ -451,6 +393,8 @@ class LessonHelpers
                 'name' => $lesson['subject'],
                 'group' => $lesson['groups_name'],
                 'teacher' => $lesson['profession_level_name'],
+                'replacing_date_time' => $lesson['replacing_date_time'],
+                'replacing_hours_diff' => $lesson['replacing_hours_diff'],
                 'for_replacement' => true
             ];
         }

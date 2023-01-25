@@ -116,11 +116,14 @@ class Lesson extends Model
 
     public static function getReplacementProperties() {
 
+        $class_periods = ClassPeriod::get();
+        
         return [
             'lesson_types' => LessonType::select('id', 'name')->get(),
             'week_days' => WeekDay::select('id', 'name')->get(),
             'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),
-            'class_periods' => ClassPeriod::get(),
+            'class_periods' => $class_periods,
+            'normalize_class_periods' => array_combine(range(1, count($class_periods)), array_values($class_periods->toArray())),
             'faculties' => Faculty::select('id', 'name')->get(),
             'departments' => Department::select('id', 'name')->get(),
             'professional_levels' => ProfessionalLevel::select('id', 'name')->get(),

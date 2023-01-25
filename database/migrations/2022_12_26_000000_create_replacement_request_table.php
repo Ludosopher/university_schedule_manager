@@ -18,7 +18,7 @@ class CreateReplacementRequestTable extends Migration
             $table->string('name');
             $table->timestamps();
         });
-        
+
         Schema::create('replacement_requests', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('replaceable_lesson_id');
@@ -26,10 +26,12 @@ class CreateReplacementRequestTable extends Migration
             $table->boolean('is_regular')->default(false);
             $table->date('replaceable_date')->nullable();
             $table->date('replacing_date')->nullable();
+            $table->boolean('is_sent')->default(false);
             $table->boolean('is_agreed')->default(false);
             $table->boolean('is_permitted')->default(false);
             $table->boolean('is_cancelled')->default(false);
             $table->boolean('is_declined')->default(false);
+            $table->boolean('is_not_permitted')->default(false);
             $table->unsignedBigInteger('status_id')->default(1);
             $table->unsignedBigInteger('initiator_id');
             $table->foreign('replaceable_lesson_id')->references('id')->on('lessons')->onDelete('cascade');
@@ -71,6 +73,6 @@ class CreateReplacementRequestTable extends Migration
         Schema::dropIfExists('replacement_requests');
         Schema::dropIfExists('messages');
         Schema::dropIfExists('notifications');
-        
+
     }
 }

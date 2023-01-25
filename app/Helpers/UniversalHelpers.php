@@ -148,16 +148,16 @@ class UniversalHelpers
                 
         $first_month_day = date('Y-m-01', strtotime($month_number));
         if (date('w', strtotime($first_month_day)) == 0) {
-            $first_month_day = date('Y-n-d', strtotime("{$first_month_day} + 1 day"));
+            $first_month_day = date('Y-m-d', strtotime("{$first_month_day} + 1 day"));
         } 
 
         $last_month_day = date('Y-m-t', strtotime($month_number));
         if (date('w', strtotime($last_month_day)) == 0) {
-            $last_month_day = date('Y-n-d', strtotime("{$first_month_day} - 1 day"));
+            $last_month_day = date('Y-m-d', strtotime("{$first_month_day} - 1 day"));
         }
 
         $month_week_numbers = [];
-        for ($i = $first_month_day; $i <= $last_month_day; $i = date('Y-n-d', strtotime("{$i} + 1 day"))) {
+        for ($i = $first_month_day; $i <= $last_month_day; $i = date('Y-m-d', strtotime("{$i} + 1 day"))) {
             $week_number = UniversalHelpers::getWeekNumberFromDate($i);
             if (! in_array($week_number, $month_week_numbers)) {
                 $month_week_numbers[] = UniversalHelpers::getWeekNumberFromDate($i);

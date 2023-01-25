@@ -152,7 +152,8 @@ class ValidationHelpers
             'week_data' => 'nullable|string',
             'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id',
             'week_dates' => 'nullable|string',
-            'is_red_week' => 'nullable|boolean', 
+            'is_red_week' => 'nullable|boolean',
+            'date_or_weekly_period' => 'nullable|string', 
         ];
         
         return self::validation($data, $rules);
@@ -189,13 +190,17 @@ class ValidationHelpers
             'replacing_lesson_id' => 'required|integer|exists:App\Lesson,id',
             'replaceable_date' => 'nullable|string',
             'replaceable_date' => function ($attribute, $value, $fail) use ($min_replacement_period) {
-                $replaceable_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
-                if ($replaceable_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+                if (isset($value)) {
+                    $replaceable_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
+                    if ($replaceable_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+                }
             },
             'replacing_date' => 'nullable|string',
             'replacing_date' => function ($attribute, $value, $fail) use ($min_replacement_period) {
-                $replacing_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
-                if ($replacing_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+                if (isset($value)) {
+                    $replacing_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
+                    if ($replacing_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+                }
             },
             'is_regular' => 'required|boolean',
             'initiator_id' => 'required|integer|exists:App\User,id', 
