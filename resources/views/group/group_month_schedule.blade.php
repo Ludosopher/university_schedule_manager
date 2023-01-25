@@ -18,7 +18,7 @@
                 <input type="hidden" name="group_name" value="{{ $data['instance_name'] }}">
                 <input type="hidden" name="weeks" value="{{ json_encode($data['weeks']) }}">
                 <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
-                <button type="submit" class="btn btn-primary top-right-button">В Word</button>
+                <button type="submit" class="btn btn-primary top-right-button">В MS Word</button>
             </form>
         </div>
     </div>

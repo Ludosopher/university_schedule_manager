@@ -201,16 +201,21 @@ class ModelHelpers
         
         $month_week_numbers = UniversalHelpers::getMonthWeekNumbers($incoming_data['month_number']);
         
-        $momth_value = date('n', strtotime($incoming_data['month_number']));
+        $month_value = date('n', strtotime($incoming_data['month_number']));
         $months_genitive = config('enum.months');
-        $data['month_name'] = date("{$months_genitive[$momth_value]} Y").' года';
+
+        $data['month_name'] = date("{$months_genitive[$month_value]} Y").' года';
 
         foreach ($month_week_numbers as $week_number) {
             
             $data['weeks'][$week_number]['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
-            $data['weeks'][$week_number]['week_dates'] = UniversalHelpers::weekDates($week_number);
             
-            
+            $preliminary_week_dates = UniversalHelpers::weekDates($week_number);
+            $week_days_ru = config('enum.week_days_ru');
+            foreach ($preliminary_week_dates as $key => $date) {
+                $data['weeks'][$week_number]['week_dates'][$week_days_ru[$key]] = date('d.m.y', strtotime($date));
+            }
+                        
             $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
             $data['weeks'][$week_number]['week_data'] = [
                 'week_number' => $week_number,
@@ -343,6 +348,7 @@ class ModelHelpers
 
         $instances = FilterHelpers::getFilteredQuery($model_name::with($config['eager_loading_fields']), $incoming_data, $config['instance_name']);
         $appends = self::getAppends($incoming_data);
+        
         $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
 
         return array_merge($data, $properties);
@@ -429,10 +435,13 @@ class ModelHelpers
 
     public static function addOrUpdateManyToManyAttributes($data, $model_id, $model_name, $attributes) {
 
+        $model = $model_name::find($model_id);
+        
         foreach ($attributes as $field => $attribute) {
             if (isset($data[$field])) {
-                $model = $model_name::find($model_id);
                 $model->$attribute()->sync($data[$field]);
+            } else {
+                $model->$attribute()->detach();
             }
         }
         return true;

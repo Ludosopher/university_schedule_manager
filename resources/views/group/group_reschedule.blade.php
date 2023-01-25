@@ -42,7 +42,7 @@
                     <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                    <button type="submit" class="btn btn-primary top-right-button">В Word</button>
+                    <button type="submit" class="btn btn-primary top-right-button">В MS Word</button>
                 </form>
             </div>
         </div>

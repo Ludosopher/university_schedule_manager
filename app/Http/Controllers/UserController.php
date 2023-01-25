@@ -67,6 +67,7 @@ class UserController extends Controller
     public function updateUser (StoreUserRequest $request)
     {
         $validated = $request->validated();
+//  dd($validated);
         $validated = UniversalHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
         $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         
