@@ -66,6 +66,7 @@ Route::middleware(['auth'])->group(function () {
     Route::match(['get', 'post'], '/replacement-request/get-my', 'ReplacementRequestController@getMyReplacementRequests')->name('my_replacement_requests');
     Route::post('/replacement-request/add', 'ReplacementRequestController@addReplacementRequest')->name('replacement-request-add')->middleware('replacer');
     Route::get('/replacement-request/update', 'ReplacementRequestController@updateReplacementRequest')->name('replacement-request-update')->middleware('replacer');
+    Route::get('/replacement-request/delete', 'ReplacementRequestController@deleteReplacementRequest')->name('replacement-request-delete')->middleware('replacer');
 
 
 });

@@ -35,8 +35,9 @@ class ReplacementRequestController extends Controller
 
     public function getMyReplacementRequests (Request $request)
     {
+ 
         $data = ReplacementRequestHelpers::getMyReplacementRequests(Auth::user()->id, $this->config);
-
+        
         return view("replacement_request.my_replacement_requests")->with('data', $data);
     }
 
@@ -65,17 +66,17 @@ class ReplacementRequestController extends Controller
         return redirect()->back()->with('updated_instance_name', $replacement_request['updated_instance_name']);
     }
 
-    // public function deleteTeacher (Request $request)
-    // {
-    //     $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
+    public function deleteReplacementRequest (Request $request)
+    {
+        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
 
-    //     if ($deleted_instance) {
-    //         $instance_name_field = $this->config['instance_name_field'];
-    //         return redirect()->route("teachers", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
-    //     } else {
-    //         return redirect()->route("teachers", ['deleting_instance_not_found' => true]);
-    //     }
-    // }
+        if ($deleted_instance) {
+            $instance_name_field = $this->config['instance_name_field'];
+            return redirect()->route("my_replacement_requests")->with('deleted_instance_name', $deleted_instance->$instance_name_field);
+        } else {
+            return redirect()->route("my_replacement_requests")->with('deleting_instance_not_found', true);
+        }
+    }
 
     // public function getTeacherSchedule (ScheduleTeacherRequest $request)
     // {

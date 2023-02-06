@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('content')
     @php
-//dd($data);
         $min_replacement_period = config('site.min_replacement_period');
         $class_period_ids = config('enum.class_period_ids');
         $class_periods = $data['normalize_class_periods'];    

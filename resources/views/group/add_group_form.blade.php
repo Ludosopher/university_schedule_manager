@@ -1,10 +1,16 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if (isset($data['new_instance_name']))
+        {{-- @if (isset($data['new_instance_name']))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 Данные группы {{ $data['new_instance_name'] }} добавлены.
+            </div>
+        @endif --}}
+        @if (\Session::has('new_instance_name'))
+            <div class="alertAccess">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                Данные группы {{ \Session::get('new_instance_name') }} успешно добавлены.
             </div>
         @endif
         <div class="external-form-container">

@@ -51,9 +51,9 @@ class GroupController extends Controller
 
         if (is_array($data)) {
             if (isset($data['updated_instance_name'])) {
-                return redirect()->route("groups", ['updated_instance_name' => $data['updated_instance_name']]);
+                return redirect()->route("groups")->with('updated_instance_name', $data['updated_instance_name']); //route("groups", ['updated_instance_name' => $data['updated_instance_name']]);
             } elseif (isset($data['new_instance_name'])) {
-                return redirect()->route("group-add-form", ['new_instance_name' => $data['new_instance_name']]);
+                return redirect()->route("group-add-form")->with('new_instance_name', $data['new_instance_name']); //route("group-add-form", ['new_instance_name' => $data['new_instance_name']]);
             }
         }
     }
@@ -62,15 +62,15 @@ class GroupController extends Controller
     {
         $relation_delited_result = GroupHelpers::deleteGroupLessonRelation($request->deleting_id);
         if (!$relation_delited_result) {
-            return redirect()->route("groups", ['deleting_instance_not_found' => true]);
+            return redirect()->route("groups")->with('deleting_instance_not_found', true); //route("groups", ['deleting_instance_not_found' => true]);
         }
         if ($relation_delited_result === 'there_are_lessons_only_with_this_group') {
-            return redirect()->route("groups", [$relation_delited_result => true]);
+            return redirect()->route("groups")->with('there_are_lessons_only_with_this_group', true); //route("groups", [$relation_delited_result => true]);
         }
 
         $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
         $instance_name_field = $this->config['instance_name_field'];
-        return redirect()->route("groups", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+        return redirect()->route("groups")->with('deleted_instance_name', $deleted_instance->$instance_name_field); //route("groups", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
     }
 
     public function getGroupSchedule (ScheduleGroupRequest $request)
@@ -78,7 +78,7 @@ class GroupController extends Controller
         $data = ModelHelpers::getSchedule($request->validated(), $this->config);
 
         if (isset($data['duplicated_lesson'])) {
-            return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+            return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']);
         }
 
         return view("group.group_schedule")->with('data', $data);
@@ -89,7 +89,7 @@ class GroupController extends Controller
         $data = ModelHelpers::getMonthSchedule($request->validated(), $this->config);
         request()->flash();
         if (isset($data['duplicated_lesson'])) {
-            return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+            return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']);
         }
 
         return view("group.group_month_schedule")->with('data', $data);
@@ -108,7 +108,7 @@ class GroupController extends Controller
         $data = ModelHelpers::getModelRechedulingData($validation['validated'], $reschedule_data, $this->config);
 
         if (isset($data['duplicated_lesson'])) {
-            return redirect()->route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+            return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']);
         }
 
         return view("group.group_reschedule")->with('data', $data);

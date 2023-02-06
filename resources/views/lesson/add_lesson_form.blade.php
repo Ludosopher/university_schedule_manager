@@ -9,10 +9,10 @@
                 </div>
             @endforeach
         @endif
-        @if (isset($data['new_instance_name']))
+        @if (\Session::has('new_instance_name'))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные занятия {{ $data['new_instance_name'] }} добавлены.
+                Данные занятия {{ \Session::get('new_instance_name') }} успешно добавлены.
             </div>
         @endif
         <div class="external-form-container">
