@@ -366,15 +366,15 @@
                                                                                 <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                                 <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                                                                                 <button type="submit" class="schedule-replace-link">
-                                                                                    <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
-                                                                                    <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson_red['room'] }}</div>
-                                                                                    <div class="font-size13 text-light-gray schedule-group">{{ $lesson_red[$other_lesson_participant] }}</div>
+                                                                                    <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
+                                                                                    <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_red['room'] }}</div>
+                                                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red[$other_lesson_participant] }}</div>
                                                                                 </button>
                                                                             </form>    
                                                                         @else
-                                                                            <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
-                                                                            <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson_red['room'] }}</div>
-                                                                            <div class="font-size13 text-light-gray schedule-group">{{ $lesson_red[$other_lesson_participant] }}</div>
+                                                                            <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
+                                                                            <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_red['room'] }}</div>
+                                                                            <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red[$other_lesson_participant] }}</div>
                                                                         @endif
 
 
@@ -426,15 +426,15 @@
                                                                                 <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                                 <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                                                                                 <button type="submit" class="schedule-replace-link">
-                                                                                    <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
-                                                                                    <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson_blue['room'] }}</div>
-                                                                                    <div class="font-size13 text-light-gray schedule-group">{{ $lesson_blue[$other_lesson_participant] }}</div>
+                                                                                    <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
+                                                                                    <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>
+                                                                                    <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue[$other_lesson_participant] }}</div>
                                                                                 </button>
                                                                             </form>    
                                                                         @else
-                                                                            <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
-                                                                            <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson_blue['room'] }}</div>
-                                                                            <div class="font-size13 text-light-gray schedule-group">{{ $lesson_blue[$other_lesson_participant] }}</div>
+                                                                            <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
+                                                                            <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>
+                                                                            <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue[$other_lesson_participant] }}</div>
                                                                         @endif
                                                                         {{-- <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
                                                                         <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>

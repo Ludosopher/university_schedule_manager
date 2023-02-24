@@ -39,7 +39,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/teacher/month-schedule/export-to-doc', 'TeacherController@exportMonthScheduleToDoc')->name('teacher-month-schedule-doc-export');
     Route::match(['get', 'post'], '/teacher/reschedule', 'TeacherController@getTeacherReschedule')->name('teacher-reschedule');
     Route::post('/teacher/reschedule/export-to-doc', 'TeacherController@exportRescheduleToDoc')->name('teacher-reschedule-doc-export');
-
+    
     Route::match(['get', 'post'],'/group/get-all', 'GroupController@getGroups')->name('groups');
     Route::get('/group/add-form', 'GroupController@addGroupForm')->name('group-add-form')->middleware('moderator');
     Route::post('/group/add-update', 'GroupController@addOrUpdateGroup')->name('group-add-update')->middleware('moderator');
@@ -67,6 +67,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/replacement-request/add', 'ReplacementRequestController@addReplacementRequest')->name('replacement-request-add')->middleware('replacer');
     Route::get('/replacement-request/update', 'ReplacementRequestController@updateReplacementRequest')->name('replacement-request-update')->middleware('replacer');
     Route::get('/replacement-request/delete', 'ReplacementRequestController@deleteReplacementRequest')->name('replacement-request-delete')->middleware('replacer');
+    Route::post('/replacement-request/send', 'ReplacementRequestController@sendReplacementRequest')->name('replacement-request-send');
+    Route::post('/replacement-request/chat', 'ReplacementRequestController@openReplacementRequestChat')->name('replacement-request-chat');
 
 
 });

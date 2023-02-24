@@ -2,8 +2,12 @@
 
 namespace App\Helpers;
 
+use App\Notifications\ReplacementRequestStatusChanged;
 use App\ReplacementRequest;
+use App\ReplacementRequestMessage;
+use App\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Notification;
 
 class ReplacementRequestHelpers
 {
@@ -21,8 +25,10 @@ class ReplacementRequestHelpers
                                           })->get();
 
         $result = [
-            'my' => [],
-            'to_me' => []
+            'my_requests' => [],
+            'to_me_requests' => [],
+            'user_id' => $initiator_id,
+            'user_name' => User::where('id', $initiator_id)->value('name'),
         ];
         foreach ($my_requests as $request) {
 
@@ -52,7 +58,8 @@ class ReplacementRequestHelpers
         $original_is_cancelled = $request->getOriginal('is_cancelled');
         $original_is_declined = $request->getOriginal('is_declined');
         $original_is_not_permitted = $request->getOriginal('is_not_permitted');
-
+        //$old_status_id = $request->status_id;
+        
         if ($request->is_sent != $original_is_sent && $request->is_sent) {
             $request->status_id = $replacement_request_status_ids['in_consent_waiting'];
             $request->is_cancelled = 0;
@@ -82,6 +89,28 @@ class ReplacementRequestHelpers
             $request->status_id = $replacement_request_status_ids['not_permitted'];
             $request->is_permitted = 0;
         }
+ 
+        // if ($request->status_id != $old_status_id
+        //     && $request->status_id != $replacement_request_status_ids['in_consent_waiting']) {
+        //     NotificationHelpers::sendReplacementRequestStatusChangedNotifi($request, $old_status_id);
+        // }
     }
 
+    public static function updatadStatus($request) {
+        
+        $replacement_request_status_ids = config('enum.replacement_request_status_ids');
+        
+        $original_status_id = $request->getOriginal('status_id');
+        if ($request->status_id != $original_status_id
+            && $request->status_id != $replacement_request_status_ids['in_consent_waiting']) {
+            NotificationHelpers::sendReplacementRequestStatusChangedNotifi($request, $original_status_id);
+        }
+    }
+
+    public static function deleteReplacementRequest ($deleting_id, $model_name) {
+        
+        ReplacementRequestMessage::where('replacement_request_id', $deleting_id)->delete();
+        
+        return ModelHelpers::deleteInstance($deleting_id, $model_name);
+    }
 }

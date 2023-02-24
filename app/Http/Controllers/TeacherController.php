@@ -7,6 +7,7 @@ use App\Group;
 use App\Helpers\DocExportHelpers;
 use App\Helpers\FilterHelpers;
 use App\Helpers\LessonHelpers;
+use App\Helpers\MailHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
 use App\Helpers\UniversalHelpers;
@@ -19,6 +20,7 @@ use App\Http\Requests\teacher\RescheduleTeacherRequest;
 use App\Http\Requests\teacher\ScheduleTeacherRequest;
 use App\Http\Requests\teacher\StoreTeacherRequest;
 use App\Lesson;
+use App\Mail\MailReplacementRequest;
 use App\ReplacementRequest;
 use App\Teacher;
 use App\User;
@@ -26,6 +28,7 @@ use App\WeekDay;
 use App\WeeklyPeriod;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class TeacherController extends Controller
@@ -84,7 +87,6 @@ class TeacherController extends Controller
     public function getTeacherSchedule (ScheduleTeacherRequest $request)
     {
         $data = ModelHelpers::getSchedule($request->validated(), $this->config);
-        // request()->flash();
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']); //route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
         }

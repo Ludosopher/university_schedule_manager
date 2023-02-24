@@ -155,6 +155,7 @@ class ModelHelpers
                     'id' => $lesson->id,
                     'week_day_id' => $lesson->week_day_id,
                     'weekly_period_id' => $lesson->weekly_period_id,
+                    'real_weekly_period_id' => $lesson->real_weekly_period_id ?? null,
                     'class_period_id' => $lesson->class_period_id,
                     'teacher_id' => $lesson->teacher_id,
                     'type' => $lesson->lesson_type->short_notation,
@@ -308,6 +309,7 @@ class ModelHelpers
         $model_name = $config['model_name'];
 
         $instance = self::addOrUpdate($data, $model_name);
+        
         if (isset($data['updating_id'])) {
             return ['id' => $instance->id, 'updated_instance_name' => $instance->$instance_name_field];
         } else {

@@ -24,6 +24,7 @@ class LessonHelpers
         $normalaze_class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
 
         $replacing_lesson = Lesson::where('id', $data['lesson_id'])->first();
+        $is_periodic_replacing_lesson = $replacing_lesson->weekly_period_id != $weekly_period_ids['every_week'];
         $seeking_teacher = Teacher::where('id', $data['teacher_id'])->with(['lessons'])->first();
         $groups_ids = array_column($replacing_lesson->groups->toArray(), 'id');
         sort($groups_ids);
@@ -48,10 +49,40 @@ class LessonHelpers
         foreach ($groups_lessons as $g_lesson) {
             if (!in_array($g_lesson->teacher->id, $looked_teachers)) {
                 foreach ($g_lesson->teacher->lessons as $key => $dt_lesson) {
+                    //----------
+                    // if ($g_lesson->teacher->id == 7 && $dt_lesson->class_period_id == 1 && $dt_lesson->week_day_id == 4) {
+                    //     echo '<pre>';
+                    //     print_r($dt_lesson->class_period_id);
+                    //     print_r($dt_lesson->week_day_id);
+                    //     print_r($dt_lesson->weekly_period_id);
+                    //     echo '</pre>';
+                        
+                    //     echo '<pre>';
+                    //     print_r('__'.$data['class_period_id']);
+                    //     print_r('__'.$data['week_day_id']);
+                    //     print_r('__'.$data['weekly_period_id']);
+                    //     print_r('__'.$weekly_period_ids['every_week']);
+                    //     echo '</pre>';
+
+                    //     echo '<pre>';
+                    //     print_r($dt_lesson->class_period_id == $data['class_period_id']);
+                    //     print_r($dt_lesson->week_day_id == $data['week_day_id']);
+                    //     print_r($dt_lesson->weekly_period_id == $weekly_period_ids['every_week']);
+                    //     echo '</pre>';
+                    // }
+                    //----------
                     if ($dt_lesson->week_day_id == $data['week_day_id']
-                        && ($dt_lesson->weekly_period_id == $data['weekly_period_id'] || $dt_lesson->weekly_period_id == $weekly_period_ids['every_week'])
+                        && ($dt_lesson->weekly_period_id == $data['weekly_period_id'] || $dt_lesson->weekly_period_id == $weekly_period_ids['every_week'] || $data['weekly_period_id'] == $weekly_period_ids['every_week'])
                         && $dt_lesson->class_period_id == $data['class_period_id'])
                     {
+                        
+                        //----------
+                        // if ($g_lesson->teacher->id == 7) {
+                        //     echo '<pre>';
+                        //     print_r('is_not_suitable_teacher');
+                        //     echo '</pre>';
+                        // }
+                        //----------
                         $is_suitable_teacher = false;
                         break;
                     }
@@ -63,12 +94,19 @@ class LessonHelpers
                             continue;
                         };
                         $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $dt_lesson);
+                        $w_p_field = 'weekly_period_id';
                         if (isset($week_schedule_lesson)) {
                             if ($week_schedule_lesson) {
                                 $dt_lesson = $week_schedule_lesson;
+                                $w_p_field = 'real_weekly_period_id';
                             } else {
                                 continue;
                             }
+                        }
+                        if ($dt_lesson->$w_p_field == $weekly_period_ids['every_week'] && $is_periodic_replacing_lesson
+                            || $dt_lesson->$w_p_field != $weekly_period_ids['every_week'] && ! $is_periodic_replacing_lesson)
+                        {
+                            continue;
                         }
                         $dt_lesson_groups_ids = array_column($dt_lesson->groups->toArray(), 'id');
                         sort($dt_lesson_groups_ids);
