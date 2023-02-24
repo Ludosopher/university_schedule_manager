@@ -61,9 +61,9 @@ class LessonController extends Controller
 
         if (is_array($lesson)) {
             if (isset($lesson['updated_instance_name'])) {
-                return redirect()->route("lessons", ['updated_instance_name' => $lesson['updated_instance_name']]);
+                return redirect()->route("lessons")->with('updated_instance_name', $lesson['updated_instance_name']); //route("lessons", ['updated_instance_name' => $lesson['updated_instance_name']]);
             } elseif (isset($lesson['new_instance_name'])) {
-                return redirect()->route("lesson-add-form", ['new_instance_name' => $lesson['new_instance_name']]);
+                return redirect()->route("lesson-add-form")->with('new_instance_name', $lesson['new_instance_name']); //route("lesson-add-form", ['new_instance_name' => $lesson['new_instance_name']]);
             }
         }
     }
@@ -73,11 +73,11 @@ class LessonController extends Controller
         $attributes = array_values($this->config['many_to_many_attributes']);
         $relations_deleted_result = ModelHelpers::deleteManyToManyAttributes($request->deleting_id, $this->config['model_name'], $attributes);
         if (!$relations_deleted_result) {
-            return redirect()->route("lessons", ['deleting_instance_not_found' => true]);
+            return redirect()->route("lessons")->with('deleting_instance_not_found', true); //route("lessons", ['deleting_instance_not_found' => true]);
         }
         $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
         $instance_name_field = $this->config['instance_name_field'];
-        return redirect()->route("lessons", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+        return redirect()->route("lessons")->with('deleted_instance_name', $deleted_instance->$instance_name_field); //route("lessons", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
     }
 
     public function getReplacementVariants (Request $request)

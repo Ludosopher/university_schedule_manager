@@ -41,7 +41,7 @@ class CreateReplacementRequestTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('replacement_request_messages', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('replacement_request_id')->nullable();
             $table->unsignedBigInteger('author_id');
@@ -51,15 +51,7 @@ class CreateReplacementRequestTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('addressee_id');
-            $table->string('subject');
-            $table->text('body');
-            $table->boolean('is_readed')->default(false);
-            $table->foreign('addressee_id')->references('id')->on('users')->onDelete('cascade');
-            $table->timestamps();
-        });
+       
     }
 
     /**
@@ -72,7 +64,6 @@ class CreateReplacementRequestTable extends Migration
         Schema::dropIfExists('replacement_request_statuses');
         Schema::dropIfExists('replacement_requests');
         Schema::dropIfExists('messages');
-        Schema::dropIfExists('notifications');
-
+    
     }
 }

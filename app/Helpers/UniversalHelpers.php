@@ -137,7 +137,9 @@ class UniversalHelpers
             || 
             (! $week_is_red && $lesson->weekly_period_id != $weekly_period_ids['red_week'])) 
         {
+            $lesson->real_weekly_period_id = $lesson->weekly_period_id;
             $lesson->weekly_period_id = $weekly_period_ids['every_week'];
+
             return $lesson;
         }
         

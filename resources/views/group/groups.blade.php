@@ -19,13 +19,13 @@
                 {{ __('user_validation.invalid_input_data') }}
             </div>
         @endif
-        @if (isset($data['updated_instance_name']))
+        @if (\Session::has('updated_instance_name'))
             <div class="alertAccess">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', $data['updated_instance_name'], __('group.group_updated')) }}
+                {{ str_replace('?', \Session::get('updated_instance_name'), __('group.group_updated')) }}
             </div>
         @endif
-        @if (isset($data['there_are_lessons_only_with_this_group']))
+        @if (\Session::has('there_are_lessons_only_with_this_group'))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ __('group.group_is_only_one_in_lesson') }}

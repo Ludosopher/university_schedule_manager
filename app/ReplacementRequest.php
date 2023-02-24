@@ -33,7 +33,7 @@ class ReplacementRequest extends Model
 
     public function messages()
     {
-        return $this->hasMany('App\Message');
+        return $this->hasMany('App\ReplacementRequestMessage');
     }
 
     public $additional_attributes = ['regular', 'name'];
@@ -101,7 +101,7 @@ class ReplacementRequest extends Model
         });
 
         static::updated(function ($replacement_request) {
-
+            ReplacementRequestHelpers::updatadStatus($replacement_request);
         });
     }
 }

@@ -155,6 +155,7 @@ class ModelHelpers
                     'id' => $lesson->id,
                     'week_day_id' => $lesson->week_day_id,
                     'weekly_period_id' => $lesson->weekly_period_id,
+                    'real_weekly_period_id' => $lesson->real_weekly_period_id ?? null,
                     'class_period_id' => $lesson->class_period_id,
                     'teacher_id' => $lesson->teacher_id,
                     'type' => $lesson->lesson_type->short_notation,
@@ -308,6 +309,7 @@ class ModelHelpers
         $model_name = $config['model_name'];
 
         $instance = self::addOrUpdate($data, $model_name);
+        
         if (isset($data['updating_id'])) {
             return ['id' => $instance->id, 'updated_instance_name' => $instance->$instance_name_field];
         } else {
@@ -328,23 +330,23 @@ class ModelHelpers
         $data['filter_form_fields'] = config()->has("forms.{$config['instance_name']}_filter") ? config("forms.{$config['instance_name']}_filter") : [];
         $properties = $model_name::getProperties();
 
-        if (!isset($incoming_data['sort'])) {
-            if (isset($incoming_data['deleted_instance_name'])) {
-                $data['deleted_instance_name'] = $incoming_data['deleted_instance_name'];
-            }
-            if (isset($incoming_data['deleting_instance_not_found'])) {
-                $data['deleting_instance_not_found'] = true;
-            }
-            if (isset($incoming_data['updated_instance_name'])) {
-                $data['updated_instance_name'] = $incoming_data['updated_instance_name'];
-            }
-            if (isset($incoming_data['duplicated_lesson'])) {
-                $data['duplicated_lesson'] = $incoming_data['duplicated_lesson'];
-            }
-            if (isset($incoming_data['there_are_lessons_only_with_this_group'])) {
-                $data['there_are_lessons_only_with_this_group'] = $incoming_data['there_are_lessons_only_with_this_group'];
-            }
-        }
+        // if (!isset($incoming_data['sort'])) {
+        //     if (isset($incoming_data['deleted_instance_name'])) {
+        //         $data['deleted_instance_name'] = $incoming_data['deleted_instance_name'];
+        //     }
+        //     if (isset($incoming_data['deleting_instance_not_found'])) {
+        //         $data['deleting_instance_not_found'] = true;
+        //     }
+        //     if (isset($incoming_data['updated_instance_name'])) {
+        //         $data['updated_instance_name'] = $incoming_data['updated_instance_name'];
+        //     }
+        //     if (isset($incoming_data['duplicated_lesson'])) {
+        //         $data['duplicated_lesson'] = $incoming_data['duplicated_lesson'];
+        //     }
+        //     if (isset($incoming_data['there_are_lessons_only_with_this_group'])) {
+        //         $data['there_are_lessons_only_with_this_group'] = $incoming_data['there_are_lessons_only_with_this_group'];
+        //     }
+        // }
 
         $instances = FilterHelpers::getFilteredQuery($model_name::with($config['eager_loading_fields']), $incoming_data, $config['instance_name']);
         $appends = self::getAppends($incoming_data);

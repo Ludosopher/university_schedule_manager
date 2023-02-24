@@ -56,7 +56,8 @@ class Teacher extends Model
         return $this->belongsToMany(User::class);
     }
     
-    public $additional_attributes = ['full_name', 'profession_level_name', 'age'];
+    public $additional_attributes = ['full_name', 'first_name_patronymic', 'profession_level_name', 'age'];
+    
     public function getFullNameAttribute()
     {
         $patronymic = '';
@@ -64,6 +65,15 @@ class Teacher extends Model
             $patronymic = $this->patronymic;
         }
         return "{$this->last_name} {$this->first_name} {$patronymic}";
+    }
+
+    public function getFirstNamePatronymicAttribute()
+    {
+        $patronymic = '';
+        if (isset($this->patronymic)) {
+            $patronymic = $this->patronymic;
+        }
+        return "{$this->first_name} {$patronymic}";
     }
 
     public function getProfessionLevelNameAttribute()

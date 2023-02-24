@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Helpers\CronHelpers;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -24,7 +25,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+//\Log::info('schedule+is+started');
+        $schedule->call(function () {
+            CronHelpers::replacementRequestStatusesUpdate();
+        })->daily(); // everyFiveMinutes(); daily() hourly()
     }
 
     /**

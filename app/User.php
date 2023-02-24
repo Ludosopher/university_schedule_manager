@@ -56,14 +56,9 @@ class User extends Authenticatable
         return $this->hasMany('App\ReplacementRequest', 'initiator_id');
     }
 
-    public function messages()
+    public function replacement_request_messages()
     {
-        return $this->hasMany('App\Message', 'author_id');
-    }
-
-    public function notifications()
-    {
-        return $this->hasMany('App\Notification', 'addressee_id');
+        return $this->hasMany('App\ReplacementRequestMessage', 'author_id');
     }
 
     public $additional_attributes = ['group_names', 'teacher_names', 'moderator', 'admin'];
