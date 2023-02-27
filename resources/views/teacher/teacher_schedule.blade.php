@@ -58,7 +58,11 @@
                                 $week_days_ru = config('enum.week_days_ru');
                             @endphp
                             @foreach($data['week_dates'] as $week_day_id => $date)
-                                <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                @if(is_array($date) && isset($date['is_holiday']))
+                                    <th class="text-uppercase" style="color: red;" title="Праздничный день">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                @else
+                                    <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                @endif
                             @endforeach
                         @else
                             <th class="text-uppercase">Понедельник</th>
@@ -95,7 +99,11 @@
                                 </td>
 
                                 @foreach($week_day_ids as $wd_name => $week_day_id)
-                                    @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
+                                    @php
+                                        $is_holiday = isset($data['week_dates']) && is_array($data['week_dates'][$week_day_id]) && isset($data['week_dates'][$week_day_id]['is_holiday']);
+                                    @endphp
+                                    @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])
+                                        && ! $is_holiday)
                                         @php 
                                             $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
                                             $cell_bg_color = isset($lesson['date']) ? '#D3D3D3' : $weekly_period_color[$weekly_period_id['every_week']];

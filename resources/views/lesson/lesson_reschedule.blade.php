@@ -55,8 +55,12 @@
                     <tr class="bg-light-gray">
                         <th class="text-uppercase">Пара</th>
                         @if(isset($data['week_dates']))
-                            @foreach($data['week_dates'] as $name => $date)
-                                <th class="text-uppercase">{{ $name }} ({{ $date }})</th>
+                            @foreach($data['week_dates'] as $week_day_id => $date)
+                                @if(is_array($date) && isset($date['is_holiday']))
+                                    <th class="text-uppercase" style="color: red;" title="Праздничный день">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                @else
+                                    <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                @endif
                             @endforeach
                         @else
                             <th class="text-uppercase">Понедельник</th>
@@ -99,10 +103,14 @@
                                     </td>
                                 @endif
                                 @foreach($week_day_ids as $wd_name => $week_day_id)
+                                    @php
+                                        $is_holiday = isset($data['week_dates']) && is_array($data['week_dates'][$week_day_id]) && isset($data['week_dates'][$week_day_id]['is_holiday']);
+                                    @endphp
                                     @if($week_day_id <= $week_days_limit)
-                                        @if(isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
-                                        @php $free_period = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]; @endphp
-                                        <td class="schedule-cell reschedule-cell" style="background-color: {{ $free_weekly_period_color[$weekly_period_id['every_week']] }};"></td>
+                                        @if (isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])
+                                             && ! $is_holiday)
+                                            @php $free_period = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]; @endphp
+                                            <td class="schedule-cell reschedule-cell" style="background-color: {{ $free_weekly_period_color[$weekly_period_id['every_week']] }};"></td>
                                         @elseif(isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']]))
                                             @php
                                                 $free_period_red = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;

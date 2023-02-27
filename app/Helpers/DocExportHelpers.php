@@ -99,9 +99,15 @@ class DocExportHelpers
             $week_dates = json_decode($data['week_dates'], true);
             $week_days_ru = config('enum.week_days_ru');
 
-            foreach ($week_dates as $key => $date) {
-                $date = date('d.m.y', strtotime($date));
-                $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$key]} ({$date})", $headerFontStyle, $headerParagraphStyle);
+            foreach ($week_dates as $week_day_id => $date) {
+                if (is_array($date) && isset($date['is_holiday'])) {
+                    $date = date('d.m.y', strtotime($date['date']));
+                    $is_holiday_header = ' /праздничный день/';
+                } else {
+                    $date = date('d.m.y', strtotime($date));
+                    $is_holiday_header = '';
+                }
+                $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$week_day_id]} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
             }
         } else {
             $table->addCell(2000, $headerCellStyle)->addText('Понедельник', $headerFontStyle, $headerParagraphStyle);
@@ -117,7 +123,8 @@ class DocExportHelpers
             $left_header_cell->addText($class_period_id, $headerFontStyle, $headerParagraphStyle);
             $left_header_cell->addText(date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])).' - '.date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])), $headerFontStyle, $headerParagraphStyle);
             foreach($week_day_ids as $wd_name => $week_day_id) {
-                if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])) {
+                $is_holiday = isset($week_dates) && is_array($week_dates[$week_day_id]) && isset($week_dates[$week_day_id]['is_holiday']); 
+                if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
                     $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
                     $lesson_n = $lesson['name'];
                     $lesson_type = "({$lesson['type']})";
@@ -268,6 +275,7 @@ class DocExportHelpers
         $class_periods = ClassPeriod::get();
         $class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
         $other_partic = $data['other_participant'];
+        $week_days_ru = config('enum.week_days_ru');
         //------------------------------------------------------
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
        
@@ -311,8 +319,15 @@ class DocExportHelpers
             $table->addRow(null, array('tblHeader' => true));
             $table->addCell(1300, $headerCellStyle)->addText($week_color_name, $headerFontStyle, $headerParagraphStyle);
             
-            foreach ($week_dates as $name => $date) {
-                $table->addCell(2000, $headerCellStyle)->addText("{$name} ({$date})", $headerFontStyle, $headerParagraphStyle);
+            foreach ($week_dates as $week_day_id => $date) {
+                if (is_array($date) && isset($date['is_holiday'])) {
+                    $date = date('d.m.y', strtotime($date['date']));
+                    $is_holiday_header = ' /праздничный день/';
+                } else {
+                    $date = date('d.m.y', strtotime($date));
+                    $is_holiday_header = '';
+                }
+                $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$week_day_id]} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
             }
             
             foreach ($class_period_ids as $lesson_name => $class_period_id) {
@@ -323,7 +338,8 @@ class DocExportHelpers
                 $left_header_cell->addText(date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])).' - '.date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])), $headerFontStyle, $headerParagraphStyle);
                 
                 foreach ($week_day_ids as $wd_name => $week_day_id) {
-                    if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])) {
+                    $is_holiday = is_array($week_dates[$week_day_id]) && isset($week_dates[$week_day_id]['is_holiday']);
+                    if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
                         $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
                         $lesson_n = $lesson['name'];
                         $lesson_type = "({$lesson['type']})";

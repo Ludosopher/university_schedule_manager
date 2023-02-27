@@ -36,15 +36,31 @@ class UniversalHelpers
 
     public static function getWeekDates($year, $week)
     {
-        return [
+        $holidays = self::getHolidays();
+        $dates =  [
             1 => (new DateTime())->setISODate($year, $week, 1)->format('Y-m-d H:i:s'),
             2 => (new DateTime())->setISODate($year, $week, 2)->format('Y-m-d H:i:s'),
             3 => (new DateTime())->setISODate($year, $week, 3)->format('Y-m-d H:i:s'),
             4 => (new DateTime())->setISODate($year, $week, 4)->format('Y-m-d H:i:s'),
             5 => (new DateTime())->setISODate($year, $week, 5)->format('Y-m-d H:i:s'),
             6 => (new DateTime())->setISODate($year, $week, 6)->format('Y-m-d H:i:s'),
-            // 'Воскресенье' => (new DateTime())->setISODate($year, $week, 7)->format('d.m.y') 
+            // 7 => (new DateTime())->setISODate($year, $week, 7)->format('d.m.y') 
         ];
+
+        foreach ($dates as &$date) {
+            foreach ($holidays as $holiday) {
+                if (date('Y-m-d', strtotime($date)) == date('Y-m-d', strtotime($holiday))) {
+                    $holiday_date = [
+                        'is_holiday' => true,
+                        'date' => $date
+                    ];
+                    $date = $holiday_date;
+                    break;
+                }
+            }
+        }
+
+        return $dates;
     }
 
     public static function weekStartEndDates($week_str) {
@@ -167,6 +183,23 @@ class UniversalHelpers
         }
 
         return $month_week_numbers;
+    }
+
+    public static function getHolidays() {
+        
+        $calendar = simplexml_load_file('http://xmlcalendar.ru/data/ru/'.date('Y').'/calendar.xml');
+        $calendar = $calendar->days->day;
+
+        //все праздники за текущий год
+        foreach( $calendar as $day ){
+            $d = (array)$day->attributes()->d;
+            $d = $d[0];
+            $d = substr($d, 3, 2).'.'.substr($d, 0, 2).'.'.date('Y');
+            //не считая короткие дни
+            if( $day->attributes()->t == 1 ) $arHolidays[] = $d;
+        }
+
+        return $arHolidays;
     }
 
 

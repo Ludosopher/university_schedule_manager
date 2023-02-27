@@ -197,7 +197,11 @@
                                             $week_days_ru = config('enum.week_days_ru');
                                         @endphp
                                         @foreach($data['week_dates'] as $week_day_id => $date)
-                                            <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                            @if(is_array($date) && isset($date['is_holiday']))
+                                                <th class="text-uppercase" style="color: red;" title="Праздничный день">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                            @else
+                                                <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                            @endif
                                         @endforeach
                                     @else
                                         <th class="text-uppercase">Понедельник</th>
@@ -242,81 +246,85 @@
                                                 </td>
                                                 @foreach($week_day_ids as $wd_name => $week_day_id)
                                                     @if($week_day_id <= $week_days_limit)
-                                                        @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
-                                                        @php 
-                                                            $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                                                            $other_lesson_participant = 'group';
-                                                            $is_replacement_link = false;
-                                                            $color = '';
-                                                            $title = '';
-                                                            if (isset($lesson['for_replacement']) && $lesson['for_replacement']) 
-                                                            {
-                                                                $color = 'RGB(200, 255, 200)';
-                                                                $title = 'Вариант замены. Просрочен!';
-                                                                $other_lesson_participant = 'teacher';
-                                                                if (
-                                                                    (isset($lesson['replacing_hours_diff']) && $lesson['replacing_hours_diff'] > $min_replacement_period)
-                                                                    ||
-                                                                    (! isset($lesson['replacing_hours_diff'])) 
-                                                                   )
-                                                                {
-                                                                    $color = 'PaleGreen';
-                                                                    $title = 'Вариант замены';
-                                                                    if (in_array($data['prev_replace_rules']['teacher_id'], $data['user_teachers_ids'])) {
-                                                                        $is_replacement_link = true;
-                                                                    }
-                                                                }   
-                                                            } elseif ($lesson['id'] == $data['prev_replace_rules']['lesson_id'] 
-                                                                      && (
-                                                                           ! isset($lessons['week_dates'][$week_day_id]) 
-                                                                           || ! isset($data['prev_replace_rules']['date'])
-                                                                           || (isset($lessons['week_dates'][$week_day_id]) && isset($data['prev_replace_rules']['date']) 
-                                                                               && date('Y-m-d', strtotime($lessons['week_dates'][$week_day_id])) == date('Y-m-d', strtotime($data['prev_replace_rules']['date']))
-                                                                              )
-                                                                         )
-                                                                     ) 
-                                                            {
-                                                                $color = 'Yellow';
-                                                                $title = 'Заменяемое занятие';
-                                                                if (isset($data['replaceable_hours_diff']) && $data['replaceable_hours_diff'] <= $min_replacement_period)
-                                                                {
-                                                                    $color = 'RGB(255, 255, 200)';
-                                                                    $title = 'Заменяемое занятие. Просрочено!';
-                                                                }
-                                                                
-                                                            } 
+                                                        @php
+                                                            $is_holiday = isset($data['week_dates']) && is_array($data['week_dates'][$week_day_id]) && isset($data['week_dates'][$week_day_id]['is_holiday']);
                                                         @endphp
-                                                        <td class="schedule-cell" style="background-color: {{ $color }}" title="{{ $title }}">
-                                                            <div class="dropdown schedule-actions-div">
-                                                                @if(isset($lesson['date']))
-                                                                    <div class="margin-10px-top font-size14 schedule-date"><span class="schedule-date-text">{{ $lesson['date'] }}</span></div>
-                                                                @endif
-                                                                @if ($is_replacement_link)
-                                                                    <form method="POST" action="{{ route('replacement-request-add') }}" title="Попросить о замене по этому варианту" target="_blank">
-                                                                    @csrf
-                                                                        <input type="hidden" name="replaceable_lesson_id" value="{{ $data['prev_replace_rules']['lesson_id'] }}">
-                                                                        <input type="hidden" name="replaceable_date" value="{{ $data['replaceable_date_time'] }}">
-                                                                        <input type="hidden" name="replacing_lesson_id" value="{{ $lesson['id'] }}">
-                                                                        <input type="hidden" name="replacing_date" value="{{ $lesson['replacing_date_time'] }}">
-                                                                        <input type="hidden" name="is_regular" value="{{ ! count($lessons['week_dates']) ? 1 : 0 }}">
-                                                                        <input type="hidden" name="initiator_id" value="{{ $data['initiator_id'] }}">
-                                                                        <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
-                                                                        <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
-                                                                        <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
-                                                                        <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                        <button type="submit" class="schedule-replace-link">
-                                                                            <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
-                                                                            <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
-                                                                            <div class="font-size13 text-light-gray schedule-group">{{ $lesson[$other_lesson_participant] }}</div>
-                                                                        </button>
-                                                                    </form>    
-                                                                @else
-                                                                    <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
-                                                                    <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
-                                                                    <div class="font-size13 text-light-gray schedule-group">{{ $lesson[$other_lesson_participant] }}</div>
-                                                                @endif
-                                                            </div>
-                                                        </td>
+                                                        @if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])
+                                                             && ! $is_holiday)
+                                                            @php 
+                                                                $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                                                                $other_lesson_participant = 'group';
+                                                                $is_replacement_link = false;
+                                                                $color = '';
+                                                                $title = '';
+                                                                if (isset($lesson['for_replacement']) && $lesson['for_replacement']) 
+                                                                {
+                                                                    $color = 'RGB(200, 255, 200)';
+                                                                    $title = 'Вариант замены. Просрочен!';
+                                                                    $other_lesson_participant = 'teacher';
+                                                                    if (
+                                                                        (isset($lesson['replacing_hours_diff']) && $lesson['replacing_hours_diff'] > $min_replacement_period)
+                                                                        ||
+                                                                        (! isset($lesson['replacing_hours_diff'])) 
+                                                                    )
+                                                                    {
+                                                                        $color = 'PaleGreen';
+                                                                        $title = 'Вариант замены';
+                                                                        if (in_array($data['prev_replace_rules']['teacher_id'], $data['user_teachers_ids'])) {
+                                                                            $is_replacement_link = true;
+                                                                        }
+                                                                    }   
+                                                                } elseif ($lesson['id'] == $data['prev_replace_rules']['lesson_id'] 
+                                                                        && (
+                                                                            ! isset($lessons['week_dates'][$week_day_id]) 
+                                                                            || ! isset($data['prev_replace_rules']['date'])
+                                                                            || (isset($lessons['week_dates'][$week_day_id]) && isset($data['prev_replace_rules']['date']) 
+                                                                                && date('Y-m-d', strtotime($lessons['week_dates'][$week_day_id])) == date('Y-m-d', strtotime($data['prev_replace_rules']['date']))
+                                                                                )
+                                                                            )
+                                                                        ) 
+                                                                {
+                                                                    $color = 'Yellow';
+                                                                    $title = 'Заменяемое занятие';
+                                                                    if (isset($data['replaceable_hours_diff']) && $data['replaceable_hours_diff'] <= $min_replacement_period)
+                                                                    {
+                                                                        $color = 'RGB(255, 255, 200)';
+                                                                        $title = 'Заменяемое занятие. Просрочено!';
+                                                                    }
+                                                                    
+                                                                } 
+                                                            @endphp
+                                                            <td class="schedule-cell" style="background-color: {{ $color }}" title="{{ $title }}">
+                                                                <div class="dropdown schedule-actions-div">
+                                                                    @if(isset($lesson['date']))
+                                                                        <div class="margin-10px-top font-size14 schedule-date"><span class="schedule-date-text">{{ $lesson['date'] }}</span></div>
+                                                                    @endif
+                                                                    @if ($is_replacement_link)
+                                                                        <form method="POST" action="{{ route('replacement-request-add') }}" title="Попросить о замене по этому варианту" target="_blank">
+                                                                        @csrf
+                                                                            <input type="hidden" name="replaceable_lesson_id" value="{{ $data['prev_replace_rules']['lesson_id'] }}">
+                                                                            <input type="hidden" name="replaceable_date" value="{{ $data['replaceable_date_time'] }}">
+                                                                            <input type="hidden" name="replacing_lesson_id" value="{{ $lesson['id'] }}">
+                                                                            <input type="hidden" name="replacing_date" value="{{ $lesson['replacing_date_time'] }}">
+                                                                            <input type="hidden" name="is_regular" value="{{ ! count($lessons['week_dates']) ? 1 : 0 }}">
+                                                                            <input type="hidden" name="initiator_id" value="{{ $data['initiator_id'] }}">
+                                                                            <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
+                                                                            <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
+                                                                            <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                                                                            <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
+                                                                            <button type="submit" class="schedule-replace-link">
+                                                                                <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
+                                                                                <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
+                                                                                <div class="font-size13 text-light-gray schedule-group">{{ $lesson[$other_lesson_participant] }}</div>
+                                                                            </button>
+                                                                        </form>    
+                                                                    @else
+                                                                        <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
+                                                                        <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
+                                                                        <div class="font-size13 text-light-gray schedule-group">{{ $lesson[$other_lesson_participant] }}</div>
+                                                                    @endif
+                                                                </div>
+                                                            </td>
                                                         @elseif(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']]))
                                                             @php 
                                                                 $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
@@ -376,11 +384,6 @@
                                                                             <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_red['room'] }}</div>
                                                                             <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red[$other_lesson_participant] }}</div>
                                                                         @endif
-
-
-                                                                        {{-- <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
-                                                                        <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_red['room'] }}</div>
-                                                                        <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red[$other_lesson_participant] }}</div> --}}
                                                                     </div>
                                                                 @endif
                                                                 @if($lesson_blue)
@@ -436,9 +439,6 @@
                                                                             <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>
                                                                             <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue[$other_lesson_participant] }}</div>
                                                                         @endif
-                                                                        {{-- <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
-                                                                        <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>
-                                                                        <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue[$other_lesson_participant] }}</div> --}}
                                                                     </div>
                                                                 @endif
                                                             </td>

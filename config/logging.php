@@ -41,17 +41,21 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        //        'single' => [
+        //            'driver' => 'single',
+        //            'path' => storage_path('logs/laravel.log'),
+        //            'level' => 'debug',
+        //        ],
         'single' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
+            'days' => 5,
         ],
 
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
-            'days' => 14,
+            'days' => 5,
         ],
 
         'slack' => [
@@ -98,6 +102,12 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'models' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/models.log'),
+            'days' => 5,
         ],
     ],
 

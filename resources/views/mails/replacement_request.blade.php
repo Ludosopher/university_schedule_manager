@@ -140,7 +140,11 @@
                             $week_days_ru = config('enum.week_days_ru');
                         @endphp
                         @foreach($data['week_dates'] as $week_day_id => $date)
-                            <th style="border: 1px solid grey; text-align: center;">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                            @if(is_array($date) && isset($date['is_holiday']))
+                                <th class="text-uppercase" style="color: red;" title="Праздничный день">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                            @else
+                                <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                            @endif
                         @endforeach
                     @else
                         <th style="border: 1px solid grey; text-align: center;">Понедельник</th>
@@ -177,32 +181,36 @@
                             </td>
 
                             @foreach($week_day_ids as $wd_name => $week_day_id)
-                                @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
-                                @php 
-                                    $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                                    $other_lesson_participant_name = 'group';
-                                    if (isset($lesson['is_replaceable'])) {
-                                        $cell_bg_color = '#FFFF00';
-                                        $title = 'Заменяемое занятие другого преподавателя';
-                                        $other_lesson_participant_name = 'teacher_name';
-                                    } elseif (isset($lesson['is_replacing'])) {
-                                        $cell_bg_color = '#98FB98';
-                                        $title = 'Ваше занятие на замену';
-                                    } elseif (isset($lesson['date'])) {
-                                        $cell_bg_color = '#D3D3D3';
-                                        $title = 'Единоразовое занятие';
-                                    } else {
-                                        $cell_bg_color = $weekly_period_color[$weekly_period_id['every_week']];
-                                        $title = '';
-                                    }
+                                @php
+                                    $is_holiday = isset($data['week_dates']) && is_array($data['week_dates'][$week_day_id]) && isset($data['week_dates'][$week_day_id]['is_holiday']);
                                 @endphp
-                                <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}; border: 1px solid grey;" title="{{ $title }}">
-                                    <div class="schedule-actions-div">
-                                        <div class="schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
-                                        <div class="schedule-room">ауд. {{ $lesson['room'] }}</div>
-                                        <div class="schedule-group">{{ $lesson[$other_lesson_participant_name] }}</div>
-                                    </div>
-                                </td>
+                                @if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])
+                                     && ! $is_holiday)
+                                    @php 
+                                        $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                                        $other_lesson_participant_name = 'group';
+                                        if (isset($lesson['is_replaceable'])) {
+                                            $cell_bg_color = '#FFFF00';
+                                            $title = 'Заменяемое занятие другого преподавателя';
+                                            $other_lesson_participant_name = 'teacher_name';
+                                        } elseif (isset($lesson['is_replacing'])) {
+                                            $cell_bg_color = '#98FB98';
+                                            $title = 'Ваше занятие на замену';
+                                        } elseif (isset($lesson['date'])) {
+                                            $cell_bg_color = '#D3D3D3';
+                                            $title = 'Единоразовое занятие';
+                                        } else {
+                                            $cell_bg_color = $weekly_period_color[$weekly_period_id['every_week']];
+                                            $title = '';
+                                        }
+                                    @endphp
+                                    <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}; border: 1px solid grey;" title="{{ $title }}">
+                                        <div class="schedule-actions-div">
+                                            <div class="schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
+                                            <div class="schedule-room">ауд. {{ $lesson['room'] }}</div>
+                                            <div class="schedule-group">{{ $lesson[$other_lesson_participant_name] }}</div>
+                                        </div>
+                                    </td>
                                 @elseif(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']]))
                                     @php
                                         $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;

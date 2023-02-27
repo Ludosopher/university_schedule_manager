@@ -108,6 +108,9 @@ class LessonHelpers
                         {
                             continue;
                         }
+                        if (isset($week_dates) && is_array($week_dates[$dt_lesson->weekly_period_id]) && isset($week_dates[$dt_lesson->weekly_period_id]['is_holiday'])) {
+                            continue;
+                        }
                         $dt_lesson_groups_ids = array_column($dt_lesson->groups->toArray(), 'id');
                         sort($dt_lesson_groups_ids);
                         if (count($dt_lesson_groups_ids) == count($groups_ids) && $dt_lesson_groups_ids === $groups_ids) {
@@ -137,7 +140,7 @@ class LessonHelpers
                                 
                                 $replacing_date_time = null;
                                 $replacing_hours_diff = null;
-                                if (isset($week_dates)) {
+                                if (isset($week_dates) && ! is_array($week_dates[$dt_lesson->week_day->id])) {
                                     $lesson_date = $week_dates[$dt_lesson->week_day->id];
                                     $replacing_date = date('Y-m-d', strtotime(str_replace('"', '', $lesson_date)));
                                     $class_period_start_time = date('H:i', strtotime($normalaze_class_periods[$dt_lesson->class_period->id]['start']));

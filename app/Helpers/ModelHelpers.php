@@ -210,13 +210,8 @@ class ModelHelpers
         foreach ($month_week_numbers as $week_number) {
             
             $data['weeks'][$week_number]['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
-            
-            $preliminary_week_dates = UniversalHelpers::weekDates($week_number);
-            $week_days_ru = config('enum.week_days_ru');
-            foreach ($preliminary_week_dates as $key => $date) {
-                $data['weeks'][$week_number]['week_dates'][$week_days_ru[$key]] = date('d.m.y', strtotime($date));
-            }
-                        
+            $data['weeks'][$week_number]['week_dates'] = UniversalHelpers::weekDates($week_number);
+                                    
             $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
             $data['weeks'][$week_number]['week_data'] = [
                 'week_number' => $week_number,
@@ -381,27 +376,6 @@ class ModelHelpers
         $data['week_dates'] = $reschedule_data['week_dates'];
         $data['is_red_week'] = $reschedule_data['is_red_week'];
         $data['week_data'] = $reschedule_data['week_data'];
-
-        // $week_number = null;
-        // if (isset($incoming_data['week_number'])) {
-        //     $week_number = $incoming_data['week_number'];
-        //     $data['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
-        //     $data['week_dates'] = UniversalHelpers::weekDates($week_number);
-        // }
-        // $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
-        // if ($week_border_dates) {
-        //     $data['week_data'] = [
-        //         'week_number' => $week_number,
-        //         'start_date' => $week_border_dates['start_date'],
-        //         'end_date' => $week_border_dates['end_date'],
-        //     ];
-        // } else {
-        //     $data['week_data'] = [
-        //         'week_number' => $week_number,
-        //         'start_date' => null,
-        //         'end_date' => null,
-        //     ];
-        // }
 
         if (isset($incoming_data['group_id'])) {
             $data['group_name'] = Group::find($incoming_data['group_id'])->name;

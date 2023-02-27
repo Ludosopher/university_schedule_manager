@@ -53,8 +53,12 @@
                         <tr class="bg-light-gray">
                             <th class="text-uppercase">Пара</th>
                             @if(isset($data['week_dates']))
-                                @foreach($data['week_dates'] as $name => $date)
-                                    <th class="text-uppercase">{{ $name }} ({{ $date }})</th>
+                                @foreach($data['week_dates'] as $week_day_id => $date)
+                                    @if(is_array($date) && isset($date['is_holiday']))
+                                        <th class="text-uppercase" style="color: red;" title="Праздничный день">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                    @else
+                                        <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                    @endif
                                 @endforeach
                             @else
                                 <th class="text-uppercase">Понедельник</th>
@@ -99,39 +103,43 @@
                                     @endif
                                     @foreach($week_day_ids as $wd_name => $week_day_id)
                                         @if($week_day_id <= $week_days_limit)
-                                            @if(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]))
                                             @php
-                                                $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                                                if (!is_array($lesson)) {
-                                                    $lesson_subject = '';
-                                                    $lesson_type = '';
-                                                    $lesson_room = '';
-                                                    $other_lesson_participant = '';
-                                                    $color = 'PaleGreen';
-                                                    $title = "Вариант переноса";
-                                                } else {
-                                                    $lesson_subject = $lesson['name'];
-                                                    $lesson_type = "({$lesson['type']})";
-                                                    $lesson_room = "ауд. {$lesson['room']}";
-                                                    $other_lesson_participant = $lesson[$other_lesson_participant_name];
-                                                    $title = '';
-                                                    $color = '';
-                                                    if ($lesson['id'] == $data['rescheduling_lesson_id']) {
-                                                        $color = 'Yellow';
-                                                        $title = 'Переносимое занятие';
-                                                    }
-                                                }
+                                                $is_holiday = isset($data['week_dates']) && is_array($data['week_dates'][$week_day_id]) && isset($data['week_dates'][$week_day_id]['is_holiday']);
                                             @endphp
-                                            <td class="schedule-cell" style="background-color: {{ $color }}" title="{{ $title }}">
-                                                <div class="dropdown schedule-actions-div">
-                                                    @if(isset($lesson['date']))
-                                                        <div class="margin-10px-top font-size14 schedule-date"><span class="schedule-date-text">{{ $lesson['date'] }}</span></div>
-                                                    @endif
-                                                    <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson_subject }} {{ $lesson_type }}</div>
-                                                    <div class="font-size13 text-light-gray schedule-room">{{ $lesson_room }}</div>
-                                                    <div class="font-size13 text-light-gray schedule-group">{{ $other_lesson_participant }}</div>
-                                                </div>
-                                            </td>
+                                            @if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])
+                                                 && ! $is_holiday)
+                                                @php
+                                                    $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                                                    if (!is_array($lesson)) {
+                                                        $lesson_subject = '';
+                                                        $lesson_type = '';
+                                                        $lesson_room = '';
+                                                        $other_lesson_participant = '';
+                                                        $color = 'PaleGreen';
+                                                        $title = "Вариант переноса";
+                                                    } else {
+                                                        $lesson_subject = $lesson['name'];
+                                                        $lesson_type = "({$lesson['type']})";
+                                                        $lesson_room = "ауд. {$lesson['room']}";
+                                                        $other_lesson_participant = $lesson[$other_lesson_participant_name];
+                                                        $title = '';
+                                                        $color = '';
+                                                        if ($lesson['id'] == $data['rescheduling_lesson_id']) {
+                                                            $color = 'Yellow';
+                                                            $title = 'Переносимое занятие';
+                                                        }
+                                                    }
+                                                @endphp
+                                                <td class="schedule-cell" style="background-color: {{ $color }}" title="{{ $title }}">
+                                                    <div class="dropdown schedule-actions-div">
+                                                        @if(isset($lesson['date']))
+                                                            <div class="margin-10px-top font-size14 schedule-date"><span class="schedule-date-text">{{ $lesson['date'] }}</span></div>
+                                                        @endif
+                                                        <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson_subject }} {{ $lesson_type }}</div>
+                                                        <div class="font-size13 text-light-gray schedule-room">{{ $lesson_room }}</div>
+                                                        <div class="font-size13 text-light-gray schedule-group">{{ $other_lesson_participant }}</div>
+                                                    </div>
+                                                </td>
                                             @elseif(isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']]))
                                                 @php
                                                     $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
