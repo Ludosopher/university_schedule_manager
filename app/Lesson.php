@@ -90,46 +90,4 @@ class Lesson extends Model
         return "{$groups_name}{$study_program}({$study_orientation}){$additional_id}";
     }
 
-    public static function getProperties() {
-
-        $groups = Group::orderBy('study_form_id')
-                        ->orderBy('study_degree_id')
-                        ->orderBy('faculty_id')
-                        ->orderBy('course_id')
-                        ->get();
-
-        $teachers = Teacher::orderBy('last_name')->get();
-        foreach ($teachers as &$teacher) {
-            $teacher->name = $teacher->profession_level_name;
-        }
-
-        return [
-            'lesson_types' => LessonType::select('id', 'name')->get(),
-            'week_days' => WeekDay::select('id', 'name')->get(),
-            'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),
-            'class_periods' => ClassPeriod::select('id', 'name')->get(),
-            'lesson_rooms' => LessonRoom::select('id', 'number AS name')->get(),
-            'groups' => $groups,
-            'teachers' => $teachers
-        ];
-    }
-
-    public static function getReplacementProperties() {
-
-        $class_periods = ClassPeriod::get();
-        
-        return [
-            'lesson_types' => LessonType::select('id', 'name')->get(),
-            'week_days' => WeekDay::select('id', 'name')->get(),
-            'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),
-            'class_periods' => $class_periods,
-            'normalize_class_periods' => array_combine(range(1, count($class_periods)), array_values($class_periods->toArray())),
-            'faculties' => Faculty::select('id', 'name')->get(),
-            'departments' => Department::select('id', 'name')->get(),
-            'professional_levels' => ProfessionalLevel::select('id', 'name')->get(),
-            'positions' => Position::select('id', 'name')->get(),
-            'lesson_rooms' => LessonRoom::select('id', 'number AS name')->get(),
-            'schedule_positions' => collect(config('enum.schedule_positions'))
-        ];
-    }
 }

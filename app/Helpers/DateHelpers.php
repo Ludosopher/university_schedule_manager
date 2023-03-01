@@ -3,13 +3,14 @@
 namespace App\Helpers;
 
 use App\ClassPeriod;
+use App\ExternalDataset;
 use App\Lesson;
 use App\Teacher;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
 
-class UniversalHelpers
+class DateHelpers
 {
     public static function getWeekData($week_str) {
         $pos = strpos($week_str, '-W');
@@ -47,19 +48,21 @@ class UniversalHelpers
             // 7 => (new DateTime())->setISODate($year, $week, 7)->format('d.m.y') 
         ];
 
-        foreach ($dates as &$date) {
-            foreach ($holidays as $holiday) {
-                if (date('Y-m-d', strtotime($date)) == date('Y-m-d', strtotime($holiday))) {
-                    $holiday_date = [
-                        'is_holiday' => true,
-                        'date' => $date
-                    ];
-                    $date = $holiday_date;
-                    break;
+        if ($holidays) {
+            foreach ($dates as &$date) {
+                foreach ($holidays as $holiday) {
+                    if (date('Y-m-d', strtotime($date)) == date('Y-m-d', strtotime($holiday))) {
+                        $holiday_date = [
+                            'is_holiday' => true,
+                            'date' => $date
+                        ];
+                        $date = $holiday_date;
+                        break;
+                    }
                 }
             }
         }
-
+        
         return $dates;
     }
 
@@ -176,9 +179,9 @@ class UniversalHelpers
 
         $month_week_numbers = [];
         for ($i = $first_month_day; $i <= $last_month_day; $i = date('Y-m-d', strtotime("{$i} + 1 day"))) {
-            $week_number = UniversalHelpers::getWeekNumberFromDate($i);
+            $week_number = DateHelpers::getWeekNumberFromDate($i);
             if (! in_array($week_number, $month_week_numbers)) {
-                $month_week_numbers[] = UniversalHelpers::getWeekNumberFromDate($i);
+                $month_week_numbers[] = DateHelpers::getWeekNumberFromDate($i);
             }
         }
 
@@ -186,21 +189,37 @@ class UniversalHelpers
     }
 
     public static function getHolidays() {
+
+        $external_dataset_ids = config('enum.external_dataset_ids');
         
-        $calendar = simplexml_load_file('http://xmlcalendar.ru/data/ru/'.date('Y').'/calendar.xml');
-        $calendar = $calendar->days->day;
+        $xmlcalendar_data = ExternalDataset::where('id', $external_dataset_ids['xmlcalendar'])->first();
+        if ($xmlcalendar_data) {
+            if (date('Y') != date('Y', strtotime($xmlcalendar_data->update_date))) {
+                $url = str_replace('{Y}', date('Y'), $xmlcalendar_data->url_pattern);
+                $calendar = simplexml_load_file($url);
+                if ($calendar) {
+                    $calendar = $calendar->days->day;
+                    // All holidays for the current year
+                    foreach( $calendar as $day ){
+                        $d = (array)$day->attributes()->d;
+                        $d = $d[0];
+                        $d = substr($d, 3, 2).'.'.substr($d, 0, 2).'.'.date('Y');
+                        // not counting the short days
+                        if( $day->attributes()->t == 1 ) $arHolidays[] = $d;
+                    }
+                    $xmlcalendar_data->body = json_encode($arHolidays);
+                    $xmlcalendar_data->update_date = date('Y-m-d');
+                    $xmlcalendar_data->save();
+                    
+                    return $arHolidays;
+                }
+            
+                Log::channel('production_calendar')->error('The production calendar was not received.');
+                return false;
+            }
 
-        //все праздники за текущий год
-        foreach( $calendar as $day ){
-            $d = (array)$day->attributes()->d;
-            $d = $d[0];
-            $d = substr($d, 3, 2).'.'.substr($d, 0, 2).'.'.date('Y');
-            //не считая короткие дни
-            if( $day->attributes()->t == 1 ) $arHolidays[] = $d;
+            return json_decode($xmlcalendar_data->body, true);
         }
-
-        return $arHolidays;
     }
-
 
 }

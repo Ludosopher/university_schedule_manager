@@ -23,12 +23,12 @@ class TeacherHelpers
         if (! $data['is_regular'] && isset($data['replaceable_date']) && isset($data['replacing_date'])) {
             $incom_replaceable_data = [
                 'schedule_teacher_id' => $data['replacing_teacher_id'], 
-                'week_number' => UniversalHelpers::getWeekNumberFromDate($data['replaceable_date']),
+                'week_number' => DateHelpers::getWeekNumberFromDate($data['replaceable_date']),
             ];
             if (date('W', strtotime($data['replaceable_date'])) !== date('W', strtotime($data['replacing_date']))) {
                 $incom_replacing_data = [
                     'schedule_teacher_id' => $data['replacing_teacher_id'], 
-                    'week_number' => UniversalHelpers::getWeekNumberFromDate($data['replacing_date']),
+                    'week_number' => DateHelpers::getWeekNumberFromDate($data['replacing_date']),
                 ];
                 $replacing_schedule_data = ModelHelpers::getSchedule($incom_replacing_data, $config);
             }

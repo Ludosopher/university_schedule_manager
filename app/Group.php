@@ -65,15 +65,4 @@ class Group extends Model
         return "{$study_degree}.{$study_form}.{$faculty}-{$cours}-{$study_program}({$study_orientation}){$additional_id}";
     }
 
-    public static function getProperties() {
-        return [
-            'groups' => Group::orderBy('study_degree_id')->orderBy('study_form_id')->orderBy('faculty_id')->orderBy('course_id')->get(),
-            'faculties' => Faculty::select('id', 'name')->get(),
-            'study_programs' => StudyProgram::select('id', 'name')->get(),
-            'study_orientations' => StudyOrientation::select('id', 'name')->get(),
-            'study_degrees' => StudyDegree::select('id', 'name')->get(),
-            'study_forms' => StudyForm::select('id', 'name')->get(),
-            'courses' => Course::select('id', 'name')->get(),
-        ];
-    }
 }

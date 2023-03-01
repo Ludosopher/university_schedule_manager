@@ -25,7 +25,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-//\Log::info('schedule+is+started');
         $schedule->call(function () {
             CronHelpers::replacementRequestStatusesUpdate();
         })->daily(); // everyFiveMinutes(); daily() hourly()

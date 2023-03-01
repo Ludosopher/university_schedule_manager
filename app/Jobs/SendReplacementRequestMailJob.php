@@ -10,6 +10,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
+use Log;
+use Throwable;
 
 class SendReplacementRequestMailJob implements ShouldQueue
 {
@@ -36,6 +38,28 @@ class SendReplacementRequestMailJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->mail_to)->send(new ReplacementRequestMail($this->data));
+        try {
+            Mail::to($this->mail_to)->send(new ReplacementRequestMail($this->data));
+            Log::channel('mail')->info('At the address "'.$this->mail_to.'" the mail message has been sent.');
+        } catch (\Exception $e) {
+            Log::channel('mail')->error($e->getMessage());
+        } catch (\Swift_TransportException $e) {
+            Log::channel('mail')->error($e->getMessage());
+        }
+
+        if (count(Mail::failures()) !== 0) {
+            Log::channel('mail')->error(Mail::failures()[0]);
+        }
+    }
+
+    /**
+     * Обработать провал задания.
+     *
+     * @param  \Throwable  $exception
+     * @return void
+     */
+    public function failed (Throwable $exception)
+    {
+        Log::channel('queue')->error($exception->getMessage());
     }
 }

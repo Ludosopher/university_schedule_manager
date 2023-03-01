@@ -363,7 +363,6 @@ class DocExportHelpers
             }
         }
         
-
         return \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
     }
 

@@ -92,15 +92,4 @@ class Teacher extends Model
         return Carbon::parse("{$this->birth_year}-06-15")->diffInYears();
     }
 
-    public static function getProperties() {
-        return [
-            'faculties' => Faculty::select('id', 'name')->get(),
-            'departments' => Department::select('id', 'name')->get(),
-            'professional_levels' => ProfessionalLevel::select('id', 'name')->get(),
-            'positions' => Position::select('id', 'name')->get(),
-            'academic_degrees' => AcademicDegree::select('id', 'name')->get(),
-            'genders' => config('enum.genders')
-        ];
-    }
-
 }

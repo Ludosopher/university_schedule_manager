@@ -9,7 +9,7 @@ use App\Helpers\FilterHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
-use App\Helpers\UniversalHelpers;
+use App\Helpers\DateHelpers;
 use App\Helpers\UserHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
@@ -67,8 +67,7 @@ class UserController extends Controller
     public function updateUser (StoreUserRequest $request)
     {
         $validated = $request->validated();
-//  dd($validated);
-        $validated = UniversalHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
+        $validated = DateHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
         $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         
         ModelHelpers::addOrUpdateManyToManyAttributes($validated, $user['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);

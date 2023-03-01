@@ -155,4 +155,8 @@ return [
       8 => '#EE82EE',
       9 => '#F08080',
    ],
+
+   'external_dataset_ids' => [
+      'xmlcalendar' => 1,
+   ],
 ];

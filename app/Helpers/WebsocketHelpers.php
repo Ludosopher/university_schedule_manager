@@ -106,6 +106,7 @@ class WebsocketHelpers implements MessageComponentInterface {
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
         echo "An error has occurred: {$e->getMessage()}\n";
+        Log::channel('cron')->error($e->getMessage());
 
         $conn->close();
     }

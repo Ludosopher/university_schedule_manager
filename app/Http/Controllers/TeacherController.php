@@ -10,7 +10,7 @@ use App\Helpers\LessonHelpers;
 use App\Helpers\MailHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
-use App\Helpers\UniversalHelpers;
+use App\Helpers\DateHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\teacher\ExportMonthScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Mime\Header\DateHeader;
 
 class TeacherController extends Controller
 {

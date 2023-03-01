@@ -5815,5 +5815,17 @@ class DatabaseSeeder extends Seeder
                 'updated_at' => '2022-12-26 00:00:00',
             ],
         ]);
+
+        \DB::table('external_datasets')->insert([
+            [
+                'id' => 1,
+                'name' => 'xmlcalendar',
+                'url_pattern' => 'http://xmlcalendar.ru/data/ru/{Y}/calendar.xml',
+                'body' => '',
+                'update_date' => '2022-12-26',
+                'created_at' => '2022-12-26 00:00:00',
+                'updated_at' => '2022-12-26 00:00:00',
+            ],
+        ]);
     }
 }

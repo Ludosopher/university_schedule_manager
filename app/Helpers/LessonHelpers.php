@@ -90,10 +90,10 @@ class LessonHelpers
                 $looked_teachers[] = $g_lesson->teacher->id;
                 if ($is_suitable_teacher) {
                     foreach ($g_lesson->teacher->lessons as $dt_lesson) {
-                        if (!UniversalHelpers::testLessonDate($week_number, $dt_lesson)) {
+                        if (! DateHelpers::testLessonDate($week_number, $dt_lesson)) {
                             continue;
                         };
-                        $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $dt_lesson);
+                        $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $dt_lesson);
                         $w_p_field = 'weekly_period_id';
                         if (isset($week_schedule_lesson)) {
                             if ($week_schedule_lesson) {
@@ -115,10 +115,10 @@ class LessonHelpers
                         sort($dt_lesson_groups_ids);
                         if (count($dt_lesson_groups_ids) == count($groups_ids) && $dt_lesson_groups_ids === $groups_ids) {
                             foreach ($seeking_teacher->lessons as $st_lesson) {
-                                if (!UniversalHelpers::testLessonDate($week_number, $st_lesson)) {
+                                if (! DateHelpers::testLessonDate($week_number, $st_lesson)) {
                                     continue;
                                 };
-                                $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $st_lesson);
+                                $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $st_lesson);
                                 if (isset($week_schedule_lesson)) {
                                     if ($week_schedule_lesson) {
                                         $st_lesson = $week_schedule_lesson;
@@ -220,9 +220,9 @@ class LessonHelpers
             $is_red_week = $incoming_data['is_red_week'];
         } elseif (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
-            $week_dates = UniversalHelpers::weekDates($week_number);
-            $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
-            $is_red_week = UniversalHelpers::weekColorIsRed($week_number);
+            $week_dates = DateHelpers::weekDates($week_number);
+            $week_border_dates = DateHelpers::weekStartEndDates($week_number);
+            $is_red_week = DateHelpers::weekColorIsRed($week_number);
             $week_data = [
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
@@ -283,7 +283,7 @@ class LessonHelpers
             'replaceable_hours_diff' => $replaceable_hours_diff,
         ];
 
-        return array_merge($data, Lesson::getReplacementProperties());
+        return array_merge($data, DictionaryHelpers::getReplacementProperties());
     }
 
     public static function getReschedulingData($incoming_data) {
@@ -304,9 +304,9 @@ class LessonHelpers
             $week_days_limit = $week_days_limits['distance'];
         } elseif (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
-            $week_dates = UniversalHelpers::weekDates($week_number);
-            $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
-            $is_red_week = UniversalHelpers::weekColorIsRed($week_number);
+            $week_dates = DateHelpers::weekDates($week_number);
+            $week_border_dates = DateHelpers::weekStartEndDates($week_number);
+            $is_red_week = DateHelpers::weekColorIsRed($week_number);
             $week_data = [
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
@@ -341,10 +341,10 @@ class LessonHelpers
                     if ($class_period->id <= $class_periods_limit) {
                         foreach ($schedule_subjects as $key => $subject_lessons) {
                             foreach ($subject_lessons as $sub_lesson) {
-                                if (!UniversalHelpers::testLessonDate($week_number, $sub_lesson)) {
+                                if (! DateHelpers::testLessonDate($week_number, $sub_lesson)) {
                                     continue;
                                 };
-                                $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $sub_lesson);
+                                $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $sub_lesson);
                                 if (isset($week_schedule_lesson)) {
                                     if ($week_schedule_lesson) {
                                         $sub_lesson = $week_schedule_lesson;

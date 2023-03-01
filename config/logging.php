@@ -104,9 +104,39 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
-        'models' => [
+        'cron' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/models.log'),
+            'path' => storage_path('logs/crons.log'),
+            'days' => 5,
+        ],
+
+        'mail' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/mails.log'),
+            'days' => 5,
+        ],
+
+        'notification_mail' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/notification_mails.log'),
+            'days' => 5,
+        ],
+
+        'queue' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/queues.log'),
+            'days' => 5,
+        ],
+
+        'websocket' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/websockets.log'),
+            'days' => 5,
+        ],
+
+        'production_calendar' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/production_calendars.log'),
             'days' => 5,
         ],
     ],
