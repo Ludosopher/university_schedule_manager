@@ -18,6 +18,7 @@ class UserHelpers
         }
         
         return [
+            'id' => $user->id,
             'phone' => $user->phone,
             'email' => $user->email,
             'level' => $user->is_admin ? 'Администратор' : ($user->is_moderator ? 'Модератор' : 'Обычный пользователь'),

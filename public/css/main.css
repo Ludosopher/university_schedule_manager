@@ -454,3 +454,26 @@ h3 {
     padding: 0px 0px 0px 5px;
 }
 
+
+/* account_main */
+.account-contact-cell {
+    padding: 0px 5px 0px 5px;
+}
+
+.account-contact-label {
+    margin-bottom: 0px; 
+    font-weight: bold; 
+    line-height: 50%;
+}
+
+.account-contact-input {
+    background-color: rgb(250, 250, 250);
+    border: 0px;
+    height: 70%;
+}
+
+.account-contact-button {
+    height: 40%  !important;
+    line-height: 40%  !important;
+}
+

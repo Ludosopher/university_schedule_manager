@@ -3,7 +3,7 @@
     <div class="container">
         @if ($errors !== null && $errors->has('updating_id'))
             @foreach($errors->get($field_name) as $error)
-                <div class="alertAccess">
+                <div class="alertFail">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     {{ $error }}
                 </div>
@@ -15,10 +15,23 @@
                 Данные занятия {{ $data['new_instance_name'] }} добавлены.
             </div>
         @endif --}}
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @endif
+        @endif
         <div class="external-form-container">
             <div class="internal-form-container">
                 <h2 style="margin-top: 1.5rem">Обновление данных пользователя</h2>
-                <form method="POST" action="{{ route('user-update') }}">
+                <form method="POST" action="{{ route('user-admin-update') }}">
                 @csrf
                     @if(isset($data['updating_instance']))
                         <input type="hidden" name="updating_id" value="{{ $data['updating_instance']->id }}">

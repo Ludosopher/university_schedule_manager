@@ -24,7 +24,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::match(['get', 'post'],'/user/get-all', 'UserController@getUsers')->name('users')->middleware('admin');
     Route::get('/user/add-form', 'UserController@addUserForm')->name('user-form')->middleware('admin');
-    Route::post('/user/update', 'UserController@updateUser')->name('user-update')->middleware('admin');
+    Route::post('/user/admin-update', 'UserController@adminUpdateUser')->name('user-admin-update')->middleware('admin');
+    Route::post('/user/self-update', 'UserController@selfUpdateUser')->name('user-self-update')->middleware('user');
     Route::get('/user/delete', 'UserController@deleteUser')->name('user-delete')->middleware('admin');
     Route::get('/user/account-main', 'UserController@getAccountMain')->name('user-account-main');
 

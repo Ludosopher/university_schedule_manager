@@ -17,7 +17,9 @@ use App\Http\Requests\teacher\FilterTeacherRequest;
 use App\Http\Requests\teacher\RescheduleTeacherRequest;
 use App\Http\Requests\teacher\ScheduleTeacherRequest;
 use App\Http\Requests\teacher\StoreTeacherRequest;
+use App\Http\Requests\user\AdminStoreUserRequest;
 use App\Http\Requests\user\FilterUserRequest;
+use App\Http\Requests\user\SelfStoreUserRequest;
 use App\Http\Requests\user\StoreUserRequest;
 use App\Lesson;
 use App\Teacher;
@@ -64,7 +66,7 @@ class UserController extends Controller
         return view("user.add_user_form")->with('data', $data);
     }
 
-    public function updateUser (StoreUserRequest $request)
+    public function adminUpdateUser (AdminStoreUserRequest $request)
     {
         $validated = $request->validated();
         $validated = DateHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
@@ -72,7 +74,21 @@ class UserController extends Controller
         
         ModelHelpers::addOrUpdateManyToManyAttributes($validated, $user['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);
 
-        return redirect()->route("users", ['updated_instance_name' => $user['updated_instance_name']]);
+        return redirect()->back()->with('response', [
+            'success' => true,
+            'message' => str_replace('?', $user['updated_instance_name'], __('user.user_updated'))
+        ]);
+    }
+
+    public function selfUpdateUser (SelfStoreUserRequest $request)
+    {
+        $validated = $request->validated();
+        $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
+        
+        return redirect()->back()->with('response', [
+            'success' => true,
+            'message' => str_replace('?', $user['updated_instance_name'], __('user.user_updated'))
+        ]);
     }
 
     public function deleteUser (Request $request)

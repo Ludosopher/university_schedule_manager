@@ -25,6 +25,19 @@
                 {{ __('user_validation.invalid_input_data') }}
             </div>
         @endif --}}
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ {{ \Session::get('response')['message'] }} }}
+                </div>
+            @endif
+        @endif
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>
