@@ -6,5 +6,6 @@
         // 'replacement_request_removed' => 'Данные просьбы о замене ? удалены.',
         // 'replacement_request_not_found' => 'Такая просьба о замене не найдена.',
         'replacement_request_updated' => '? обновлена.',
-        'schedule_validation_error' => 'Ошибка валидации входящих данных для получения расписания.'
+        'schedule_validation_error' => 'Ошибка валидации входящих данных для получения расписания.',
+        'replacement_request_sended' => 'Запрос на замену отправлен.',
     ];

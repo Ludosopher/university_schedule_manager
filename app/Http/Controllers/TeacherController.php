@@ -2,37 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\ClassPeriod;
-use App\Group;
 use App\Helpers\DocExportHelpers;
-use App\Helpers\FilterHelpers;
 use App\Helpers\LessonHelpers;
-use App\Helpers\MailHelpers;
 use App\Helpers\ModelHelpers;
-use App\Helpers\TeacherHelpers;
-use App\Helpers\DateHelpers;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\teacher\DeleteTeacherRequest;
-use App\Http\Requests\teacher\ExportMonthScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\FilterTeacherRequest;
 use App\Http\Requests\teacher\MonthScheduleTeacherRequest;
-use App\Http\Requests\teacher\RescheduleTeacherRequest;
 use App\Http\Requests\teacher\ScheduleTeacherRequest;
 use App\Http\Requests\teacher\StoreTeacherRequest;
-use App\Lesson;
-use App\Mail\MailReplacementRequest;
-use App\ReplacementRequest;
-use App\Teacher;
-use App\User;
-use App\WeekDay;
-use App\WeeklyPeriod;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
-use Symfony\Component\Mime\Header\DateHeader;
+
 
 class TeacherController extends Controller
 {

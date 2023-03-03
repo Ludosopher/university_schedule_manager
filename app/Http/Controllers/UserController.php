@@ -2,35 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\ClassPeriod;
-use App\Group;
-use App\Helpers\DocExportHelpers;
-use App\Helpers\FilterHelpers;
-use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
-use App\Helpers\TeacherHelpers;
 use App\Helpers\DateHelpers;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\UserHelpers;
-use App\Helpers\ValidationHelpers;
-use App\Http\Requests\teacher\DeleteUserRequest as TeacherDeleteUserRequest;
 use App\Http\Requests\user\DeleteUserRequest;
-use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
-use App\Http\Requests\teacher\FilterTeacherRequest;
-use App\Http\Requests\teacher\RescheduleTeacherRequest;
-use App\Http\Requests\teacher\ScheduleTeacherRequest;
-use App\Http\Requests\teacher\StoreTeacherRequest;
 use App\Http\Requests\user\AdminStoreUserRequest;
 use App\Http\Requests\user\FilterUserRequest;
 use App\Http\Requests\user\SelfStoreUserRequest;
-use App\Http\Requests\user\StoreUserRequest;
-use App\Lesson;
-use App\Teacher;
-use App\WeekDay;
-use App\WeeklyPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+
 
 class UserController extends Controller
 {

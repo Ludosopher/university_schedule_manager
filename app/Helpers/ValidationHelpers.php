@@ -14,9 +14,7 @@ class ValidationHelpers
 {
     public static function validation($data, $rules, $messages = [], $attributes = []) 
     {
-//dd($data, $rules);        
         $validator = Validator::make($data, $rules, $messages, $attributes);
-//dd($validator->validated());       
         if ($validator->fails()) {
             return [
                 'success' => false,
@@ -32,7 +30,7 @@ class ValidationHelpers
     public static function getReplacementVariantsValidation($data) {
         
         $rules = [
-            'week_day_id' => 'nullable|array', //array
+            'week_day_id' => 'nullable|array',
             'weekly_period_id' => 'nullable|array',
             'class_period_id' => 'nullable|array',
             'faculty_id' => 'nullable|array',

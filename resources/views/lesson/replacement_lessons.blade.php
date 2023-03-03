@@ -105,9 +105,9 @@
                     @endif
                     <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}" style="margin-bottom: 20px;">
                     <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
-                    <input type="hidden" name="prev_week_data" value="{{ json_encode($data['week_data']) }}">
-                    <input type="hidden" name="prev_is_red_week" value="{{ isset($data['is_red_week']) ? ($data['is_red_week'] ? 1 : 0) : '' }}">
-                    <input type="hidden" name="prev_week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                    <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
+                    <input type="hidden" name="is_red_week" value="{{ isset($data['is_red_week']) ? ($data['is_red_week'] ? 1 : 0) : '' }}">
+                    <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                     <p for="{{ $field_name }}" class="form-explanation"><span style="color: red;">*</span> Для выбора нескольких полей нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора.</p>
                     <button type="submit" class="btn btn-primary form-button">Показать</button>
                 </form>
@@ -154,11 +154,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($data['replacement_lessons'] as $lesson)
+                        @foreach($data['replacement_lessons'] as $key => $lesson)
+                            @php
+                                $wd_id = $lesson['week_day_id']['id'];
+                                $is_holiday = isset($data['week_dates']) && is_array($data['week_dates'][$wd_id]) && isset($data['week_dates'][$wd_id]['is_holiday']);
+                            @endphp
                             @if (
-                                 (isset($lesson['replacing_hours_diff']) && $lesson['replacing_hours_diff'] > $min_replacement_period)
-                                 ||
-                                 (! isset($lesson['replacing_hours_diff'])) 
+                                    ! $is_holiday
+                                    &&
+                                    (
+                                        (isset($lesson['replacing_hours_diff']) && $lesson['replacing_hours_diff'] > $min_replacement_period)
+                                        ||
+                                        (! isset($lesson['replacing_hours_diff']))
+                                    ) 
                                 )
                                 <tr>
                                     @foreach($data['table_properties'] as $property)

@@ -6,4 +6,5 @@
         // 'replacement_request_removed' => 'Replacement Request data of ? is removed.',
         // 'replacement_request_not_found' => 'This Replacement Request was not found.',
         'replacement_request_updated' => '? is updated.',
+        'replacement_request_sended' => 'A replacement request has been sent.',
     ];

@@ -12,10 +12,9 @@ use App\Http\Requests\replacement_request\DeleteReplacementReqRequest;
 use App\Http\Requests\replacement_request\FilterReplacementReqRequest;
 use App\Http\Requests\replacement_request\SendReplacementReqRequest;
 use App\Http\Requests\replacement_request\StoreReplacementReqRequest;
-use App\Mail\MailReplacementRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+
 
 class ReplacementRequestController extends Controller
 {
@@ -96,18 +95,11 @@ class ReplacementRequestController extends Controller
         MailHelpers::sendReplacementRequest($data);
         $replacement_request = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
 
-        // if ($message_errors) {
-        //     return redirect()->back()->with('response', [
-        //         'errors' => "При отправке просьбы о замене возникли ошибки: \n".implode("\n", $message_errors),
-        //         'results' => [$replacement_request['updated_instance_name']. ' успешно обновлена.'],
-        //     ]);
-        // }
-
+        $response_content = ResponseHelpers::getContent($replacement_request, $this->config['instance_name']);
+        
         return redirect()->back()->with('response', [
-            'results' => [
-                "Просьба о замене успешно отправлена",
-                $replacement_request['updated_instance_name']. 'успешно обновлена.',
-            ],
+            'success' => $response_content['success'],
+            'message' => __('replacement_request.replacement_request_sended')."\n".$response_content['message']
         ]);
     }
 
