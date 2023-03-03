@@ -7,8 +7,10 @@ use App\Group;
 use App\Helpers\DocExportHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
+use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Helpers\ValidatorHelpers;
+use App\Http\Requests\lesson\DeleteLessonRequest;
 use App\Http\Requests\lesson\FilterLessonRequest;
 use App\Http\Requests\lesson\RescheduleLessonRequest;
 use App\Http\Requests\lesson\StoreLessonRequest;
@@ -60,25 +62,26 @@ class LessonController extends Controller
         $lesson = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         ModelHelpers::addOrUpdateManyToManyAttributes($validated, $lesson['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);
 
-        if (is_array($lesson)) {
-            if (isset($lesson['updated_instance_name'])) {
-                return redirect()->route("lessons")->with('updated_instance_name', $lesson['updated_instance_name']); //route("lessons", ['updated_instance_name' => $lesson['updated_instance_name']]);
-            } elseif (isset($lesson['new_instance_name'])) {
-                return redirect()->route("lesson-add-form")->with('new_instance_name', $lesson['new_instance_name']); //route("lesson-add-form", ['new_instance_name' => $lesson['new_instance_name']]);
-            }
-        }
+        $response_content = ResponseHelpers::getContent($lesson, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
-    public function deleteLesson (Request $request)
+    public function deleteLesson (DeleteLessonRequest $request)
     {
         $attributes = array_values($this->config['many_to_many_attributes']);
-        $relations_deleted_result = ModelHelpers::deleteManyToManyAttributes($request->deleting_id, $this->config['model_name'], $attributes);
-        if (!$relations_deleted_result) {
-            return redirect()->route("lessons")->with('deleting_instance_not_found', true); //route("lessons", ['deleting_instance_not_found' => true]);
-        }
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
-        $instance_name_field = $this->config['instance_name_field'];
-        return redirect()->route("lessons")->with('deleted_instance_name', $deleted_instance->$instance_name_field); //route("lessons", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+        ModelHelpers::deleteManyToManyAttributes($request->validated()['deleting_id'], $this->config['model_name'], $attributes);
+        
+        $deleted_instance = ModelHelpers::deleteInstance($request->validated()['deleting_id'], $this->config);
+        $response_content = ResponseHelpers::getContent($deleted_instance, $this->config['instance_name']);
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
+    
     }
 
     public function getReplacementVariants (Request $request)

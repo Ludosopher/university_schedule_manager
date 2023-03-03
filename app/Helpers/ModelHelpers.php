@@ -33,14 +33,14 @@ class ModelHelpers
         return $instance;
     }
 
-    public static function deleteInstance($id, $model) {
-        $deleting_instance = $model::where('id', $id)->first();
-        if ($deleting_instance) {
-            $model::where('id', $id)->delete();
-            return $deleting_instance;
-        }
-
-        return false;
+    public static function deleteInstance($id, $config) 
+    {
+        $model_name = $config['model_name'];
+        $deleting_instance = $model_name::where('id', $id)->first();
+        
+        $instance_name_field = $config['instance_name_field'];
+        $model_name::where('id', $id)->delete();
+        return ['deleted_instance_name' => $deleting_instance->$instance_name_field];
     }
 
     public static function getAppends($data) {
@@ -398,15 +398,12 @@ class ModelHelpers
         return true;
     }
 
-    public static function deleteManyToManyAttributes($model_id, $model_name, $attributes) {
+    public static function deleteManyToManyAttributes($model_id, $model_name, $attributes) 
+    {
         $model = $model_name::with($attributes)->find($model_id);
-        if ($model) {
-            foreach ($attributes as $attribute) {
-                $model->$attribute()->detach();
-            }
-            return true;
+        foreach ($attributes as $attribute) {
+            $model->$attribute()->detach();
         }
-        return false;
     }
 
     public static function getManyToManyData($data, $attributes) {

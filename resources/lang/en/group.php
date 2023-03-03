@@ -1,6 +1,7 @@
 <?php
 
     return [
+        'group_added' => 'The data of the new group ? has been added.',
         'group_removed' => 'Group data of ? is removed.',
         'group_not_found' => 'This group was not found.',
         'group_updated' => 'Group data of ? is updated.',

@@ -1,17 +1,18 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if (isset($data['deleted_instance_name']))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', $data['deleted_instance_name'], __('group.group_removed')) }}
-            </div>
-        @endif
-        @if (isset($data['deleting_instance_not_found']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('group.group_not_found') }}
-            </div>
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @endif
         @endif
         @if($errors->any() && ($errors->has('schedule_group_id') || $errors->has('week_number')))
             <div class="alertFail">
@@ -19,17 +20,10 @@
                 {{ __('user_validation.invalid_input_data') }}
             </div>
         @endif
-        @if (\Session::has('updated_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', \Session::get('updated_instance_name'), __('group.group_updated')) }}
-            </div>
-        @endif
-        @if (\Session::has('there_are_lessons_only_with_this_group'))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('group.group_is_only_one_in_lesson') }}
-            </div>
+        @if ($errors->any() && $errors->has('deleting_id'))
+            @foreach($errors->get('deleting_id') as $error)
+                <div class="validationErrorText">{{ $error }}</div>
+            @endforeach
         @endif
         <div class="getAllContainer">
             <div class="getAllLeft">

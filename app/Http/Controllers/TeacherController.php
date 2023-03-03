@@ -11,7 +11,9 @@ use App\Helpers\MailHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
 use App\Helpers\DateHelpers;
+use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
+use App\Http\Requests\teacher\DeleteTeacherRequest;
 use App\Http\Requests\teacher\ExportMonthScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\FilterTeacherRequest;
@@ -66,30 +68,36 @@ class TeacherController extends Controller
     {
         $data = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
 
-        if (isset($data['updated_instance_name'])) {
-            return redirect()->route("teachers")->with('updated_instance_name', $data['updated_instance_name']); // route("teachers", ['updated_instance_name' => $data['updated_instance_name']]);
-        } elseif (isset($data['new_instance_name'])) {
-            return redirect()->route("teacher-add-form")->with('new_instance_name', $data['new_instance_name']); //route("teacher-add-form", ['new_instance_name' => $data['new_instance_name']]);
-        }
+        $response_content = ResponseHelpers::getContent($data, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
-    public function deleteTeacher (Request $request)
+    public function deleteTeacher (DeleteTeacherRequest $request)
     {
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
+        $deleted_instance = ModelHelpers::deleteInstance($request->validated()['deleting_id'], $this->config);
 
-        if ($deleted_instance) {
-            $instance_name_field = $this->config['instance_name_field'];
-            return redirect()->route("teachers")->with('deleted_instance_name', $deleted_instance->$instance_name_field); //route("teachers", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
-        } else {
-            return redirect()->route("teachers")->with('deleting_instance_not_found', true); //route("teachers", ['deleting_instance_not_found' => true]);
-        }
+        $response_content = ResponseHelpers::getContent($deleted_instance, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
     public function getTeacherSchedule (ScheduleTeacherRequest $request)
     {
         $data = ModelHelpers::getSchedule($request->validated(), $this->config);
         if (isset($data['duplicated_lesson'])) {
-            return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']); //route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+            $response_content = ResponseHelpers::getContent($data, $this->config['instance_name']);
+        
+            return redirect()->back()->with('response', [
+                'success' => $response_content['success'],
+                'message' => $response_content['message']
+            ]);
         }
 
         return view("teacher.teacher_schedule")->with('data', $data);
@@ -100,7 +108,12 @@ class TeacherController extends Controller
         $data = ModelHelpers::getMonthSchedule($request->validated(), $this->config);
         request()->flash();
         if (isset($data['duplicated_lesson'])) {
-            return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']); //route("lessons", ['duplicated_lesson' => $data['duplicated_lesson']]);
+            $response_content = ResponseHelpers::getContent($data, $this->config['instance_name']);
+        
+            return redirect()->back()->with('response', [
+                'success' => $response_content['success'],
+                'message' => $response_content['message']
+            ]);
         }
 
         return view("teacher.teacher_month_schedule")->with('data', $data);

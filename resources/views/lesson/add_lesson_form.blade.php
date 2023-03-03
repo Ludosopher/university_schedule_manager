@@ -1,19 +1,26 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if ($errors !== null && $errors->has('updating_id'))
-            @foreach($errors->get($field_name) as $error)
-                <div class="alertAccess">
+        @if ($errors->any() && $errors->has('updating_id'))
+            @foreach($errors->get('updating_id') as $error)
+                <div class="alertFail">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     {{ $error }}
                 </div>
             @endforeach
         @endif
-        @if (\Session::has('new_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные занятия {{ \Session::get('new_instance_name') }} успешно добавлены.
-            </div>
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @endif
         @endif
         <div class="external-form-container">
             <div class="internal-form-container">

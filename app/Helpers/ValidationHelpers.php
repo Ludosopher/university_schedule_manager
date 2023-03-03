@@ -12,9 +12,11 @@ use Illuminate\Support\Facades\Validator;
 
 class ValidationHelpers
 {
-    public static function validation($data, $rules, $messages = [], $attributes = []) {
-        
+    public static function validation($data, $rules, $messages = [], $attributes = []) 
+    {
+//dd($data, $rules);        
         $validator = Validator::make($data, $rules, $messages, $attributes);
+//dd($validator->validated());       
         if ($validator->fails()) {
             return [
                 'success' => false,
@@ -30,7 +32,7 @@ class ValidationHelpers
     public static function getReplacementVariantsValidation($data) {
         
         $rules = [
-            'week_day_id' => 'nullable|array',
+            'week_day_id' => 'nullable|array', //array
             'weekly_period_id' => 'nullable|array',
             'class_period_id' => 'nullable|array',
             'faculty_id' => 'nullable|array',
@@ -41,13 +43,15 @@ class ValidationHelpers
             'schedule_position' => 'nullable|array',
             'week_number' => 'nullable|string',
             'week_data' => 'nullable|string',
-            'week_dates' => 'nullable|string',
+            'week_dates' => 'nullable|string', 
             'is_red_week' => 'nullable|boolean',
       
+            'replace_rules' => 'nullable|array',
             'replace_rules.*.week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
             'replace_rules.*.weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
             'replace_rules.*.class_period_id' => 'nullable|integer|exists:App\ClassPeriod,id',
-            'replace_rules.*.teacher_id' => 'nullable|integer|exists:App\Teacher,id',
+            'replace_rules.*.teacher_id' => 'nullable|integer|exists:App\Teacher,id', 
+            'replace_rules.*.lesson_id' => 'nullable|integer|exists:App\Lesson,id',
             'replace_rules.*.date' => 'nullable|date',
         ];
         
@@ -67,10 +71,10 @@ class ValidationHelpers
             'schedule_position' => __('attribute_names.schedule_position'),
             'week_data' => __('attribute_names.week_data'),
       
-            'replace_rules.*.week_day_id' => __('attribute_names.replace_rules_week_day_id'),
-            'replace_rules.*.weekly_period_id' => __('attribute_names.replace_rules_weekly_period_id'),
-            'replace_rules.*.class_period_id' => __('attribute_names.replace_rules_class_period_id'),
-            'replace_rules.*.teacher_id' => __('attribute_names.replace_rules_teacher_id'),
+            // 'replace_rules.*.week_day_id' => __('attribute_names.replace_rules_week_day_id'),
+            // 'replace_rules.*.weekly_period_id' => __('attribute_names.replace_rules_weekly_period_id'),
+            // 'replace_rules.*.class_period_id' => __('attribute_names.replace_rules_class_period_id'),
+            // 'replace_rules.*.teacher_id' => __('attribute_names.replace_rules_teacher_id'),
         ];
 
         return self::validation($data, $rules, $messages, $attributes);

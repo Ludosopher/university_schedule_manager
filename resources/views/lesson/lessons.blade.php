@@ -1,35 +1,26 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if (\Session::has('updated_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', \Session::get('updated_instance_name'), __('lesson.lesson_updated')) }}
-            </div>
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @endif
         @endif
-        @if (\Session::has('deleted_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', \Session::get('deleted_instance_name'), __('lesson.lesson_removed')) }}
-            </div>
-        @endif
-        @if (\Session::has('deleting_instance_not_found'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('lesson.lesson_not_found') }}
-            </div>
-        @endif
-        @if (\Session::has('duplicated_lesson') && isset(\Session::get('duplicated_lesson')['teacher']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace(['?-1', '?-2', '?-3', '?-4'], [\Session::get('duplicated_lesson')['week_day'], mb_strtolower(\Session::get('duplicated_lesson')['class_period']), mb_strtolower(\Session::get('duplicated_lesson')['weekly_period']), \Session::get('duplicated_lesson')['teacher']], __('lesson.is_teacher_lesson_dublicate')) }}
-            </div>
-        @endif
-        @if (\Session::has('duplicated_lesson') && isset(\Session::get('duplicated_lesson')['group']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace(['?-1', '?-2', '?-3', '?-4'], [\Session::get('duplicated_lesson')['week_day'], mb_strtolower(\Session::get('duplicated_lesson')['class_period']), mb_strtolower(\Session::get('duplicated_lesson')['weekly_period']), \Session::get('duplicated_lesson')['group']], __('lesson.is_group_lesson_dublicate')) }}
-            </div>
+        @if ($errors->any() && $errors->has('deleting_id'))
+            @foreach($errors->get('deleting_id') as $error)
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ $error }}
+                </div>
+            @endforeach
         @endif
         <div class="getAllContainer">
             <div class="getAllLeft">

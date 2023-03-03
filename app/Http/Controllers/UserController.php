@@ -10,8 +10,11 @@ use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\TeacherHelpers;
 use App\Helpers\DateHelpers;
+use App\Helpers\ResponseHelpers;
 use App\Helpers\UserHelpers;
 use App\Helpers\ValidationHelpers;
+use App\Http\Requests\teacher\DeleteUserRequest as TeacherDeleteUserRequest;
+use App\Http\Requests\user\DeleteUserRequest;
 use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
 use App\Http\Requests\teacher\FilterTeacherRequest;
 use App\Http\Requests\teacher\RescheduleTeacherRequest;
@@ -70,37 +73,43 @@ class UserController extends Controller
     {
         $validated = $request->validated();
         $validated = DateHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
-        $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         
+        $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         ModelHelpers::addOrUpdateManyToManyAttributes($validated, $user['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);
 
+        $response_content = ResponseHelpers::getContent($user, $this->config['instance_name']);
+        
         return redirect()->back()->with('response', [
-            'success' => true,
-            'message' => str_replace('?', $user['updated_instance_name'], __('user.user_updated'))
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
         ]);
     }
 
     public function selfUpdateUser (SelfStoreUserRequest $request)
     {
         $validated = $request->validated();
+        
         $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         
+        $response_content = ResponseHelpers::getContent($user, $this->config['instance_name']);
+        
         return redirect()->back()->with('response', [
-            'success' => true,
-            'message' => str_replace('?', $user['updated_instance_name'], __('user.user_updated'))
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
         ]);
     }
 
-    public function deleteUser (Request $request)
+    public function deleteUser (DeleteUserRequest $request)
     {
         $attributes = array_values($this->config['many_to_many_attributes']);
-        $relations_deleted_result = ModelHelpers::deleteManyToManyAttributes($request->deleting_id, $this->config['model_name'], $attributes);
-        if (!$relations_deleted_result) {
-            return redirect()->route("users", ['deleting_instance_not_found' => true]);
-        }
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
-        $instance_name_field = $this->config['instance_name_field'];
-        return redirect()->route("users", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+        ModelHelpers::deleteManyToManyAttributes($request->validated()['deleting_id'], $this->config['model_name'], $attributes);
+        
+        $deleted_instance = ModelHelpers::deleteInstance($request->validated()['deleting_id'], $this->config);
+        $response_content = ResponseHelpers::getContent($deleted_instance, $this->config['instance_name']);
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
     public function getAccountMain (Request $request)

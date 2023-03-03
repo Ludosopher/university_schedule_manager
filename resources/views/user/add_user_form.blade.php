@@ -1,20 +1,14 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if ($errors !== null && $errors->has('updating_id'))
-            @foreach($errors->get($field_name) as $error)
+        @if ($errors->any() && $errors->has('updating_id'))
+            @foreach($errors->get('updating_id') as $error)
                 <div class="alertFail">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     {{ $error }}
                 </div>
             @endforeach
         @endif
-        {{-- @if (isset($data['new_instance_name']))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные занятия {{ $data['new_instance_name'] }} добавлены.
-            </div>
-        @endif --}}
         @if (\Session::has('response'))
             @if(\Session::get('response')['success'])
                 <div class="alertAccess">

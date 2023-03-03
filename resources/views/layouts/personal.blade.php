@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
+        @if($errors->any())
+            <div class="alertFail">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                {{ __('user_validation.invalid_input_data') }}
+            </div>
+        @endif
         @if (\Session::has('response'))
             @if(\Session::get('response')['success'])
                 <div class="alertAccess">

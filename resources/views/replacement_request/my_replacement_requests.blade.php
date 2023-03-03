@@ -1,49 +1,32 @@
 @extends('layouts.personal')
 @section('personal_content')
     <div class="container">
-        @if($errors->any())
+        {{-- @if($errors->any())
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ __('user_validation.invalid_input_data') }}
             </div>
-        @endif
-        @if (\Session::has('response') && isset(\Session::get('response')['errors']) && !empty(\Session::get('response')['errors']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ \Session::get('response')['errors'] }}
-            </div>
-        @endif
-        @if (\Session::has('response') && isset(\Session::get('response')['results']))
-            @foreach(\Session::get('response')['results'] as $result)
+        @endif --}}
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
                 <div class="alertAccess">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ $result }}
-                </div>    
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @endif
+        @endif
+        @if ($errors->any() && $errors->has('deleting_id'))
+            @foreach($errors->get('deleting_id') as $error)
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ $error }}
+                </div>
             @endforeach
-        @endif
-        @if (\Session::has('new_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ \Session::get('new_instance_name') }} успешно добавлена.
-            </div>
-        @endif
-        @if (\Session::has('updated_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ \Session::get('updated_instance_name') }} успешно обновлена.
-            </div>
-        @endif
-        @if (\Session::has('deleted_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ \Session::get('deleted_instance_name') }} удалена.
-            </div>
-        @endif
-        @if (\Session::has('deleting_instance_not_found'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Такая замена не найдена.
-            </div>
         @endif
         @php $replacement_request_status_ids = config('enum.replacement_request_status_ids'); @endphp
         <h2>Мои просьбы о замене</h2>

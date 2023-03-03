@@ -1,47 +1,32 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if (\Session::has('updated_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', \Session::get('updated_instance_name'), __('teacher.teacher_updated')) }}
-            </div>
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @endif
         @endif
-        @if (\Session::has('deleted_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', \Session::get('deleted_instance_name'), __('teacher.teacher_removed')) }}
-            </div>
-        @endif
-        @if (\Session::has('deleting_instance_not_found'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('teacher.teacher_not_found') }}
-            </div>
-        @endif
-        {{-- @if (isset($data['deleted_instance_name']))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', $data['deleted_instance_name'], __('teacher.teacher_removed')) }}
-            </div>
-        @endif --}}
-        {{-- @if (isset($data['deleting_instance_not_found']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('teacher.teacher_not_found') }}
-            </div>
-        @endif --}}
-        {{-- @if (isset($data['updated_instance_name']))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', $data['updated_instance_name'], __('teacher.teacher_updated')) }}
-            </div>
-        @endif --}}
         @if($errors->any() && ($errors->has('schedule_teacher_id') || $errors->has('week_number')))
             <div class="alertFail">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ __('user_validation.invalid_input_data') }}
             </div>
+        @endif
+        @if ($errors->any() && $errors->has('deleting_id'))
+            @foreach($errors->get('deleting_id') as $error)
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ $error }}
+                </div>
+            @endforeach
         @endif
         <div class="getAllContainer">
             <div class="getAllLeft">

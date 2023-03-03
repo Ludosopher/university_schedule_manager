@@ -107,10 +107,10 @@ class ReplacementRequestHelpers
         }
     }
 
-    public static function deleteReplacementRequest ($deleting_id, $model_name) {
+    public static function deleteReplacementRequest ($deleting_id, $config) {
         
         ReplacementRequestMessage::where('replacement_request_id', $deleting_id)->delete();
         
-        return ModelHelpers::deleteInstance($deleting_id, $model_name);
+        return ModelHelpers::deleteInstance($deleting_id, $config);
     }
 }
