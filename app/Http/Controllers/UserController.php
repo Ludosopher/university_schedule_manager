@@ -54,7 +54,7 @@ class UserController extends Controller
     public function adminUpdateUser (AdminStoreUserRequest $request)
     {
         $validated = $request->validated();
-        $validated = DateHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
+        $validated = ModelHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
         
         $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         ModelHelpers::addOrUpdateManyToManyAttributes($validated, $user['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);

@@ -6,6 +6,7 @@ use App\ClassPeriod;
 use App\Group;
 use App\Http\Controllers\TeacherController;
 use App\Lesson;
+use App\Setting;
 use App\Teacher;
 use App\WeekDay;
 use App\WeeklyPeriod;
@@ -209,16 +210,14 @@ class LessonHelpers
 
     public static function getReplacementData($incoming_data)
     {
+        $settings = Setting::pluck('value', 'name');
+        $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
+        $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
         $replacement_lessons = [];
         $header_data = [];
         $date_or_weekly_period = '';
 
-        if (isset($incoming_data['week_data'])) {
-            $week_data = json_decode($incoming_data['week_data'], true);
-            $week_number = $week_data['week_number'];
-            $week_dates = json_decode($incoming_data['week_dates'], true);
-            $is_red_week = $incoming_data['is_red_week'];
-        } elseif (isset($incoming_data['week_number'])) {
+        if (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
             $week_dates = DateHelpers::weekDates($week_number);
             $week_border_dates = DateHelpers::weekStartEndDates($week_number);
@@ -228,6 +227,13 @@ class LessonHelpers
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
             ];
+            $class_periods_limit = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
+            $week_days_limit = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
+        } elseif (isset($incoming_data['week_data'])) {
+            $week_data = json_decode($incoming_data['week_data'], true);
+            $week_number = $week_data['week_number'];
+            $week_dates = json_decode($incoming_data['week_dates'], true);
+            $is_red_week = $incoming_data['is_red_week'];
         } else {
             $week_data = null;
             $week_number = null;
@@ -281,27 +287,34 @@ class LessonHelpers
             'date_or_weekly_period' => $date_or_weekly_period,
             'replaceable_date_time' => $replaceable_date_time,
             'replaceable_hours_diff' => $replaceable_hours_diff,
+            'week_day_ids' => config('enum.week_day_ids'),
+            'weekly_periods' => config('enum.weekly_periods'),
+            'weekly_period_ids' => config('enum.weekly_period_ids'),
+            'weekly_period_colors' => config('enum.weekly_period_colors'),
+            'class_period_ids' => config('enum.class_period_ids'),
+            'week_days_limit' => $week_days_limit,
+            'class_periods_limit' => $class_periods_limit,
         ];
 
         return array_merge($data, DictionaryHelpers::getReplacementProperties());
     }
 
-    public static function getReschedulingData($incoming_data) {
-
+    public static function getReschedulingData($incoming_data) 
+    {
+        $settings = Setting::pluck('value', 'name');
+        $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
+        $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
         $teacher = Teacher::with(['lessons'])->where('id', $incoming_data['teacher_id'])->first();
         $lesson = Lesson::with(['groups.lessons'])->where('id', $incoming_data['lesson_id'])->first();
         $weekly_period_ids = config('enum.weekly_period_ids');
-        $week_days_limits = config('site.week_days_limits');
-        $class_periods_limits = config('site.class_periods_limits');
         $week_days = WeekDay::select('id', 'name')->get();
         $class_periods = ClassPeriod::get();
+        
         if (isset($incoming_data['week_data'])) {
             $week_data = json_decode($incoming_data['week_data'], true);
             $week_number = $week_data['week_number'];
-            $week_dates = json_decode($incoming_data['week_dates']);
+            $week_dates = json_decode($incoming_data['week_dates'], true);
             $is_red_week = $incoming_data['is_red_week'];
-            $class_periods_limit = $class_periods_limits['distance'];
-            $week_days_limit = $week_days_limits['distance'];
         } elseif (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
             $week_dates = DateHelpers::weekDates($week_number);
@@ -312,15 +325,13 @@ class LessonHelpers
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
             ];
-            $class_periods_limit = $class_periods_limits['distance'];
-            $week_days_limit = $week_days_limits['distance'];
+            $class_periods_limit = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
+            $week_days_limit = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
         } else {
             $week_data = null;
             $week_number = null;
             $week_dates = null;
             $is_red_week = null;
-            $class_periods_limit = $class_periods_limits['full_time'];
-            $week_days_limit = $week_days_limits['full_time'];
         }
 
         $schedule_subjects[] = $teacher->lessons;
@@ -405,6 +416,14 @@ class LessonHelpers
             'week_data' => $week_data,
             'week_dates' => $week_dates,
             'is_red_week' => $is_red_week,
+            'week_day_ids' => config('enum.week_day_ids'),
+            'weekly_period' => config('enum.weekly_periods'),
+            'weekly_period_id' => config('enum.weekly_period_ids'),
+            'weekly_period_color' => config('enum.weekly_period_colors'),
+            'class_period_ids' => config('enum.class_period_ids'),
+            'week_days_limit' => $week_days_limit,
+            'class_periods_limit' => $class_periods_limit,
+            'free_weekly_period_colors' => config('enum.free_weekly_period_colors'),
         ];
 
         return $data;

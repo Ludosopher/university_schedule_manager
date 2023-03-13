@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\ClassPeriod;
 use App\Group;
 use App\Lesson;
+use App\Setting;
 use App\Teacher;
 use App\WeekDay;
 use Illuminate\Database\Eloquent\Builder;
@@ -61,6 +62,12 @@ class ModelHelpers
 
     public static function getSchedule($incoming_data, $config) {
 
+        $settings = Setting::pluck('value', 'name');
+        $data['week_day_ids'] = config('enum.week_day_ids');
+        $data['weekly_periods'] = config('enum.weekly_periods');
+        $data['weekly_period_ids'] = config('enum.weekly_period_ids');
+        $data['weekly_period_colors'] = config('enum.weekly_period_colors');
+        $data['class_period_ids'] = config('enum.class_period_ids');
         $model_name = $config['model_name'];
         $instance_name = $config['instance_name'];
         $schedule_instance_id = $incoming_data["schedule_{$config['instance_name']}_id"];
@@ -84,12 +91,16 @@ class ModelHelpers
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
             ];
+            $data['week_days_limit'] = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
+            $data['class_periods_limit'] = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
         } else {
             $data['week_data'] = [
                 'week_number' => $week_number,
                 'start_date' => null,
                 'end_date' => null,
             ];
+            $data['week_days_limit'] = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
+            $data['class_periods_limit'] = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
         }
 
         $weekly_period_ids = config('enum.weekly_period_ids');
@@ -179,6 +190,14 @@ class ModelHelpers
         $profession_level_name_field = $config['profession_level_name_field'];
         $other_lesson_participant = $config['other_lesson_participant'];
         $other_lesson_participant_name = $config['other_lesson_participant_name'];
+        $settings = Setting::pluck('value', 'name');
+        $data['class_periods_limit'] = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
+        $data['week_days_limit'] = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
+        $data['week_day_ids'] = config('enum.week_day_ids');
+        $data['weekly_periods'] = config('enum.weekly_periods');
+        $data['weekly_period_ids'] = config('enum.weekly_period_ids');
+        $data['weekly_period_colors'] = config('enum.weekly_period_colors');
+        $data['class_period_ids'] = config('enum.class_period_ids'); 
         
         $weekly_period_ids = config('enum.weekly_period_ids');
         $class_periods = ClassPeriod::get();
@@ -314,7 +333,8 @@ class ModelHelpers
 
     public static function getInstances ($incoming_data, $config)
     {
-        $rows_per_page = config('site.rows_per_page');
+        $rows_per_page_setting = Setting::where('name', 'default_rows_per_page')->first();
+        $rows_per_page = $rows_per_page_setting ? $rows_per_page_setting->value : config('site.rows_per_page');
         $model_name = $config['model_name'];
         $dictionary_function = 'get'.ucfirst($config['instance_name']).'Properties';
 
@@ -353,7 +373,14 @@ class ModelHelpers
             'other_lesson_participant_name' => $config['other_lesson_participant'],
             'teacher_name' => $rescheduling_lesson->teacher->profession_level_name,
             'teacher_id' => $rescheduling_lesson->teacher->id,
-            'group_id' => $incoming_data['group_id'] ?? null
+            'group_id' => $incoming_data['group_id'] ?? null,
+            'week_day_ids' => $schedule_data['week_day_ids'],
+            'weekly_periods' => $schedule_data['weekly_periods'],
+            'weekly_period_ids' => $schedule_data['weekly_period_ids'],
+            'weekly_period_colors' => $schedule_data['weekly_period_colors'],
+            'class_period_ids' => $schedule_data['class_period_ids'],
+            'week_days_limit' => $schedule_data['week_days_limit'],
+            'class_periods_limit' => $schedule_data['class_periods_limit'],
         ];
 
         $data['week_dates'] = $reschedule_data['week_dates'];
@@ -415,6 +442,15 @@ class ModelHelpers
                 $attribute_ids[] = $elem->id;
             }
             $data['updating_instance']->$field = $attribute_ids;
+        }
+        return $data;
+    }
+
+    public static function preparingBooleans($data, $boolean_attributes) {
+        foreach ($boolean_attributes as $attribute) {
+            if (! isset($data[$attribute])) {
+                $data[$attribute] = 0;
+            }
         }
         return $data;
     }

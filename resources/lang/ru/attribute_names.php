@@ -55,5 +55,12 @@ return [
     'is_regular' => '"Регулярная замена"',
     'initiator_id' => '"initiator_id"',
     'status_id' => '"status_id"',
-            
+    // additionally only settings attributes
+    'red_week_is_odd' => '"Красная(Первая) неделя - нечётная"',
+    'full_time_week_days_limit' => '"Число дней недели на очном обучении"',
+    'distance_week_days_limit' => '"Число дней недели на заочном обучении"',
+    'full_time_class_periods_limit' => '"Максимальное число пар в день на очном обучении"',
+    'distance_class_periods_limit' => '"Максимальное число пар в день на заочном обучении"',
+    'default_rows_per_page' => '"Изначальное число строк на странице"',
+    'min_replacement_period' => '"Минимальное допустимое время перед началом замены, часов"',        
 ];

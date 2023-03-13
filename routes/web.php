@@ -71,7 +71,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/replacement-request/send', 'ReplacementRequestController@sendReplacementRequest')->name('replacement-request-send');
     Route::post('/replacement-request/chat', 'ReplacementRequestController@openReplacementRequestChat')->name('replacement-request-chat');
 
-
+    Route::get('/settings/get', 'SettingController@getSettings')->name('settings-get')->middleware('admin');
+    Route::post('/settings/update', 'SettingController@updateSettings')->name('settings-update')->middleware('admin');
 });
 
 

@@ -693,6 +693,68 @@ return [
          ],
          
       ],
+      'settings' => [
+         [
+            'type' => 'switch',
+            'input_type' => null,
+            'name' => 'red_week_is_odd',
+            'header' => '"Красная"(Первая) неделя - нечётная',
+            'is_required' => false,
+         ],
+         [
+            'type' => 'input',
+            'input_type' => 'number',
+            'name' => 'full_time_week_days_limit',
+            'header' => 'Число дней недели на очном обучении',
+            'max' => 6,
+            'min' => 5,
+            'is_required' => true,
+         ],
+         [
+            'type' => 'input',
+            'input_type' => 'number',
+            'name' => 'distance_week_days_limit',
+            'header' => 'Число дней недели на заочном обучении',
+            'max' => 6,
+            'min' => 5,
+            'is_required' => true,
+         ],
+         [
+            'type' => 'input',
+            'input_type' => 'number',
+            'name' => 'full_time_class_periods_limit',
+            'header' => 'Максимальное число пар в день на очном обучении',
+            'max' => 5,
+            'min' => 4,
+            'is_required' => true,
+         ],
+         [
+            'type' => 'input',
+            'input_type' => 'number',
+            'name' => 'distance_class_periods_limit',
+            'header' => 'Максимальное число пар в день на заочном обучении',
+            'max' => 5,
+            'min' => 4,
+            'is_required' => true,
+         ],
+         [
+            'type' => 'input',
+            'input_type' => 'number',
+            'name' => 'default_rows_per_page',
+            'header' => 'Изначальное число строк на странице',
+            'max' => 50,
+            'min' => 5,
+            'is_required' => true,
+         ],
+         [
+            'type' => 'input',
+            'input_type' => 'number',
+            'name' => 'min_replacement_period',
+            'header' => 'Минимальное допустимое время перед началом замены, часов',
+            'min' => 2,
+            'is_required' => true,
+         ],
+      ],
 
 
 ];

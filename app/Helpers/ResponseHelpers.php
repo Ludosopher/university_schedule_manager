@@ -47,7 +47,7 @@ class ResponseHelpers
         } else {
             $replace_rules = $data['replace_rules'];
         }
-//dd($data);        
+        
         return [
             'replace_rules' => $replace_rules,
             'week_data' => $data['week_data'],

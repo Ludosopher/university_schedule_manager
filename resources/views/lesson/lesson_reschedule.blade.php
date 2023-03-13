@@ -54,6 +54,9 @@
                 <thead>
                     <tr class="bg-light-gray">
                         <th class="text-uppercase">Пара</th>
+                        @php
+                            $week_days_ru = config('enum.week_days_ru');
+                        @endphp
                         @if(isset($data['week_dates']))
                             @foreach($data['week_dates'] as $week_day_id => $date)
                                 @if(is_array($date) && isset($date['is_holiday']))
@@ -63,73 +66,66 @@
                                 @endif
                             @endforeach
                         @else
-                            <th class="text-uppercase">Понедельник</th>
-                            <th class="text-uppercase">Вторник</th>
-                            <th class="text-uppercase">Среда</th>
-                            <th class="text-uppercase">Четверг</th>
-                            <th class="text-uppercase">Пятница</th>
-                            {{-- <th class="text-uppercase">Суббота</th> --}}
+                            @foreach($week_days_ru as $week_day_id => $week_day_name)
+                                @if($week_day_id <= $data['week_days_limit'])
+                                    <th class="text-uppercase">{{ $week_day_name }}</th>
+                                @endif
+                            @endforeach
                         @endif
                     </tr>
                 </thead>
                 <tbody>
                     @if(isset($data) && isset($data['class_periods']) && isset($data['free_periods']))
                         @php
-                            $week_day_ids = config('enum.week_day_ids');
-                            $weekly_period = config('enum.weekly_periods');
-                            $weekly_period_id = config('enum.weekly_period_ids');
-                            $free_weekly_period_color = config('enum.free_weekly_period_colors');
-                            $class_period_ids = config('enum.class_period_ids');
-                            $week_days_limits = config('site.week_days_limits');
-                            $class_periods_limits = config('site.class_periods_limits');
+                            $week_day_ids = $data['week_day_ids'];
+                            $weekly_period = $data['weekly_period'];
+                            $weekly_period_id = $data['weekly_period_id'];
+                            $weekly_period_color = $data['weekly_period_color'];
+                            $class_period_ids = $data['class_period_ids'];
+                            $week_days_limit = $data['week_days_limit'];
+                            $class_periods_limit = $data['class_periods_limit'];
+                            $free_weekly_period_color = $data['free_weekly_period_colors'];
                             $class_periods = $data['class_periods'];
                             $free_periods = $data['free_periods'];
-                            if (isset($data['week_data']['week_number'])) {
-                                $week_days_limit = $week_days_limits['distance'];
-                                $class_periods_limit = $class_periods_limits['distance']; 
-                            } else {
-                                $week_days_limit = $week_days_limits['full_time'];
-                                $class_periods_limit = $class_periods_limits['full_time'];
-                            }
                         @endphp
                         @foreach($class_period_ids as $lesson_name => $class_period_id)
-                            <tr>
-                                @if($class_period_id <= $class_periods_limit)
+                            @if($class_period_id <= $class_periods_limit)
+                                <tr>
                                     <td class="align-middle schedule-period">
                                         <div class="schedule-period-name">{{ $class_period_id }}</div>
                                         <div class="schedule-period-time">
                                             {{ date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])) }} - {{ date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])) }}
                                         </div>
                                     </td>
-                                @endif
-                                @foreach($week_day_ids as $wd_name => $week_day_id)
-                                    @php
-                                        $is_holiday = isset($data['week_dates']) && is_array($data['week_dates'][$week_day_id]) && isset($data['week_dates'][$week_day_id]['is_holiday']);
-                                    @endphp
-                                    @if($week_day_id <= $week_days_limit)
-                                        @if (isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])
-                                             && ! $is_holiday)
-                                            @php $free_period = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]; @endphp
-                                            <td class="schedule-cell reschedule-cell" style="background-color: {{ $free_weekly_period_color[$weekly_period_id['every_week']] }};"></td>
-                                        @elseif(isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']]))
-                                            @php
-                                                $free_period_red = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
-                                                $free_period_blue = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']] ?? false;
-                                            @endphp
-                                            <td class="schedule-cell reschedule-cell">
-                                                @if($free_period_red)
-                                                    <div class="schedule-cell-top" style="background-color: {{ $free_weekly_period_color[$weekly_period_id['red_week']] }}"></div>
-                                                @endif
-                                                @if($free_period_blue)
-                                                    <div class="schedule-cell-bottom" style="background-color: {{ $free_weekly_period_color[$weekly_period_id['blue_week']] }}"></div>
-                                                @endif
-                                            </td>
-                                        @else
-                                            <td class="schedule-cell reschedule-cell"></td>
+                                    @foreach($week_day_ids as $wd_name => $week_day_id)
+                                        @php
+                                            $is_holiday = isset($data['week_dates']) && is_array($data['week_dates'][$week_day_id]) && isset($data['week_dates'][$week_day_id]['is_holiday']);
+                                        @endphp
+                                        @if($week_day_id <= $week_days_limit)
+                                            @if (isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']])
+                                                && ! $is_holiday)
+                                                @php $free_period = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]; @endphp
+                                                <td class="schedule-cell reschedule-cell" style="background-color: {{ $free_weekly_period_color[$weekly_period_id['every_week']] }};"></td>
+                                            @elseif(isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']]))
+                                                @php
+                                                    $free_period_red = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
+                                                    $free_period_blue = $free_periods[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']] ?? false;
+                                                @endphp
+                                                <td class="schedule-cell reschedule-cell">
+                                                    @if($free_period_red)
+                                                        <div class="schedule-cell-top" style="background-color: {{ $free_weekly_period_color[$weekly_period_id['red_week']] }}"></div>
+                                                    @endif
+                                                    @if($free_period_blue)
+                                                        <div class="schedule-cell-bottom" style="background-color: {{ $free_weekly_period_color[$weekly_period_id['blue_week']] }}"></div>
+                                                    @endif
+                                                </td>
+                                            @else
+                                                <td class="schedule-cell reschedule-cell"></td>
+                                            @endif
                                         @endif
-                                    @endif
-                                @endforeach
-                            </tr>
+                                    @endforeach
+                                </tr>
+                            @endif
                         @endforeach
                     @endif
                 </tbody>

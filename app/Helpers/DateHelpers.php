@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\ClassPeriod;
 use App\ExternalDataset;
 use App\Lesson;
+use App\Setting;
 use App\Teacher;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -101,18 +102,10 @@ class DateHelpers
         return "{$year}-W{$week}";
     }
 
-    public static function preparingBooleans($data, $boolean_attributes) {
-        foreach ($boolean_attributes as $attribute) {
-            if (! isset($data[$attribute])) {
-                $data[$attribute] = false;
-            }
-        }
-        return $data;
-    }
-
     public static function weekColorIsRed($week_number_str) {
         
-        $red_week_is_odd = config('site.red_week_is_odd');
+        $red_week_is_odd_setting = Setting::where('name', 'red_week_is_odd')->first();
+        $red_week_is_odd = $red_week_is_odd_setting ? $red_week_is_odd_setting->value : config('site.red_week_is_odd');
         $week_data = self::getWeekData($week_number_str);
 
         $this_week_is_odd = (int)$week_data['week'] % 2;
@@ -165,8 +158,8 @@ class DateHelpers
         return false;
     }
 
-    public static function getMonthWeekNumbers($month_number) {
-                
+    public static function getMonthWeekNumbers($month_number) 
+    {
         $first_month_day = date('Y-m-01', strtotime($month_number));
         if (date('w', strtotime($first_month_day)) == 0) {
             $first_month_day = date('Y-m-d', strtotime("{$first_month_day} + 1 day"));
@@ -174,7 +167,7 @@ class DateHelpers
 
         $last_month_day = date('Y-m-t', strtotime($month_number));
         if (date('w', strtotime($last_month_day)) == 0) {
-            $last_month_day = date('Y-m-d', strtotime("{$first_month_day} - 1 day"));
+            $last_month_day = date('Y-m-d', strtotime("{$last_month_day} - 1 day"));
         }
 
         $month_week_numbers = [];

@@ -54,5 +54,13 @@ return [
     'is_regular' => '"Regular replacement"',
     'initiator_id' => '"initiator_id"',
     'status_id' => '"status_id"',
+    // additionally only settings attributes
+    'red_week_is_odd' => '"The red (First) week is odd"',
+    'full_time_week_days_limit' => '"The number of days of the week in full-time training"',
+    'distance_week_days_limit' => '"The number of days of the week in correspondence training"',
+    'full_time_class_periods_limit' => '"Maximum number of couples per day in full-time training"',
+    'distance_class_periods_limit' => '"The maximum number of couples per day in correspondence training"',
+    'default_rows_per_page' => '"The initial number of lines per page"',
+    'min_replacement_period' => '"The minimum allowable time before the start of the replacement, hours"',
             
 ];
