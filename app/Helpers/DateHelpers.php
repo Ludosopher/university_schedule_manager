@@ -2,14 +2,10 @@
 
 namespace App\Helpers;
 
-use App\ClassPeriod;
 use App\ExternalDataset;
-use App\Lesson;
 use App\Setting;
-use App\Teacher;
 use DateTime;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Schema;
+
 
 class DateHelpers
 {

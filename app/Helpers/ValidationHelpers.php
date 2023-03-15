@@ -166,7 +166,7 @@ class ValidationHelpers
         $rules = [
             "month_name" => "required|string",
             "teacher_name" => "required|string",
-            "weeks" => "required|string", 
+            "weeks" => "required|string",
         ];
         
         return self::validation($data, $rules);

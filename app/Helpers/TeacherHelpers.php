@@ -73,7 +73,7 @@ class TeacherHelpers
         }
 
         $result = [
-            'mails_to' => ['ludosopher@yandex.ru'],//[Auth::user()->email], // $mails_to, // $replacing_lesson->teacher->users
+            'mails_to' => $mails_to,//[Auth::user()->email], // $mails_to
             'addressee_name' => $replacing_lesson->teacher->first_name_patronymic,
             'requester_name' => $replaceable_lesson->teacher->profession_level_name,
             'replaceable_lesson_description' => $replaceable_lesson_description,

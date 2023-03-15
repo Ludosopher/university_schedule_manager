@@ -336,7 +336,13 @@ class ModelHelpers
         $rows_per_page_setting = Setting::where('name', 'default_rows_per_page')->first();
         $rows_per_page = $rows_per_page_setting ? $rows_per_page_setting->value : config('site.rows_per_page');
         $model_name = $config['model_name'];
-        $dictionary_function = 'get'.ucfirst($config['instance_name']).'Properties';
+
+        $instance_name_arr = explode('_', $config['instance_name']);
+        foreach ($instance_name_arr as &$name_part) {
+            $name_part = ucfirst($name_part);
+        }
+        $dictionary_instance_name = implode('', $instance_name_arr);
+        $dictionary_function = 'get'.$dictionary_instance_name.'Properties';
 
         if (count($incoming_data)) {
             request()->flash();

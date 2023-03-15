@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\ClassPeriod;
 use App\Lesson;
+use App\Setting;
 use App\Teacher;
 
 class DocExportHelpers
@@ -18,6 +19,9 @@ class DocExportHelpers
         $class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
         $other_partic = $data['other_participant'];
         $week_data = isset($data['week_data']) ? json_decode($data['week_data'], true) : null;
+        $settings = Setting::pluck('value', 'name');
+        $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
+        $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
         //------------------------------------------------------
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
        
@@ -95,172 +99,176 @@ class DocExportHelpers
         $table = $section->addTable('Schedule');
         $table->addRow(null, array('tblHeader' => true));
         $table->addCell(1300, $headerCellStyle)->addText('Пары', $headerFontStyle, $headerParagraphStyle);
+        $week_days_ru = config('enum.week_days_ru');
         if (isset($data['week_dates'])) {
             $week_dates = json_decode($data['week_dates'], true);
-            $week_days_ru = config('enum.week_days_ru');
-
             foreach ($week_dates as $week_day_id => $date) {
-                if (is_array($date) && isset($date['is_holiday'])) {
-                    $date = date('d.m.y', strtotime($date['date']));
-                    $is_holiday_header = ' /праздничный день/';
-                } else {
-                    $date = date('d.m.y', strtotime($date));
-                    $is_holiday_header = '';
+                if ($week_day_id <= $week_days_limit) {
+                    if (is_array($date) && isset($date['is_holiday'])) {
+                        $date = date('d.m.y', strtotime($date['date']));
+                        $is_holiday_header = ' /праздничный день/';
+                    } else {
+                        $date = date('d.m.y', strtotime($date));
+                        $is_holiday_header = '';
+                    }
+                    $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$week_day_id]} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
                 }
-                $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$week_day_id]} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
             }
         } else {
-            $table->addCell(2000, $headerCellStyle)->addText('Понедельник', $headerFontStyle, $headerParagraphStyle);
-            $table->addCell(2000, $headerCellStyle)->addText('Вторник', $headerFontStyle, $headerParagraphStyle);
-            $table->addCell(2000, $headerCellStyle)->addText('Среда', $headerFontStyle, $headerParagraphStyle);
-            $table->addCell(2000, $headerCellStyle)->addText('Четверг', $headerFontStyle, $headerParagraphStyle);
-            $table->addCell(2000, $headerCellStyle)->addText('Пятница', $headerFontStyle, $headerParagraphStyle);
-            $table->addCell(2000, $headerCellStyle)->addText('Суббота', $headerFontStyle, $headerParagraphStyle);
-        }
-        foreach($class_period_ids as $lesson_name => $class_period_id) {
-            $table->addRow(1200);
-            $left_header_cell = $table->addCell(1300, $headerCellStyle);
-            $left_header_cell->addText($class_period_id, $headerFontStyle, $headerParagraphStyle);
-            $left_header_cell->addText(date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])).' - '.date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])), $headerFontStyle, $headerParagraphStyle);
-            foreach($week_day_ids as $wd_name => $week_day_id) {
-                $is_holiday = isset($week_dates) && is_array($week_dates[$week_day_id]) && isset($week_dates[$week_day_id]['is_holiday']); 
-                if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
-                    $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                    $lesson_n = $lesson['name'];
-                    $lesson_type = "({$lesson['type']})";
-                    $lesson_room = " ауд. {$lesson['room']}";
-                    $lesson_other_participant = $lesson[$other_partic];
-                    $everyWeekFontStyle = array('size' => 8);
-                    $reschedule_massage = false;
-                    $replacement_massage = false;
-                    if (isset($lesson['for_replacement']) && $lesson['for_replacement']) {
-                        $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['shading' => array('fill' => '#DCDCDC')]);
-                        $lesson_other_participant = $lesson['teacher'];
-                    } elseif (isset($lesson['id']) && isset($data['replaceable_lesson_id']) && $lesson['id'] == $data['replaceable_lesson_id']) {
-                        $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['bold' => true]);
-                        $replacement_massage = true;
-                    }
-                    if (!is_array($lesson) && $lesson) {
-                        $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['name' => 'Segoe Script']);
-                        $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                        $lesson_n = '';
-                        $lesson_type = '';
-                        $lesson_room = '';
-                        $lesson_other_participant = 'Вариант переноса';
-                    } elseif (isset($lesson['id']) && isset($data['rescheduling_lesson_id']) && $lesson['id'] == $data['rescheduling_lesson_id']) {
-                        $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['bold' => true]);
-                        $reschedule_massage = true;
-                    }
-                    $currentEveryWeekCellStyle = $everyWeekCellStyle;
-                    if (isset($lesson['date'])) {
-                        $currentEveryWeekCellStyle = array_merge($everyWeekCellStyle, ['borderStyle' => 'double', 'borderSize' => 8]);
-                    }
-                    $sell = $table->addCell(2000, $currentEveryWeekCellStyle);
-                    $sell->addText("{$lesson_n} {$lesson_type}", $everyWeekFontStyle, $everyWeekParagraphStyle);
-                    $sell->addText("{$lesson_room}", $everyWeekFontStyle, $everyWeekParagraphStyle);
-                    $sell->addText($lesson_other_participant, $everyWeekFontStyle, $everyWeekParagraphStyle);
-                    $reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 8, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                    $replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                } elseif (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']])) {
-                    $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
-                    $lesson_blue = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']] ?? false;
-                    $red_replacement_massage = false;
-                    $blue_replacement_massage = false;
-                    $red_reschedule_massage = false;
-                    $blue_reschedule_massage = false;
-                    if (!$lesson_red) {
-                        $redFontStyle = array('size' => 6, 'color' => '#ffffff');
-                        $blueFontStyle = array('size' => 6);
-                        $red_name = $lesson_blue['name'];
-                        $red_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                        $red_type = "({$lesson_blue['type']})";
-                        $red_room = "ауд. {$lesson_blue['room']}";
-                        $red_group = $lesson_blue[$other_partic];
-                        $blue_name = $lesson_blue['name'];
-                        $blue_type = "({$lesson_blue['type']})";
-                        $blue_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                        $blue_room = "ауд. {$lesson_blue['room']}";
-                        $blue_group = $lesson_blue[$other_partic];
-                    } elseif (!$lesson_blue) {
-                        $blueFontStyle = array('size' => 6, 'color' => '#ffffff');
-                        $redFontStyle = array('size' => 6);
-                        $red_name = $lesson_red['name'];
-                        $red_type = "({$lesson_red['type']})";
-                        $red_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                        $red_room = "ауд. {$lesson_red['room']}";
-                        $red_group = $lesson_red[$other_partic];
-                        $blue_name = $lesson_red['name'];
-                        $blue_type = $lesson_red['type'];
-                        $blue_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                        $blue_room = $lesson_red['room'];
-                        $blue_group = $lesson_red[$other_partic];
-                    } else {
-                        $redFontStyle = array('size' => 6);
-                        $blueFontStyle = array('size' => 6);
-                        $red_name = $lesson_red['name'];
-                        $red_type = "({$lesson_red['type']})";
-                        $red_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                        $red_room = "ауд. {$lesson_red['room']}";
-                        $red_group = $lesson_red[$other_partic];
-                        $blue_name = $lesson_blue['name'];
-                        $blue_type = "({$lesson_blue['type']})";
-                        $blue_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                        $blue_room = "ауд. {$lesson_blue['room']}";
-                        $blue_group = $lesson_blue[$other_partic];
-                    }
-                    if (isset($lesson_red['for_replacement']) && $lesson_red['for_replacement']) {
-                        $redFontStyle = array_merge($redFontStyle, ['shading' => array('fill' => '#DCDCDC')]);
-                        $red_group = $lesson_red['teacher'];
-                    } elseif (isset($lesson_red['id']) && isset($data['replaceable_lesson_id']) && $lesson_red['id'] == $data['replaceable_lesson_id']) {
-                        $redFontStyle = array_merge($redFontStyle, ['bold' => true]);
-                        $red_replacement_massage = true;
-                    }
-                    if (isset($lesson_blue['for_replacement']) && $lesson_blue['for_replacement']) {
-                        $blueFontStyle = array_merge($blueFontStyle, ['shading' => array('fill' => '#DCDCDC')]);
-                        $blue_group = $lesson_blue['teacher'];
-                    } elseif (isset($lesson_blue['id']) && isset($data['replaceable_lesson_id']) && $lesson_blue['id'] == $data['replaceable_lesson_id']) {
-                        $blueFontStyle = array_merge($blueFontStyle, ['bold' => true]);
-                        $blue_replacement_massage = true;
-                    }
-
-                    if (!is_array($lesson_red) && $lesson_red) {
-                        $redFontStyle = array_merge($redFontStyle, ['size' => 8, 'name' => 'Segoe Script']);
-                        $red_name = '';
-                        $red_type = '';
-                        $red_room = '';
-                        $red_group = 'Вариант переноса';
-                    } elseif (isset($lesson_red['id']) && isset($data['rescheduling_lesson_id']) && $lesson_red['id'] == $data['rescheduling_lesson_id']) {
-                        $redFontStyle = array_merge($redFontStyle, ['bold' => true]);
-                        $red_reschedule_massage = true;
-                    }
-                    if (!is_array($lesson_blue) && $lesson_blue) {
-                        $blueFontStyle = array_merge($blueFontStyle, ['size' => 8, 'name' => 'Segoe Script']);
-                        $blue_name = '';
-                        $blue_type = '';
-                        $blue_room = '';
-                        $blue_group = 'Вариант переноса';
-                    } elseif (isset($lesson_blue['id']) && isset($data['rescheduling_lesson_id']) && $lesson_blue['id'] == $data['rescheduling_lesson_id']) {
-                        $blueFontStyle = array_merge($blueFontStyle, ['bold' => true]);
-                        $blue_reschedule_massage = true;
-                    }
-                    $sell = $table->addCell(2000, $halfCellStyle);
-                    $sell->addText("{$red_name} {$red_type}", $redFontStyle, $halfParagraphStyle);
-                    $sell->addText("{$red_date}{$red_room}", $redFontStyle, $halfParagraphStyle);
-                    $sell->addText($red_group, $redFontStyle, $halfParagraphStyle);
-                    $red_reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 6, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                    $red_replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'bold' => true, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                    
-                    $sell->addText('------------------------------------------', $borderFontStyle, $borderParagraphStyle);
-                    
-                    $sell->addText("{$blue_name} {$blue_type}", $blueFontStyle, $halfParagraphStyle);
-                    $sell->addText("{$blue_date}{$blue_room}", $blueFontStyle, $halfParagraphStyle);
-                    $sell->addText($blue_group, $blueFontStyle, $halfParagraphStyle);
-                    $blue_reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 6, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                    $blue_replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'bold' => true, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                } else {
-                    $table->addCell(2000, $everyWeekCellStyle);
+            foreach($week_days_ru as $week_day_id => $week_day_name) {
+                if ($week_day_id <= $week_days_limit) {
+                    $table->addCell(2000, $headerCellStyle)->addText($week_day_name, $headerFontStyle, $headerParagraphStyle);
                 }
             }
+        }
+        foreach($class_period_ids as $lesson_name => $class_period_id) {
+            if ($class_period_id <= $class_periods_limit) {
+                $table->addRow(1200);
+                $left_header_cell = $table->addCell(1300, $headerCellStyle);
+                $left_header_cell->addText($class_period_id, $headerFontStyle, $headerParagraphStyle);
+                $left_header_cell->addText(date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])).' - '.date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])), $headerFontStyle, $headerParagraphStyle);
+                foreach($week_day_ids as $wd_name => $week_day_id) {
+                    $is_holiday = isset($week_dates) && is_array($week_dates[$week_day_id]) && isset($week_dates[$week_day_id]['is_holiday']); 
+                    if ($week_day_id <= $week_days_limit) {
+                        if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
+                            $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                            $lesson_n = $lesson['name'];
+                            $lesson_type = "({$lesson['type']})";
+                            $lesson_room = " ауд. {$lesson['room']}";
+                            $lesson_other_participant = $lesson[$other_partic];
+                            $everyWeekFontStyle = array('size' => 8);
+                            $reschedule_massage = false;
+                            $replacement_massage = false;
+                            if (isset($lesson['for_replacement']) && $lesson['for_replacement']) {
+                                $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['shading' => array('fill' => '#DCDCDC')]);
+                                $lesson_other_participant = $lesson['teacher'];
+                            } elseif (isset($lesson['id']) && isset($data['replaceable_lesson_id']) && $lesson['id'] == $data['replaceable_lesson_id']) {
+                                $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['bold' => true]);
+                                $replacement_massage = true;
+                            }
+                            if (!is_array($lesson) && $lesson) {
+                                $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['name' => 'Segoe Script']);
+                                $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                                $lesson_n = '';
+                                $lesson_type = '';
+                                $lesson_room = '';
+                                $lesson_other_participant = 'Вариант переноса';
+                            } elseif (isset($lesson['id']) && isset($data['rescheduling_lesson_id']) && $lesson['id'] == $data['rescheduling_lesson_id']) {
+                                $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['bold' => true]);
+                                $reschedule_massage = true;
+                            }
+                            $currentEveryWeekCellStyle = $everyWeekCellStyle;
+                            if (isset($lesson['date'])) {
+                                $currentEveryWeekCellStyle = array_merge($everyWeekCellStyle, ['borderStyle' => 'double', 'borderSize' => 8]);
+                            }
+                            $sell = $table->addCell(2000, $currentEveryWeekCellStyle);
+                            $sell->addText("{$lesson_n} {$lesson_type}", $everyWeekFontStyle, $everyWeekParagraphStyle);
+                            $sell->addText("{$lesson_room}", $everyWeekFontStyle, $everyWeekParagraphStyle);
+                            $sell->addText($lesson_other_participant, $everyWeekFontStyle, $everyWeekParagraphStyle);
+                            $reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 8, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                        } elseif (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']])) {
+                            $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
+                            $lesson_blue = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']] ?? false;
+                            $red_replacement_massage = false;
+                            $blue_replacement_massage = false;
+                            $red_reschedule_massage = false;
+                            $blue_reschedule_massage = false;
+                            if (!$lesson_red) {
+                                $redFontStyle = array('size' => 6, 'color' => '#ffffff');
+                                $blueFontStyle = array('size' => 6);
+                                $red_name = $lesson_blue['name'];
+                                $red_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
+                                $red_type = "({$lesson_blue['type']})";
+                                $red_room = "ауд. {$lesson_blue['room']}";
+                                $red_group = $lesson_blue[$other_partic];
+                                $blue_name = $lesson_blue['name'];
+                                $blue_type = "({$lesson_blue['type']})";
+                                $blue_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
+                                $blue_room = "ауд. {$lesson_blue['room']}";
+                                $blue_group = $lesson_blue[$other_partic];
+                            } elseif (!$lesson_blue) {
+                                $blueFontStyle = array('size' => 6, 'color' => '#ffffff');
+                                $redFontStyle = array('size' => 6);
+                                $red_name = $lesson_red['name'];
+                                $red_type = "({$lesson_red['type']})";
+                                $red_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
+                                $red_room = "ауд. {$lesson_red['room']}";
+                                $red_group = $lesson_red[$other_partic];
+                                $blue_name = $lesson_red['name'];
+                                $blue_type = $lesson_red['type'];
+                                $blue_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
+                                $blue_room = $lesson_red['room'];
+                                $blue_group = $lesson_red[$other_partic];
+                            } else {
+                                $redFontStyle = array('size' => 6);
+                                $blueFontStyle = array('size' => 6);
+                                $red_name = $lesson_red['name'];
+                                $red_type = "({$lesson_red['type']})";
+                                $red_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
+                                $red_room = "ауд. {$lesson_red['room']}";
+                                $red_group = $lesson_red[$other_partic];
+                                $blue_name = $lesson_blue['name'];
+                                $blue_type = "({$lesson_blue['type']})";
+                                $blue_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
+                                $blue_room = "ауд. {$lesson_blue['room']}";
+                                $blue_group = $lesson_blue[$other_partic];
+                            }
+                            if (isset($lesson_red['for_replacement']) && $lesson_red['for_replacement']) {
+                                $redFontStyle = array_merge($redFontStyle, ['shading' => array('fill' => '#DCDCDC')]);
+                                $red_group = $lesson_red['teacher'];
+                            } elseif (isset($lesson_red['id']) && isset($data['replaceable_lesson_id']) && $lesson_red['id'] == $data['replaceable_lesson_id']) {
+                                $redFontStyle = array_merge($redFontStyle, ['bold' => true]);
+                                $red_replacement_massage = true;
+                            }
+                            if (isset($lesson_blue['for_replacement']) && $lesson_blue['for_replacement']) {
+                                $blueFontStyle = array_merge($blueFontStyle, ['shading' => array('fill' => '#DCDCDC')]);
+                                $blue_group = $lesson_blue['teacher'];
+                            } elseif (isset($lesson_blue['id']) && isset($data['replaceable_lesson_id']) && $lesson_blue['id'] == $data['replaceable_lesson_id']) {
+                                $blueFontStyle = array_merge($blueFontStyle, ['bold' => true]);
+                                $blue_replacement_massage = true;
+                            }
+
+                            if (!is_array($lesson_red) && $lesson_red) {
+                                $redFontStyle = array_merge($redFontStyle, ['size' => 8, 'name' => 'Segoe Script']);
+                                $red_name = '';
+                                $red_type = '';
+                                $red_room = '';
+                                $red_group = 'Вариант переноса';
+                            } elseif (isset($lesson_red['id']) && isset($data['rescheduling_lesson_id']) && $lesson_red['id'] == $data['rescheduling_lesson_id']) {
+                                $redFontStyle = array_merge($redFontStyle, ['bold' => true]);
+                                $red_reschedule_massage = true;
+                            }
+                            if (!is_array($lesson_blue) && $lesson_blue) {
+                                $blueFontStyle = array_merge($blueFontStyle, ['size' => 8, 'name' => 'Segoe Script']);
+                                $blue_name = '';
+                                $blue_type = '';
+                                $blue_room = '';
+                                $blue_group = 'Вариант переноса';
+                            } elseif (isset($lesson_blue['id']) && isset($data['rescheduling_lesson_id']) && $lesson_blue['id'] == $data['rescheduling_lesson_id']) {
+                                $blueFontStyle = array_merge($blueFontStyle, ['bold' => true]);
+                                $blue_reschedule_massage = true;
+                            }
+                            $sell = $table->addCell(2000, $halfCellStyle);
+                            $sell->addText("{$red_name} {$red_type}", $redFontStyle, $halfParagraphStyle);
+                            $sell->addText("{$red_date}{$red_room}", $redFontStyle, $halfParagraphStyle);
+                            $sell->addText($red_group, $redFontStyle, $halfParagraphStyle);
+                            $red_reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 6, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $red_replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'bold' => true, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            
+                            $sell->addText('------------------------------------------', $borderFontStyle, $borderParagraphStyle);
+                            
+                            $sell->addText("{$blue_name} {$blue_type}", $blueFontStyle, $halfParagraphStyle);
+                            $sell->addText("{$blue_date}{$blue_room}", $blueFontStyle, $halfParagraphStyle);
+                            $sell->addText($blue_group, $blueFontStyle, $halfParagraphStyle);
+                            $blue_reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 6, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $blue_replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'bold' => true, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                        } else {
+                            $table->addCell(2000, $everyWeekCellStyle);
+                        }
+                    }    
+                }
+            }    
         }
 
         return \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
@@ -276,6 +284,9 @@ class DocExportHelpers
         $class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
         $other_partic = $data['other_participant'];
         $week_days_ru = config('enum.week_days_ru');
+        $settings = Setting::pluck('value', 'name');
+        $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
+        $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
         //------------------------------------------------------
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
        
@@ -320,46 +331,52 @@ class DocExportHelpers
             $table->addCell(1300, $headerCellStyle)->addText($week_color_name, $headerFontStyle, $headerParagraphStyle);
             
             foreach ($week_dates as $week_day_id => $date) {
-                if (is_array($date) && isset($date['is_holiday'])) {
-                    $date = date('d.m.y', strtotime($date['date']));
-                    $is_holiday_header = ' /праздничный день/';
-                } else {
-                    $date = date('d.m.y', strtotime($date));
-                    $is_holiday_header = '';
+                if ($week_day_id <= $week_days_limit) {
+                    if (is_array($date) && isset($date['is_holiday'])) {
+                        $date = date('d.m.y', strtotime($date['date']));
+                        $is_holiday_header = ' /праздничный день/';
+                    } else {
+                        $date = date('d.m.y', strtotime($date));
+                        $is_holiday_header = '';
+                    }
+                    $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$week_day_id]} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
                 }
-                $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$week_day_id]} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
             }
             
             foreach ($class_period_ids as $lesson_name => $class_period_id) {
-                $section->addText('');
-                $table->addRow(1200);
-                $left_header_cell = $table->addCell(1300, $headerCellStyle);
-                $left_header_cell->addText($class_period_id, $headerFontStyle, $headerParagraphStyle);
-                $left_header_cell->addText(date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])).' - '.date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])), $headerFontStyle, $headerParagraphStyle);
-                
-                foreach ($week_day_ids as $wd_name => $week_day_id) {
-                    $is_holiday = is_array($week_dates[$week_day_id]) && isset($week_dates[$week_day_id]['is_holiday']);
-                    if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
-                        $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                        $lesson_n = $lesson['name'];
-                        $lesson_type = "({$lesson['type']})";
-                        $lesson_room = " ауд. {$lesson['room']}";
-                        $lesson_other_participant = $lesson[$other_partic];
-                        $everyWeekFontStyle = array('size' => 8);
-                        
-                        $currentEveryWeekCellStyle = $everyWeekCellStyle;
-                        if (isset($lesson['date'])) {
-                            $currentEveryWeekCellStyle = array_merge($everyWeekCellStyle, ['borderStyle' => 'double', 'borderSize' => 8]);
-                        }
-                        $sell = $table->addCell(2000, $currentEveryWeekCellStyle);
-                        $sell->addText("{$lesson_n} {$lesson_type}", $everyWeekFontStyle, $everyWeekParagraphStyle);
-                        $sell->addText("{$lesson_room}", $everyWeekFontStyle, $everyWeekParagraphStyle);
-                        $sell->addText($lesson_other_participant, $everyWeekFontStyle, $everyWeekParagraphStyle);
-                        
-                    } else {
-                        $table->addCell(2000, $everyWeekCellStyle);
+                if ($class_period_id <= $class_periods_limit) {
+                    $section->addText('');
+                    $table->addRow(1200);
+                    $left_header_cell = $table->addCell(1300, $headerCellStyle);
+                    $left_header_cell->addText($class_period_id, $headerFontStyle, $headerParagraphStyle);
+                    $left_header_cell->addText(date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start'])).' - '.date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])), $headerFontStyle, $headerParagraphStyle);
+                    
+                    foreach ($week_day_ids as $wd_name => $week_day_id) {
+                        $is_holiday = is_array($week_dates[$week_day_id]) && isset($week_dates[$week_day_id]['is_holiday']);
+                        if ($week_day_id <= $week_days_limit) {
+                            if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
+                                $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
+                                $lesson_n = $lesson['name'];
+                                $lesson_type = "({$lesson['type']})";
+                                $lesson_room = " ауд. {$lesson['room']}";
+                                $lesson_other_participant = $lesson[$other_partic];
+                                $everyWeekFontStyle = array('size' => 8);
+                                
+                                $currentEveryWeekCellStyle = $everyWeekCellStyle;
+                                if (isset($lesson['date'])) {
+                                    $currentEveryWeekCellStyle = array_merge($everyWeekCellStyle, ['borderStyle' => 'double', 'borderSize' => 8]);
+                                }
+                                $sell = $table->addCell(2000, $currentEveryWeekCellStyle);
+                                $sell->addText("{$lesson_n} {$lesson_type}", $everyWeekFontStyle, $everyWeekParagraphStyle);
+                                $sell->addText("{$lesson_room}", $everyWeekFontStyle, $everyWeekParagraphStyle);
+                                $sell->addText($lesson_other_participant, $everyWeekFontStyle, $everyWeekParagraphStyle);
+                                
+                            } else {
+                                $table->addCell(2000, $everyWeekCellStyle);
+                            }
+                        }    
                     }
-                }
+                }    
             }
         }
         

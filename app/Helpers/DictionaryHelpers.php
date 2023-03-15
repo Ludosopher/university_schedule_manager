@@ -15,11 +15,13 @@ use App\Mail\MailReplacementRequest;
 use App\Position;
 use App\ProfessionalLevel;
 use App\ReplacementRequest;
+use App\ReplacementRequestStatus;
 use App\StudyDegree;
 use App\StudyForm;
 use App\StudyOrientation;
 use App\StudyProgram;
 use App\Teacher;
+use App\User;
 use App\WeekDay;
 use App\WeeklyPeriod;
 use Illuminate\Support\Facades\Mail;
@@ -108,6 +110,31 @@ class DictionaryHelpers
             'positions' => Position::select('id', 'name')->get(),
             'lesson_rooms' => LessonRoom::select('id', 'number AS name')->get(),
             'schedule_positions' => collect(config('enum.schedule_positions'))
+        ];
+    }
+
+    public static function getReplacementRequestProperties() {
+
+        $groups = Group::orderBy('study_form_id')
+                        ->orderBy('study_degree_id')
+                        ->orderBy('faculty_id')
+                        ->orderBy('course_id')
+                        ->get();
+
+        $teachers = Teacher::orderBy('last_name')->get();
+        foreach ($teachers as &$teacher) {
+            $teacher->name = $teacher->profession_level_name;
+        }
+
+        $users = User::orderBy('name')->get();
+
+        $replacement_request_statuses = ReplacementRequestStatus::get();
+        
+        return [
+            'groups' => $groups,
+            'teachers' => $teachers,
+            'users' => $users,
+            'statuses' => $replacement_request_statuses,
         ];
     }
 }
