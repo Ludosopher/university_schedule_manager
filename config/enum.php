@@ -144,6 +144,11 @@ return [
       'not_permitted' => 9,
    ],
 
+   'replacement_request_status_groups' => [
+      'in_management' => [1, 2, 3, 4, 5],
+      'active' => [2, 3, 4, 5],
+   ],
+
    'replacement_request_status_colors' => [
       1 => 'rgb(255, 255, 255)',
       2 => 'rgb(255, 255, 215)',
@@ -158,5 +163,10 @@ return [
 
    'external_dataset_ids' => [
       'xmlcalendar' => 1,
+   ],
+
+   'languages' => [
+      'english' => 'en',
+      'russian' => 'ru',
    ],
 ];

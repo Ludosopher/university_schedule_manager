@@ -39,14 +39,14 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item">
-                            <a class="nav-link main-nav-link" href="{{ route('home') }}">Домашняя</a>
+                            <a class="nav-link main-nav-link" href="{{ route('home') }}">{{ __('menu.home') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link main-nav-link" href="{{ route('about') }}">О сервисе</a>
+                            <a class="nav-link main-nav-link" href="{{ route('about') }}">{{ __('menu.about_app') }}</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Преподаватели
+                                {{ __('menu.teachers') }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('teachers') }}">Список</a>
@@ -57,7 +57,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Группы
+                                {{ __('menu.groups') }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('groups') }}">Список</a>
@@ -68,7 +68,7 @@
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Занятия
+                                {{ __('menu.lessons') }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <a class="nav-link" href="{{ route('lessons') }}">Список</a>
@@ -79,13 +79,13 @@
                         </li>
                         @if (Auth::check() && Auth::user()->is_admin)
                             <li class="nav-item">
-                                <a class="nav-link main-nav-link" href="{{ route('users') }}">Пользователи</a>
+                                <a class="nav-link main-nav-link" href="{{ route('users') }}">{{ __('menu.users') }}</a>
                             </li>
                         @endif
                         @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Запросы
+                                    {{ __('menu.requests') }}
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="nav-link" href="{{ route('replacement_requests') }}">На замену</a>
@@ -96,8 +96,25 @@
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
+                        <li class="nav-item" style="padding: 0.5rem 1rem;">
+                            <form method="POST" action="{{ route('user-set-locate') }}">
+                            @csrf
+                                <select name="lang" aria-label="Default select example" style="border: 1px solid Gainsboro; color: Gray;">
+                                    @foreach(config('enum.languages') as $lang)
+                                        @if (\Session::has('applocale') && $lang == \Session::get('applocale'))
+                                            <option selected value="{{ $lang }}">{{ $lang }}</option>    
+                                        @elseif (! \Session::has('applocale') && $lang == config('app.locale'))
+                                            <option selected value="{{ $lang }}">{{ $lang }}</option>
+                                        @else
+                                            <option value="{{ $lang }}">{{ $lang }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                <button type="submit" style="border-style: none; background-color: inherit; color: Gray;" title="Изменить">▼</button>
+                            </form>
+                        </li>
                         <li class="nav-item">
-                            <a class="nav-link main-nav-link" href="{{ route('user-account-main') }}">Личный кабинет</a>
+                            <a class="nav-link main-nav-link" href="{{ route('user-account-main') }}">{{ __('menu.personal_account') }}</a>
                         </li>
                         <!-- Authentication Links -->
                         @guest

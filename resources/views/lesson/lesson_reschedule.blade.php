@@ -9,11 +9,6 @@
         @endif
     <div>
         <div>
-            {{-- @if(isset($data['week_data']['start_date']) && isset($data['week_data']['end_date']))
-                <h1>Варианты переноса занятия в период с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }}</h1>   
-            @else
-                <h1>Регулярные варианты переноса занятия</h1>
-            @endif --}}
             @if(isset($data['week_data']) && isset($data['is_red_week']))
                 @php
                     $is_red_week = 0;
@@ -133,7 +128,6 @@
         </div>
     </div>
     <div class="replacement-schedule-header-div">
- {{-- @dd($data) --}}
             <h5>Смотреть в расписании:</h5>
             <div class="schedule-button-group">
                 {{-- <a class="btn btn-primary reschedule-link" href="{{ route('teacher-reschedule', ['lesson_id' => $data['lesson_id'], 'teacher_id' => $data['teacher_id'], 'week_number' => $data['week_data']['week_number']]) }}" role="button" target="_blank">Преподавателя</a> --}}

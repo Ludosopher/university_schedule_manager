@@ -23,6 +23,13 @@
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ __('user_validation.invalid_input_data') }}
             </div>
+        @elseif($errors->any())
+            @foreach($errors->all() as $error)
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ $error }}
+                </div>    
+            @endforeach
         @endif
         <div class="getAllContainer" class="top-header">
             <div class="getAllLeft">

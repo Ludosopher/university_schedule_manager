@@ -7,7 +7,6 @@
             {{ __('user_validation.invalid_input_data') }}
         </div>
     @endif
-{{-- @dd(old()) --}}
     <h1 class="top-header">Расписание занятий группы на {{ $data['month_name'] }}</h1>
     <div class="replacement-schedule-header-div">
         <h3>Группа: {{ $data['instance_name'] ?? ''}}</h3>

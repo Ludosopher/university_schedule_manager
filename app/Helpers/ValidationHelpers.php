@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\ClassPeriod;
 use App\Lesson;
+use App\ReplacementRequest;
 use App\Teacher;
 use DateTime;
 use Illuminate\Database\Eloquent\Builder;
@@ -186,10 +187,21 @@ class ValidationHelpers
     public static function addReplacementRequestValidation($data) {
         
         $min_replacement_period = config('site.min_replacement_period');
-                
+        $replacement_request_status_groups = config('enum.replacement_request_status_groups');
+                        
         $rules = [
             'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id',
             'replacing_lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'replacing_lesson_id' => function ($attribute, $value, $fail) use ($data, $replacement_request_status_groups) {
+                $same_replacement_request = ReplacementRequest::where([
+                                                                ['replaceable_lesson_id', $data['replaceable_lesson_id']],
+                                                                ['replacing_lesson_id', $value],
+                                                            ])->whereDate('replaceable_date', date('Y-m-d', strtotime($data['replaceable_date'])))
+                                                              ->whereDate('replacing_date', date('Y-m-d', strtotime($data['replacing_date'])))
+                                                              ->whereIn('status_id', $replacement_request_status_groups['in_management'])
+                                                              ->exists();
+                if ($same_replacement_request) $fail(__('user_validation.request_already_exists')); 
+            },
             'replaceable_date' => 'nullable|string',
             'replaceable_date' => function ($attribute, $value, $fail) use ($min_replacement_period) {
                 if (isset($value)) {

@@ -12,7 +12,7 @@ use App\Http\Requests\user\FilterUserRequest;
 use App\Http\Requests\user\SelfStoreUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -99,6 +99,15 @@ class UserController extends Controller
         $data = UserHelpers::getAccountMain(Auth::user());
 
         return view("user.account_main")->with('data', $data);
+    }
+
+    public function setLocate (Request $request)
+    {
+        if (in_array($request->lang, config('enum.languages'))) {
+            Session::put('applocale', $request->lang);
+        }
+
+        return redirect()->back();
     }
 
 }

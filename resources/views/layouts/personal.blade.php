@@ -2,9 +2,12 @@
 @section('content')
     <div class="container">
         @if($errors->any())
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('user_validation.invalid_input_data') }}
+            @foreach($errors->all() as $error)
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ $error }}
+                </div>    
+            @endforeach
             </div>
         @endif
         @if (\Session::has('response'))

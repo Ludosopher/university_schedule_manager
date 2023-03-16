@@ -1,20 +1,6 @@
 @extends('layouts.personal')
 @section('personal_content')
     <div class="container">
-        {{-- @if($errors->any())
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('user_validation.invalid_input_data') }}
-            </div>
-        @endif --}}
-        @if ($errors->any() && $errors->has('deleting_id'))
-            @foreach($errors->get('deleting_id') as $error)
-                <div class="alertFail">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ $error }}
-                </div>
-            @endforeach
-        @endif
         @php $replacement_request_status_ids = config('enum.replacement_request_status_ids'); @endphp
         <h2>Мои просьбы о замене</h2>
         <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">

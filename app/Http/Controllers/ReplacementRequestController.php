@@ -35,7 +35,7 @@ class ReplacementRequestController extends Controller
     {
         $request->validated();
         $data = ModelHelpers::getInstances(request()->all(), $this->config);
-//dd($data);
+
         return view("replacement_request.replacement_requests")->with('data', $data);
     }
 
