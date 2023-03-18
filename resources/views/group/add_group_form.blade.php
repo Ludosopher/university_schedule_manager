@@ -25,9 +25,9 @@
         <div class="external-form-container">
             <div class="internal-form-container">
                 @if(isset($data['updating_instance']))
-                <h2 style="margin-top: 1.5rem">Обновление данных группы</h2>
+                <h2 style="margin-top: 1.5rem">{{ __('header.group_update') }}</h2>
                 @else
-                    <h2 style="margin-top: 1.5rem">Добавление новой группы</h2>
+                    <h2 style="margin-top: 1.5rem">{{ __('header.group_add') }}</h2>
                 @endif
 
                 <form method="POST" action="{{ route('group-add-update') }}">
@@ -107,8 +107,8 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation"><span style="color: red;">*</span> Поле, обязательное для заполнения</p>
-                    <button type="submit" class="btn btn-primary">{{isset($data['updating_instance']) ? 'Обновить' : 'Добавить'}}</button>
+                    <p class="form-explanation"><span style="color: red;">*</span>{{ __('form.required_field') }}</p>
+                    <button type="submit" class="btn btn-primary">{{isset($data['updating_instance']) ? __('form.update') : __('form.add') }}</button>
                 </form>
             </div>
         </div>

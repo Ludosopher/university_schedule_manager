@@ -49,9 +49,9 @@
                                 {{ __('menu.teachers') }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="nav-link" href="{{ route('teachers') }}">Список</a>
+                                <a class="nav-link" href="{{ route('teachers') }}">{{ __('menu.list') }}</a>
                                 @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                    <a class="nav-link" href="{{ route('teacher-add-form') }}">Добавить</a>
+                                    <a class="nav-link" href="{{ route('teacher-add-form') }}">{{ __('menu.add') }}</a>
                                 @endif
                             </div>
                         </li>
@@ -60,9 +60,9 @@
                                 {{ __('menu.groups') }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="nav-link" href="{{ route('groups') }}">Список</a>
+                                <a class="nav-link" href="{{ route('groups') }}">{{ __('menu.list') }}</a>
                                 @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                    <a class="nav-link" href="{{ route('group-add-form') }}">Добавить</a>
+                                    <a class="nav-link" href="{{ route('group-add-form') }}">{{ __('menu.add') }}</a>
                                 @endif
                             </div>
                         </li>
@@ -71,9 +71,9 @@
                                 {{ __('menu.lessons') }}
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="nav-link" href="{{ route('lessons') }}">Список</a>
+                                <a class="nav-link" href="{{ route('lessons') }}">{{ __('menu.list') }}</a>
                                 @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                    <a class="nav-link" href="{{ route('lesson-add-form') }}">Добавить</a>
+                                    <a class="nav-link" href="{{ route('lesson-add-form') }}">{{ __('menu.add') }}</a>
                                 @endif
                             </div>
                         </li>
@@ -88,8 +88,8 @@
                                     {{ __('menu.requests') }}
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="nav-link" href="{{ route('replacement_requests') }}">На замену</a>
-                                    <a class="nav-link" href="#">На перенос</a>
+                                    <a class="nav-link" href="{{ route('replacement_requests') }}">{{ __('menu.replacement') }}</a>
+                                    <a class="nav-link" href="#">{{ __('menu.rescheduling') }}</a>
                                 </div>
                             </li>
                         @endif
@@ -110,7 +110,7 @@
                                         @endif
                                     @endforeach
                                 </select>
-                                <button type="submit" style="border-style: none; background-color: inherit; color: Gray;" title="Изменить">▼</button>
+                                <button type="submit" style="border-style: none; background-color: inherit; color: Gray;" title="{{ __('title.update') }}">▼</button>
                             </form>
                         </li>
                         <li class="nav-item">
@@ -119,12 +119,12 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">Вход</a>
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('auth.entrance') }}</a>
                                 {{-- {{ __('Login') }} --}}
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">Регистрация</a>
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('auth.registration') }}</a>
                                     {{-- {{ __('Register') }} --}}
                                 </li>
                             @endif
@@ -139,7 +139,7 @@
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{-- {{ __('Logout') }} --}}
-                                        Выход
+                                        {{ __('auth.exit') }}
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
@@ -150,7 +150,7 @@
                         @endguest
                         @if (Auth::check() && (Auth::user()->is_admin))
                             <li class="nav-item">
-                                <a class="nav-link main-nav-link" href="{{ route('settings-get') }}" title="Настройки" target="_blank">
+                                <a class="nav-link main-nav-link" href="{{ route('settings-get') }}" title="{{ __('title.settings') }}" target="_blank">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
                                         <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
                                     </svg>

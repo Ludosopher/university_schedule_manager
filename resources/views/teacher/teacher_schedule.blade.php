@@ -10,26 +10,26 @@
     @if(isset($data['week_data']) && isset($data['is_red_week']))
         @php
             $is_red_week = 0;
-            $week_color = "синяя";
+            $week_color = __('header.blue_week_color');
             $bg_color = '#ace7f2';
             if ($data['is_red_week']) {
                 $is_red_week = 1;
-                $week_color = "красная";
+                $week_color = __('header.red_week_color');
                 $bg_color = '#ffb3b9';
             }
         @endphp
-        <h1 class="top-header">Расписание занятий преподавателя с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }} <span style="background-color: {{ $bg_color }};">( {{ $week_color }} неделя )</span></h1>   
+        <h1 class="top-header">{{ str_replace(['?-1', '?-2'], [$data['week_data']['start_date'], $data['week_data']['end_date']], __('header.teacher_dated_schedule')) }}<span style="background-color: {{ $bg_color }};">{{ str_replace('?', $week_color, __('header.week_color')) }}</span></h1>   
     @else
-        <h1 class="top-header">Регулярное расписание занятий преподавателя</h1>
+        <h1 class="top-header">{{ __('header.teacher_regular_schedule') }}</h1>
     @endif
     <div class="replacement-schedule-header-div">
-        <h3>Преподаватель: {{ $data['instance_name'] ?? ''}}</h3>
+        <h3>{{ __('header.teacher') }}: {{ $data['instance_name'] ?? ''}}</h3>
         <div class="schedule-button-group">
             <form method="POST" class="month-schedule-form" action="{{ route('teacher-month-schedule') }}" target="_blank">
             @csrf
                 <input type="month" name="month_number" value="">
                 <input type="hidden" name="schedule_teacher_id" value="{{ $data['schedule_instance_id'] }}">
-                <button type="submit" class="btn btn-success month-schedule-button">За этот месяц</button>
+                <button type="submit" class="btn btn-success month-schedule-button">{{ __('form.this_month') }}</button>
             </form>
             <form method="POST" action="{{ route('teacher-schedule', ['schedule_teacher_id' => $data['schedule_instance_id']]) }}" target="_blank">
             @csrf
@@ -43,7 +43,7 @@
                 <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                 <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                 <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                <button type="submit" class="btn btn-primary top-right-button">В MS Word</button>
+                <button type="submit" class="btn btn-primary top-right-button">{{ __('form.ms_word') }}</button>
             </form>
         </div>
     </div>
@@ -52,7 +52,7 @@
             <table class="table table-bordered text-center schedule-table">
                 <thead>
                     <tr class="bg-light-gray">
-                        <th class="text-uppercase">Пара</th>
+                        <th class="text-uppercase">{{ __('header.period') }}</th>
                         @php
                             $week_days_ru = config('enum.week_days_ru');
                         @endphp
@@ -60,7 +60,7 @@
                             @foreach($data['week_dates'] as $week_day_id => $date)
                                 @if($week_day_id <= $data['week_days_limit'])
                                     @if(is_array($date) && isset($date['is_holiday']))
-                                        <th class="text-uppercase" style="color: red;" title="Праздничный день">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                        <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                     @else
                                         <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                     @endif
@@ -112,7 +112,7 @@
                                                 @php 
                                                     $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
                                                     $cell_bg_color = isset($lesson['date']) ? '#D3D3D3' : $weekly_period_color[$weekly_period_id['every_week']];
-                                                    $title = isset($lesson['date']) ? 'Единоразовое занятие' : 'Регулярное занятие'; 
+                                                    $title = isset($lesson['date']) ? __('title.one_time_lesson') : __('title.regular_lesson'); 
                                                 @endphp
                                                 <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}" title="{{ $title }}">
                                                     <div class="dropdown schedule-actions-div">
@@ -143,7 +143,7 @@
                                                                     <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                    <button type="submit" class="btn btn-light schedule-dropdown">Варианты замены</button>
+                                                                    <button type="submit" class="btn btn-light schedule-dropdown">{{ __('form.replacement_variants') }}</button>
                                                                 </form>
                                                             </li>
                                                             <li>
@@ -154,7 +154,7 @@
                                                                     <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                    <button type="submit" class="btn btn-light schedule-dropdown">Варианты переноса</button>
+                                                                    <button type="submit" class="btn btn-light schedule-dropdown">{{ __('form.reschedule_variants') }}</button>
                                                                 </form>
                                                             </li>
                                                         </ul>
@@ -185,7 +185,7 @@
                                                                         <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                                         <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                         <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                        <button type="submit" class="btn btn-light schedule-dropdown">Варианты замены</button>
+                                                                        <button type="submit" class="btn btn-light schedule-dropdown">{{ __('form.replacement_variants') }}</button>
                                                                     </form>
                                                                 </li>
                                                                 <li>
@@ -196,7 +196,7 @@
                                                                         <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                                         <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                         <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                        <button type="submit" class="btn btn-light schedule-dropdown">Варианты переноса</button>
+                                                                        <button type="submit" class="btn btn-light schedule-dropdown">{{ __('form.reschedule_variants') }}</button>
                                                                     </form>
                                                                 </li>
                                                             </ul>
@@ -221,7 +221,7 @@
                                                                         <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                                         <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                         <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                        <button type="submit" class="btn btn-light schedule-dropdown">Варианты замены</button>
+                                                                        <button type="submit" class="btn btn-light schedule-dropdown">{{ __('form.replacement_variants') }}</button>
                                                                     </form>
                                                                 </li>
                                                                 <li>
@@ -232,7 +232,7 @@
                                                                         <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                                         <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                         <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                        <button type="submit" class="btn btn-light schedule-dropdown">Варианты переноса</button>
+                                                                        <button type="submit" class="btn btn-light schedule-dropdown">{{ __('form.reschedule_variants') }}</button>
                                                                     </form>
                                                                 </li>
                                                             </ul>

@@ -112,8 +112,8 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation"><span style="color: green;">*</span> Для выбора нескольких полей нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора.</p>
-                    <button type="submit" class="btn btn-primary form-button">Показать</button>
+                    <p class="form-explanation"><span style="color: green;">*</span>{{ __('form.multiple_fields_select') }}</p>
+                    <button type="submit" class="btn btn-primary form-button">{{ __('form.show') }}</button>
                 </form>
             </div>
             <div class="getAllRight">

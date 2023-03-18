@@ -9,7 +9,7 @@
             </div>    
         @endforeach
     @endif
-    <h1 class="top-header">Расписание занятий преподавателя на {{ $data['month_name'] }}</h1>
+    <h1 class="top-header">{{ str_replace('?', $data['month_name'], __('header.teacher_schedule_on')) }}</h1>
     <div class="replacement-schedule-header-div">
         <h3>Преподаватель: {{ $data['instance_name'] ?? ''}}</h3>
         <div class="schedule-button-group">
@@ -19,7 +19,7 @@
                 <input type="hidden" name="teacher_name" value="{{ $data['instance_name'] }}">
                 <input type="hidden" name="weeks" value="{{ json_encode($data['weeks']) }}">
                 <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
-                <button type="submit" class="btn btn-primary top-right-button">В MS Word</button>
+                <button type="submit" class="btn btn-primary top-right-button">{{ __('form.ms_word') }}</button>
             </form>
         </div>
     </div>
@@ -47,7 +47,7 @@
                 <table class="table table-bordered text-center" style="background-color: {{ $bg_color }}">
                     <thead>
                         <tr class="bg-light-gray">
-                            <th class="text-uppercase month-schedule-header-th">Пара</th>
+                            <th class="text-uppercase month-schedule-header-th">{{ __('header.period') }}</th>
                             @php
                                 $week_days_ru = config('enum.week_days_ru');
                             @endphp
@@ -55,7 +55,7 @@
                                 @foreach($week_content['week_dates'] as $week_day_id => $date)
                                     @if($week_day_id <= $data['week_days_limit'])
                                         @if(is_array($date) && isset($date['is_holiday']))
-                                            <th class="text-uppercase" style="color: red;" title="Праздничный день">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                            <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                         @else
                                             <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                         @endif
@@ -93,7 +93,7 @@
                                                     @php 
                                                         $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
                                                         $cell_bg_color = isset($lesson['date']) ? '#D3D3D3' : $weekly_period_color[$weekly_period_id['every_week']];
-                                                        $title = isset($lesson['date']) ? 'Единоразовое занятие' : 'Регулярное занятие'; 
+                                                        $title = isset($lesson['date']) ? __('title.one_time_lesson') : __('title.regular_lesson'); 
                                                     @endphp
                                                     <td class="month-schedule-cell" style="background-color: {{ $cell_bg_color }}" title="{{ $title }}">
                                                         <div class="dropdown month-schedule-actions-div">
@@ -114,7 +114,7 @@
                                                                         <input type="hidden" name="week_data" value="{{ isset($week_content['week_data']) ? json_encode($week_content['week_data']) : '' }}">
                                                                         <input type="hidden" name="week_dates" value="{{ isset($week_content['week_dates']) ? json_encode($week_content['week_dates']) : '' }}">
                                                                         <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                        <button type="submit" class="btn btn-light schedule-dropdown">Варианты замены</button>
+                                                                        <button type="submit" class="btn btn-light schedule-dropdown">{{ __('menu.replacement_variants') }}</button>
                                                                     </form>
                                                                 </li>
                                                                 <li>
@@ -125,7 +125,7 @@
                                                                         <input type="hidden" name="week_data" value="{{ isset($week_content['week_data']) ? json_encode($week_content['week_data']) : '' }}">
                                                                         <input type="hidden" name="week_dates" value="{{ isset($week_content['week_dates']) ? json_encode($week_content['week_dates']) : '' }}">
                                                                         <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                                                                        <button type="submit" class="btn btn-light schedule-dropdown">Варианты переноса</button>
+                                                                        <button type="submit" class="btn btn-light schedule-dropdown">{{ __('menu.reschedule_variants') }}</button>
                                                                     </form>
                                                                 </li>
                                                             </ul>

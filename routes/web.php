@@ -13,12 +13,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::get('/', 'HomeController@index')->name('home')->middleware('setlocate');
 Route::get('/about', 'HomeController@about')->name('about')->middleware('setlocate');
+Route::post('/user/set-locate', 'UserController@setLocate')->name('user-set-locate');
 
 Route::middleware(['auth', 'setlocate'])->group(function () {
 
@@ -28,8 +25,7 @@ Route::middleware(['auth', 'setlocate'])->group(function () {
     Route::post('/user/self-update', 'UserController@selfUpdateUser')->name('user-self-update')->middleware('user');
     Route::get('/user/delete', 'UserController@deleteUser')->name('user-delete')->middleware('admin');
     Route::get('/user/account-main', 'UserController@getAccountMain')->name('user-account-main');
-    Route::post('/user/set-locate', 'UserController@setLocate')->name('user-set-locate');
-
+    
     Route::match(['get', 'post'], '/teacher/get-all', 'TeacherController@getTeachers')->name('teachers');
     Route::get('/teacher/add-form', 'TeacherController@addTeacherForm')->name('teacher-add-form')->middleware('moderator');
     Route::post('/teacher/add-update', 'TeacherController@addOrUpdateTeacher')->name('teacher-add-update')->middleware('moderator');

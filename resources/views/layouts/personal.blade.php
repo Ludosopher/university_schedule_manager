@@ -25,10 +25,10 @@
         @endif
         <div class="getAllContainer">
             <div class="getAllLeft">
-                <h4>Личный кабинет</h4>
+                <h4>{{ __('header.account') }}</h4>
                 <nav class="nav flex-column">
-                    <a class="nav-link main-nav-link" href="{{ route('user-account-main') }}">Основное</a>
-                    <a class="nav-link main-nav-link" href="{{ route('my_replacement_requests') }}">Просьбы о замене</a>
+                    <a class="nav-link main-nav-link" href="{{ route('user-account-main') }}">{{ __('header.basic') }}</a>
+                    <a class="nav-link main-nav-link" href="{{ route('my_replacement_requests') }}">{{ __('header.replacement_requests') }}</a>
                 </nav>
             </div>
             <div class="getAllRight">

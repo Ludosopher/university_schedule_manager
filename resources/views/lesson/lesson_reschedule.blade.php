@@ -12,23 +12,23 @@
             @if(isset($data['week_data']) && isset($data['is_red_week']))
                 @php
                     $is_red_week = 0;
-                    $week_color = "синяя";
+                    $week_color = __('header.blue_week_color');
                     $bg_color = '#ace7f2';
                     if ($data['is_red_week']) {
                         $is_red_week = 1;
-                        $week_color = "красная";
+                        $week_color = __('header.red_week_color');
                         $bg_color = '#ffb3b9';
                     }
                 @endphp
-                <h1 class="top-header">Варианты переноса занятия в период с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }} <span style="background-color: {{ $bg_color }};">( {{ $week_color }} неделя )</span></h1>   
+                <h1 class="top-header">{{ str_replace(['?-1', '?-2'], [$data['week_data']['start_date'], $data['week_data']['end_date']], __('header.dated_reschedule_variants')) }}<span style="background-color: {{ $bg_color }};">{{ str_replace('?', $week_color, __('header.week_color')) }}</span></h1>   
             @else
-                <h1 class="top-header">Регулярные варианты переноса занятия</h1>
+                <h1 class="top-header">{{ __('header.regular_reschedule_variants') }}</h1>
             @endif
-            <h4>Переносимое занятие: {{ $data['lesson_name'] }} - {{ $data['lesson_week_day'] }} - {{ $data['lesson_weekly_period'] }} - {{ $data['lesson_class_period'] }} пара</h4>
-            <h4>Преподаватель: {{ $data['teacher_name'] ?? ''}}</h4>
+            <h4>{{ __('header.rescheduling_lesson') }}: {{ $data['lesson_name'] }} - {{ $data['lesson_week_day'] }} - {{ $data['lesson_weekly_period'] }} - {{ $data['lesson_class_period'] }} пара</h4>
+            <h4>{{ __('header.teacher') }}: {{ $data['teacher_name'] ?? ''}}</h4>
         </div>
         <div class="replacement-schedule-header-div">
-            <h4>Группа(ы): {{ $data['groups_name'] ?? ''}}</h4>
+            <h4>{{ __('header.group(s)') }}: {{ $data['groups_name'] ?? ''}}</h4>
             <div class="schedule-button-group">
                 <form method="POST" action="{{ route('lesson-rescheduling') }}" class="top-right-button">
                 @csrf
@@ -38,7 +38,7 @@
                         $week_number = isset($data['week_data']['week_number']) ? $data['week_data']['week_number'] : (isset($data['week_number']) ? $data['week_number'] : '');
                     @endphp
                     <input type="week" name="week_number" value="{{ $week_number }}">
-                    <button type="submit" class="btn btn-primary">За эту неделю</button>
+                    <button type="submit" class="btn btn-primary">{{ __('form.this_week') }}</button>
                 </form>
             </div>
         </div>
@@ -48,14 +48,14 @@
             <table class="table table-bordered text-center">
                 <thead>
                     <tr class="bg-light-gray">
-                        <th class="text-uppercase">Пара</th>
+                        <th class="text-uppercase">{{ __('header.period') }}</th>
                         @php
                             $week_days_ru = config('enum.week_days_ru');
                         @endphp
                         @if(isset($data['week_dates']))
                             @foreach($data['week_dates'] as $week_day_id => $date)
                                 @if(is_array($date) && isset($date['is_holiday']))
-                                    <th class="text-uppercase" style="color: red;" title="Праздничный день">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                    <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                 @else
                                     <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                 @endif
@@ -128,9 +128,8 @@
         </div>
     </div>
     <div class="replacement-schedule-header-div">
-            <h5>Смотреть в расписании:</h5>
+            <h5>{{ __('header.view_in_schedule') }}:</h5>
             <div class="schedule-button-group">
-                {{-- <a class="btn btn-primary reschedule-link" href="{{ route('teacher-reschedule', ['lesson_id' => $data['lesson_id'], 'teacher_id' => $data['teacher_id'], 'week_number' => $data['week_data']['week_number']]) }}" role="button" target="_blank">Преподавателя</a> --}}
                 <form method="POST" action="{{ route('teacher-reschedule') }}" target="_blank">
                 @csrf
                     <input type="hidden" name="lesson_id" value="{{ $data['lesson_id'] }}">
@@ -139,11 +138,10 @@
                     <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                    <button type="submit" class="btn btn-light schedule-dropdown">Преподавателя</button>
+                    <button type="submit" class="btn btn-light schedule-dropdown">{{ __("form.teacher's") }}</button>
                 </form>
                 @if (isset($data['groups_ids_names']) && is_array($data['groups_ids_names']))
                     @foreach ($data['groups_ids_names'] as $group)
-                        {{-- <a class="btn btn-primary reschedule-link top-right-button" href="{{ route('group-reschedule', ['lesson_id' => $data['lesson_id'], 'teacher_id' => $data['teacher_id'], 'group_id' => $group['id'], 'week_number' => $data['week_data']['week_number']]) }}" role="button" target="_blank">{{ $group['name'] }}</a> --}}
                         <form method="POST" action="{{ route('group-reschedule') }}" target="_blank">
                         @csrf
                             <input type="hidden" name="lesson_id" value="{{ $data['lesson_id'] }}">

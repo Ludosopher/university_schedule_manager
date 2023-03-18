@@ -10,20 +10,20 @@
         @if(isset($data['week_data']) && isset($data['is_red_week']))
         @php
             $is_red_week = 0;
-            $week_color = "синяя";
+            $week_color = __('header.blue_week_color');
             $bg_color = '#ace7f2';
             if ($data['is_red_week']) {
                 $is_red_week = 1;
-                $week_color = "красная";
+                $week_color = __('header.red_week_color');
                 $bg_color = '#ffb3b9';
             }
         @endphp
-            <h1 class="top-header">Варианты переноса занятия в расписании группы в период с {{ $data['week_data']['start_date'] }} по {{ $data['week_data']['end_date'] }} <span style="background-color: {{ $bg_color }};">( {{ $week_color }} неделя )</span></h1>   
+            <h1 class="top-header">{{ str_replace(['?-1', '?-2'], [$data['week_data']['start_date'], $data['week_data']['end_date']], __('header.group_dated_reschedule_variants')) }} <span style="background-color: {{ $bg_color }};">{{ str_replace('?', $week_color, __('header.week_color')) }}</span></h1>   
         @else
-            <h1 class="top-header">Регулярные варианты переноса занятия в расписании группы</h1>
+            <h1 class="top-header">{{ __('header.group_regular_reschedule_variants') }}</h1>
         @endif
         <div class="replacement-schedule-header-div">
-            <h3>Группа: {{ $data['group_name'] ?? ''}}</h3>
+            <h3>{{ __('header.group') }}: {{ $data['group_name'] ?? ''}}</h3>
             <div class="schedule-button-group">
                 <form method="POST" action="{{ route('group-reschedule') }}">
                 @csrf
@@ -31,7 +31,7 @@
                     <input type="hidden" name="group_id" value="{{ $data['group_id'] }}">
                     <input type="hidden" name="lesson_id" value="{{ $data['rescheduling_lesson_id'] }}">
                     <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}">
-                    <button type="submit" class="btn btn-primary">За эту неделю</button>
+                    <button type="submit" class="btn btn-primary">{{ __('form.this_week') }}</button>
                 </form>
                 <form method="POST" action="{{ route('group-reschedule-doc-export') }}">
                 @csrf
@@ -42,7 +42,7 @@
                     <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
-                    <button type="submit" class="btn btn-primary top-right-button">В MS Word</button>
+                    <button type="submit" class="btn btn-primary top-right-button">{{ __('form.ms_word') }}</button>
                 </form>
             </div>
         </div>
@@ -52,7 +52,7 @@
                 <table class="table table-bordered text-center schedule-table">
                     <thead>
                         <tr class="bg-light-gray">
-                            <th class="text-uppercase">Пара</th>
+                            <th class="text-uppercase">{{ __('header.period') }}</th>
                             @php
                                 $week_days_ru = config('enum.week_days_ru');
                             @endphp
@@ -113,7 +113,7 @@
                                                             $lesson_room = "";
                                                             $other_lesson_participant = '';
                                                             $color = 'PaleGreen';
-                                                            $title = "Вариант переноса";
+                                                            $title = __('title.reschedule_variant');
                                                         } else {
                                                             $lesson_subject = $lesson['name'];
                                                             $lesson_type = "({$lesson['type']})";
@@ -123,7 +123,7 @@
                                                             $title = '';
                                                             if ($lesson['id'] == $data['rescheduling_lesson_id']) {
                                                                 $color = 'Yellow';
-                                                                $title = 'Переносимое занятие';
+                                                                $title = __('title.rescheduling_lesson');
                                                             }
                                                         }
                                                     @endphp
@@ -151,7 +151,7 @@
                                                                     $lesson_room = "";
                                                                     $other_lesson_participant = '';
                                                                     $color = 'PaleGreen';
-                                                                    $title = "Вариант переноса";
+                                                                    $title = __('title.reschedule_variant');
                                                                 } else {
                                                                     $lesson_subject = $lesson_red['name'];
                                                                     $lesson_type = "({$lesson_red['type']})";
@@ -161,7 +161,7 @@
                                                                     $title = '';
                                                                     if ($lesson_red['id'] == $data['rescheduling_lesson_id']) {
                                                                         $color = 'Yellow';
-                                                                        $title = 'Переносимое занятие';
+                                                                        $title = __('title.rescheduling_lesson');
                                                                     }
                                                                 }
                                                             @endphp
@@ -182,7 +182,7 @@
                                                                     $lesson_room = '';
                                                                     $other_lesson_participant = '';
                                                                     $color = 'PaleGreen';
-                                                                    $title = "Вариант переноса";
+                                                                    $title = __('title.reschedule_variant');
                                                                 } else {
                                                                     $lesson_subject = $lesson_blue['name'];
                                                                     $lesson_type = "({$lesson_blue['type']})";
@@ -192,7 +192,7 @@
                                                                     $title = '';
                                                                     if ($lesson_blue['id'] == $data['rescheduling_lesson_id']) {
                                                                         $color = 'Yellow';
-                                                                        $title = 'Переносимое занятие';
+                                                                        $title = __('title.rescheduling_lesson');
                                                                     }
                                                                 }
                                                             @endphp
