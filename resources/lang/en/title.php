@@ -17,9 +17,12 @@
         'overdue_replaceable_lesson' => 'Replaceable lesson. Overdue!',
         'ask_for_replacement' => 'Ask for a replacement for this option',
         'log_in_chat' => 'Log in chat',
+        'send' => 'Send',
         'to_agree' => 'To agree',
         'reject' => 'Reject',
         'cancel' => 'Cancel',
         'teacher_schedule' => 'Teacher schedule',
+        'red_week' => 'Red week',
+        'blue_week' => 'Blue week',
         
     ];

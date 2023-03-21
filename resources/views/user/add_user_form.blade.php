@@ -24,7 +24,7 @@
         @endif
         <div class="external-form-container">
             <div class="internal-form-container">
-                <h2 style="margin-top: 1.5rem">Обновление данных пользователя</h2>
+                <h2 style="margin-top: 1.5rem">{{ __('form.update') }}</h2>
                 <form method="POST" action="{{ route('user-admin-update') }}">
                 @csrf
                     @if(isset($data['updating_instance']))
@@ -35,7 +35,7 @@
                             @if($field['type'] == 'enum-select')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
                                             <span style="color: red;">*</span>
                                         @endif
@@ -62,15 +62,15 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('user_form.'.$field['name']) }}
                                             @if (isset($field['is_required']) && $field['is_required'])
                                             <span style="color: red;">*</span>
                                         @endif
                                         </label>
-                                        <p class="form-explanation">{{ $field['multiple_options']['explanation'] }}</p>
+                                        <p class="form-explanation">{{ __('form.multiple_fields_select') }}</p>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">
                                     @else
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('user_form.'.$field['name']) }}
                                             @if (isset($field['is_required']) && $field['is_required'])
                                                 <span style="color: red;">*</span>
                                             @endif
@@ -110,7 +110,7 @@
                                         @else
                                             <input class="form-check-input" name="{{ $field_name }}" type="checkbox" id="{{ $field_name }}" value="{{ true }}">
                                         @endif
-                                        <label class="form-check-label" for="{{ $field_name }}">{{ $field['header'] }}</label>
+                                        <label class="form-check-label" for="{{ $field_name }}">{{ __('form.'.$field['name']) }}</label>
                                     </div>
                                     @if ($errors !== null && $errors->has($field_name))
                                         @foreach($errors->get($field_name) as $error)
@@ -122,7 +122,7 @@
                             @if($field['type'] == 'input')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
                                             <span style="color: red;">*</span>
                                         @endif
@@ -137,8 +137,8 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation"><span style="color: red;">*</span> Поле, обязательное для заполнения</p>
-                    <button type="submit" class="btn btn-primary">Обновить</button>
+                    <p class="form-explanation"><span style="color: red;">*</span>{{ __('form.required_field') }}</p>
+                    <button type="submit" class="btn btn-primary">{{ __('form.update') }}</button>
                 </form>
             </div>
         </div>

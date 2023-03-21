@@ -110,6 +110,16 @@
                                         @endif
                                     @endforeach
                                 </select>
+                                <input type="hidden" name="prev_replace_rules" value="{{ isset($data['prev_replace_rules']) ? json_encode($data['prev_replace_rules']) : '' }}">
+                                <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
+                                <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
+                                <input type="hidden" name="is_red_week" value="{{ isset($data['is_red_week']) ? ($data['is_red_week'] ? 1 : 0) : '' }}">
+                                <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                                <input type="hidden" name="week_number" value="{{ isset($data['week_number']) ? $data['week_number'] : '' }}">
+                                <input type="hidden" name="teacher_id" value="{{ isset($data['teacher_id']) ? $data['teacher_id'] : '' }}">
+                                <input type="hidden" name="group_id" value="{{ isset($data['group_id']) ? $data['group_id'] : '' }}">
+                                <input type="hidden" name="lesson_id" value="{{ isset($data['rescheduling_lesson_id']) ? $data['rescheduling_lesson_id'] : '' }}">
+                                <input type="hidden" name="previous_route" value="{{ \Route::current()->getName() }}">
                                 <button type="submit" style="border-style: none; background-color: inherit; color: Gray;" title="{{ __('title.update') }}">▼</button>
                             </form>
                         </li>

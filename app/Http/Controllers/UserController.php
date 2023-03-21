@@ -11,6 +11,7 @@ use App\Http\Requests\user\AdminStoreUserRequest;
 use App\Http\Requests\user\FilterUserRequest;
 use App\Http\Requests\user\SelfStoreUserRequest;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -107,6 +108,14 @@ class UserController extends Controller
             Session::put('applocale', $request->lang);
         }
 
+        if (isset($request->prev_replace_rules)) {
+            return redirect()->route("lesson-replacement", ResponseHelpers::getLessonReplacementBackData($request->all()));
+        }
+        
+        if (isset($request->previous_route)) {
+            return redirect()->route($request->previous_route, $request->all());
+        }
+     
         return redirect()->back();
     }
 

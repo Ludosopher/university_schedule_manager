@@ -40,7 +40,7 @@
                             @if($field['type'] == 'enum-select')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
                                             <span style="color: red;">*</span>
                                         @endif
@@ -66,7 +66,7 @@
                             @if($field['type'] == 'objects-select')
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
                                             <span style="color: red;">*</span>
                                         @endif
@@ -92,7 +92,7 @@
                             @if($field['type'] == 'input')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
                                             <span style="color: red;">*</span>
                                         @endif

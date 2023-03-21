@@ -40,7 +40,7 @@
                             @if($field['type'] == 'enum-select')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
                                             <span style="color: red;">*</span>
                                         @endif
@@ -67,15 +67,15 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                             @if (isset($field['is_required']) && $field['is_required'])
                                                 <span style="color: red;">*</span>
                                             @endif
                                         </label>
-                                        <p class="form-explanation">{{ $field['multiple_options']['explanation'] }}</p>
+                                        <p class="form-explanation">{{ __('form.multiple_fields_select') }}</p>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">
                                     @else
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                             @if (isset($field['is_required']) && $field['is_required'])
                                                 <span style="color: red;">*</span>
                                             @endif
@@ -107,7 +107,7 @@
                             @if($field['type'] == 'input')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
                                             <span style="color: red;">*</span>
                                         @endif

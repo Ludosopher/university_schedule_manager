@@ -23,13 +23,6 @@
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                 {{ __('user_validation.invalid_input_data') }}
             </div>
-        @elseif($errors->any())
-            @foreach($errors->all() as $error)
-                <div class="alertFail">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ $error }}
-                </div>    
-            @endforeach
         @endif
         <div class="getAllContainer" class="top-header">
             <div class="getAllLeft">
@@ -40,7 +33,7 @@
                         @foreach($data['filter_form_fields'] as $field)
                             @if($field['type'] == 'between')
                                 @php $field_name = $field['name']; @endphp
-                                <h6>{{ $field['header'] }}</h6>
+                                <h6>{{ __('form.'.$field['name']) }}</h6>
                                 <div class="birthYear">
                                     <div>
                                         <label for="{{$field_name}}_from" class="form-label">{{ __('form.from') }}</label>
@@ -66,10 +59,10 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label class="form-label">{{ $field['header'] }}<span style="color: red;">*</span></label>
+                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span style="color: red;">*</span></label>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">    
                                     @else
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
@@ -99,7 +92,7 @@
                             @if($field['type'] == 'input')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
                                     <input name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm filter-input" id="{{ $field_name }}" value="{{ old($field_name) !== null ? old($field_name) : '' }}">
                                     @if ($errors !== null && $errors->has($field_name))
                                         @foreach($errors->get($field_name) as $error)
@@ -156,7 +149,7 @@
                     <thead>
                         <tr>
                             @foreach($data['table_properties'] as $property)
-                                <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                                <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                             @endforeach
                         </tr>
                     </thead>
@@ -220,22 +213,22 @@
                                 <tr class="bg-light-gray">
                                     <th class="text-uppercase">{{ __('header.period') }}</th>
                                     @php
-                                        $week_days_ru = config('enum.week_days_ru');
+                                        $week_days = config('enum.week_days');
                                     @endphp
                                     @if(isset($data['week_dates']))
                                         @foreach($data['week_dates'] as $week_day_id => $date)
                                             @if($week_day_id <= $data['week_days_limit'])
                                                 @if(is_array($date) && isset($date['is_holiday']))
-                                                    <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                                    <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                                 @else
-                                                    <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                                    <th class="text-uppercase">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                                 @endif
                                             @endif
                                         @endforeach
                                     @else
-                                        @foreach($week_days_ru as $week_day_id => $week_day_name)
+                                        @foreach($week_days as $week_day_id => $week_day_name)
                                             @if($week_day_id <= $data['week_days_limit'])
-                                                <th class="text-uppercase">{{ $week_day_name }}</th>
+                                                <th class="text-uppercase">{{ __('week_day.'.$week_day_name) }}</th>
                                             @endif
                                         @endforeach
                                     @endif

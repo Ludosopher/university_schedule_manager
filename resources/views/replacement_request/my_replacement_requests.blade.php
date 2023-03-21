@@ -6,24 +6,24 @@
         <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
             <thead>
                 <tr>
-                    <th class="th-sm text-center align-top" rowspan="2">Действия</th>
+                    <th class="th-sm text-center align-top" rowspan="2" style="width: 7%;">{{ __('table_header.actions') }}</th>
                     @foreach($data['table_properties'] as $property)
-                        @if(in_array($property['header'], ['День недели', 'Пара', 'Аудитория', 'Преподаватель']))
+                        @if(in_array($property['header'], ['week_day', 'class_period', 'lesson_room', 'teacher']))
                             @continue
                         @endif
                         @php
                             $rowspan = '';
                             $colspan = '';
-                            $header = $property['header'];
-                            if (in_array($property['header'], ['Группа(ы)', 'Постоянная замена', 'Статус', 'Инициатор'])) {
+                            $header = __('table_header.'.$property['header']);
+                            if (in_array($property['header'], ['group', 'is_regular', 'status', 'initiator'])) {
                                 $rowspan = 2;
                             }
-                            if ($property['header'] == 'Дата') {
+                            if ($property['header'] == 'date') {
                                 $colspan = 5;
                                 if ($property['field'] == 'replaceable_date') {
-                                    $header = 'Заменяемое занятие';
+                                    $header = __('table_header.replaceable_lesson');
                                 } else {
-                                    $header = 'Заменяющее занятие';
+                                    $header = __('table_header.replacing_lesson');
                                 }
                                 $was_first_lesson = true;
                             }
@@ -33,28 +33,28 @@
                 </tr>
                 <tr>
                     @foreach($data['table_properties'] as $property)
-                        @if(in_array($property['header'], ['Группа(ы)', 'Постоянная замена', 'Статус', 'Инициатор']))
+                        @if(in_array($property['header'], ['group', 'is_regular', 'status', 'initiator']))
                             @continue
                         @endif
                         @if($property['sorting'])
                             @if(is_array($property['field']) && isset($property['sort_name']))
                                 <th class="th-sm text-center align-top">
-                                    <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                    <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                 </th>
                             @elseif(is_array($property['field']))
                                 @php
                                     $full_field = implode('.', $property['field']);
                                 @endphp
                                 <th class="th-sm text-center align-top">
-                                    <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                    <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                 </th>
                             @else
                                 <th class="th-sm text-center align-top">
-                                    <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                    <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                 </th>
                             @endif
                         @else
-                            <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                            <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                         @endif
                     @endforeach
                 </tr>
@@ -69,7 +69,7 @@
                         <tr style="background-color: {{ $status_color }}">
                             <td>
                                 <div style="display: flex; justify-content: space-around;">
-                                    <form method="POST" action="{{ route('replacement-request-chat') }}" title="Открыть чат" target="_blank">
+                                    <form method="POST" action="{{ route('replacement-request-chat') }}" title="{{ __('title.log_in_chat') }}" target="_blank">
                                     @csrf
                                         <input type="hidden" name="replacement_request_id" value="{{ $instance->id }}">
                                         <input type="hidden" name="replacement_request_name" value="{{ $instance->name }}">
@@ -82,7 +82,7 @@
                                         </button>
                                     </form>
                                     @if ($instance->status_id == $replacement_request_status_ids['in drafting'])
-                                        <form method="POST" action="{{ route('replacement-request-send') }}" title="Отправить" target="_blank">
+                                        <form method="POST" action="{{ route('replacement-request-send') }}" title="{{ __('title.send') }}" target="_blank">
                                         @csrf
                                             <input type="hidden" name="updating_id" value="{{ $instance->id }}">
                                             <input type="hidden" name="is_sent" value="1">
@@ -151,24 +151,24 @@
         <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
             <thead>
                 <tr>
-                    <th class="th-sm text-center align-top" rowspan="2">Действия</th>
+                    <th class="th-sm text-center align-top" rowspan="2" style="width: 7%;">{{ __('table_header.actions') }}</th>
                     @foreach($data['table_properties'] as $property)
-                        @if(in_array($property['header'], ['День недели', 'Пара', 'Аудитория', 'Преподаватель']))
+                        @if(in_array($property['header'], ['week_day', 'class_period', 'lesson_room', 'teacher']))
                             @continue
                         @endif
                         @php
                             $rowspan = '';
                             $colspan = '';
-                            $header = $property['header'];
-                            if (in_array($property['header'], ['Группа(ы)', 'Постоянная замена', 'Статус', 'Инициатор'])) {
+                            $header = __('table_header.'.$property['header']);
+                            if (in_array($property['header'], ['group', 'is_regular', 'status', 'initiator'])) {
                                 $rowspan = 2;
                             }
-                            if ($property['header'] == 'Дата') {
+                            if ($property['header'] == 'date') {
                                 $colspan = 5;
                                 if ($property['field'] == 'replaceable_date') {
-                                    $header = 'Заменяемое занятие';
+                                    $header = __('table_header.replaceable_lesson');
                                 } else {
-                                    $header = 'Заменяющее занятие';
+                                    $header = __('table_header.replacing_lesson');
                                 }
                                 $was_first_lesson = true;
                             }
@@ -178,28 +178,28 @@
                 </tr>
                 <tr>
                     @foreach($data['table_properties'] as $property)
-                        @if(in_array($property['header'], ['Группа(ы)', 'Постоянная замена', 'Статус', 'Инициатор']))
+                        @if(in_array($property['header'], ['group', 'is_regular', 'status', 'initiator']))
                             @continue
                         @endif
                         @if($property['sorting'])
                             @if(is_array($property['field']) && isset($property['sort_name']))
                                 <th class="th-sm text-center align-top">
-                                    <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                    <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                 </th>
                             @elseif(is_array($property['field']))
                                 @php
                                     $full_field = implode('.', $property['field']);
                                 @endphp
                                 <th class="th-sm text-center align-top">
-                                    <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                    <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                 </th>
                             @else
                                 <th class="th-sm text-center align-top">
-                                    <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                    <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                 </th>
                             @endif
                         @else
-                            <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                            <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                         @endif
                     @endforeach
                 </tr>

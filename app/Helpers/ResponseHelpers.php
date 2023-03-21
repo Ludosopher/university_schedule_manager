@@ -50,9 +50,9 @@ class ResponseHelpers
         
         return [
             'replace_rules' => $replace_rules,
-            'week_data' => $data['week_data'],
-            'week_dates' => $data['week_dates'],
-            'is_red_week' => $data['is_red_week'],
+            'week_data' => $data['week_data'] ?? '',
+            'week_dates' => $data['week_dates'] ?? '',
+            'is_red_week' => $data['is_red_week'] ?? '',
         ];
     }
 

@@ -23,7 +23,7 @@ class RescheduleLessonRequest extends FormRequest
      */
     public function rules()
     {
-//  dd($this->all());
+//dd($this->all());
         return [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',

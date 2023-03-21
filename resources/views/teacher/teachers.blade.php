@@ -37,7 +37,7 @@
                         @foreach($data['filter_form_fields'] as $field)
                             @if($field['type'] == 'between')
                                 @php $field_name = $field['name']; @endphp
-                                <h6>{{ $field['header'] }}</h6>
+                                <h6>{{ __('form.'.$field['name']) }}</h6>
                                 <div class="birthYear">
                                     <div class="integer-input-div">
                                         <label for="{{$field_name}}_from" class="form-label">{{ __('form.from') }}</label>
@@ -63,10 +63,10 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label class="form-label">{{ $field['header'] }}<span style="color: green;">*</span></label>
+                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span style="color: green;">*</span></label>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">
                                     @else
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
@@ -96,7 +96,7 @@
                             @if($field['type'] == 'input')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
                                     <input name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm filter-input" id="{{ $field_name }}" value="{{ old($field_name) !== null && count(request()->all()) ? old($field_name) : '' }}">
                                     @if ($errors !== null && $errors->has($field_name))
                                         @foreach($errors->get($field_name) as $error)
@@ -112,7 +112,7 @@
                 </form>
             </div>
             <div class="getAllRight">
-                <h1>Преподаватели</h1>
+                <h1>{{ __('header.teachers') }}</h1>
                 <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                     <thead>
                         <tr>
@@ -123,22 +123,22 @@
                                 @if($property['sorting'])
                                     @if(is_array($property['field']) && isset($property['sort_name']))
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @elseif(is_array($property['field']))
                                         @php
                                             $full_field = implode('.', $property['field']);
                                         @endphp
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @else
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], $property['header'], [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @endif
                                 @else
-                                    <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                                    <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                                 @endif
                             @endforeach
                         </tr>
@@ -189,7 +189,7 @@
                                 <th class="th-sm text-center align-top"></th>
                             @endif
                             @foreach($data['table_properties'] as $property)
-                                <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                                <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                             @endforeach
                         </tr>
                     </tfoot>

@@ -36,45 +36,45 @@ class DocExportHelpers
         $week_period_string = '';
         if (isset($data['week_data']) && isset($data['is_red_week'])) {
             $week_data = json_decode($data['week_data'], true);
-            $week_color = $data['is_red_week'] ? 'красная' : 'синяя';
-            $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']} ( {$week_color} неделя )"; 
+            $week_color = $data['is_red_week'] ? __('header.red_week_color') : __('header.blue_week_color');
+            $week_period_string = str_replace(['?-1', '?-2', '?-3' ], [$week_data['start_date'], $week_data['end_date'], $week_color], __('header.week_period_string')); 
         }
         
         $section->addTextBreak(1);
         if (isset($data['header_data'])) {
             $header_data = json_decode($data['header_data'], true);
-            $section->addText('Варианты замены занятия'.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
-            $section->addText("Заменяемое занятие: {$header_data['class_period']} пара, {$header_data['week_day']}, {$data['date_or_weekly_period']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
-            $section->addText("Преподавателя: {$header_data['teacher']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
-            $section->addText("Группы: {$header_data['group']}", null, array('spaceBefore' => 0, 'spaceAfter' => 100));
+            $section->addText(__('header.replacement_variants_export_to_docx').$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+            $section->addText(str_replace(['?-1', '?-2', '?-3' ], [$header_data['class_period'], $header_data['week_day'], $data['date_or_weekly_period']], __('header.replaceable_lesson_export_to_docx')), null, array('spaceBefore' => 0, 'spaceAfter' => 0));
+            $section->addText(__('header.of_teacher_export_to_docx').$header_data['teacher'], null, array('spaceBefore' => 0, 'spaceAfter' => 0));
+            $section->addText(__('header.of_group_export_to_docx').$header_data['group'], null, array('spaceBefore' => 0, 'spaceAfter' => 100));
         } else {
             if (isset($data['rescheduling_lesson_id'])) {
                 if ($data['is_reschedule_for'] == 'teacher') {
-                    $participant_header = 'Преподаватель';
-                    $of_participant_header = 'преподавателя';
+                    $participant_header = __('header.teacher');
+                    $of_participant_header = __('header.of_teacher');
                     $participant = $data['teacher_name'];
                 } elseif ($data['is_reschedule_for'] == 'group') {
-                    $participant_header = 'Группа';
-                    $of_participant_header = 'группы';
+                    $participant_header = __('header.group');
+                    $of_participant_header = __('header.of_group');
                     $participant = $data['group_name'];
                 } else {
                     $participant_header = '';
                     $of_participant_header = ''; 
                 }
-                $section->addText("Варианты переноса занятия в расписании {$of_participant_header}{$week_period_string}", ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+                $section->addText(__('header.reschedule_variants_export_to_docx').$of_participant_header.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
                 $section->addText("{$participant_header}: {$participant}");
             } else {
                 if (isset($data['teacher_name'])) {
-                    $participant_header = 'Преподаватель';
+                    $participant_header = __('header.teacher');
                     $participant = $data['teacher_name'];
                 } elseif (isset($data['group_name'])) {
-                    $participant_header = 'Группа';
+                    $participant_header = __('header.group');
                     $participant = $data['group_name'];
                 } else {
                     $participant_header = '';
                     $participant = '';
                 }
-                $section->addText('Расписание занятий'.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+                $section->addText(__('header.schedule_export_to_docx').$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
                 $section->addText("{$participant_header}: {$participant}");
             }
         }
@@ -98,26 +98,26 @@ class DocExportHelpers
         
         $table = $section->addTable('Schedule');
         $table->addRow(null, array('tblHeader' => true));
-        $table->addCell(1300, $headerCellStyle)->addText('Пары', $headerFontStyle, $headerParagraphStyle);
-        $week_days_ru = config('enum.week_days_ru');
+        $table->addCell(1300, $headerCellStyle)->addText(__('header.period'), $headerFontStyle, $headerParagraphStyle);
+        $week_days = config('enum.week_days');
         if (isset($data['week_dates'])) {
             $week_dates = json_decode($data['week_dates'], true);
             foreach ($week_dates as $week_day_id => $date) {
                 if ($week_day_id <= $week_days_limit) {
                     if (is_array($date) && isset($date['is_holiday'])) {
                         $date = date('d.m.y', strtotime($date['date']));
-                        $is_holiday_header = ' /праздничный день/';
+                        $is_holiday_header = ' /'.__('title.holiday').'/';
                     } else {
                         $date = date('d.m.y', strtotime($date));
                         $is_holiday_header = '';
                     }
-                    $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$week_day_id]} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
+                    $table->addCell(2000, $headerCellStyle)->addText("{__('week_day.'.$week_days[$week_day_id])} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
                 }
             }
         } else {
-            foreach($week_days_ru as $week_day_id => $week_day_name) {
+            foreach($week_days as $week_day_id => $week_day_name) {
                 if ($week_day_id <= $week_days_limit) {
-                    $table->addCell(2000, $headerCellStyle)->addText($week_day_name, $headerFontStyle, $headerParagraphStyle);
+                    $table->addCell(2000, $headerCellStyle)->addText(__('week_day.'.$week_day_name), $headerFontStyle, $headerParagraphStyle);
                 }
             }
         }
@@ -152,7 +152,7 @@ class DocExportHelpers
                                 $lesson_n = '';
                                 $lesson_type = '';
                                 $lesson_room = '';
-                                $lesson_other_participant = 'Вариант переноса';
+                                $lesson_other_participant = __('title.reschedule_variant');
                             } elseif (isset($lesson['id']) && isset($data['rescheduling_lesson_id']) && $lesson['id'] == $data['rescheduling_lesson_id']) {
                                 $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['bold' => true]);
                                 $reschedule_massage = true;
@@ -165,8 +165,8 @@ class DocExportHelpers
                             $sell->addText("{$lesson_n} {$lesson_type}", $everyWeekFontStyle, $everyWeekParagraphStyle);
                             $sell->addText("{$lesson_room}", $everyWeekFontStyle, $everyWeekParagraphStyle);
                             $sell->addText($lesson_other_participant, $everyWeekFontStyle, $everyWeekParagraphStyle);
-                            $reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 8, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                            $replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $reschedule_massage ? $sell->addText('('.__('title.rescheduling_lesson').')', ['size' => 8, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $replacement_massage ? $sell->addText('('.__('title.replaceable_lesson').')', ['size' => 6, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
                         } elseif (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']])) {
                             $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
                             $lesson_blue = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']] ?? false;
@@ -234,7 +234,7 @@ class DocExportHelpers
                                 $red_name = '';
                                 $red_type = '';
                                 $red_room = '';
-                                $red_group = 'Вариант переноса';
+                                $red_group = __('title.reschedule_variant');
                             } elseif (isset($lesson_red['id']) && isset($data['rescheduling_lesson_id']) && $lesson_red['id'] == $data['rescheduling_lesson_id']) {
                                 $redFontStyle = array_merge($redFontStyle, ['bold' => true]);
                                 $red_reschedule_massage = true;
@@ -244,7 +244,7 @@ class DocExportHelpers
                                 $blue_name = '';
                                 $blue_type = '';
                                 $blue_room = '';
-                                $blue_group = 'Вариант переноса';
+                                $blue_group = __('title.reschedule_variant');
                             } elseif (isset($lesson_blue['id']) && isset($data['rescheduling_lesson_id']) && $lesson_blue['id'] == $data['rescheduling_lesson_id']) {
                                 $blueFontStyle = array_merge($blueFontStyle, ['bold' => true]);
                                 $blue_reschedule_massage = true;
@@ -253,16 +253,16 @@ class DocExportHelpers
                             $sell->addText("{$red_name} {$red_type}", $redFontStyle, $halfParagraphStyle);
                             $sell->addText("{$red_date}{$red_room}", $redFontStyle, $halfParagraphStyle);
                             $sell->addText($red_group, $redFontStyle, $halfParagraphStyle);
-                            $red_reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 6, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                            $red_replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'bold' => true, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $red_reschedule_massage ? $sell->addText('('.__('title.rescheduling_lesson').')', ['size' => 6, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $red_replacement_massage ? $sell->addText('('.__('title.replaceable_lesson').')', ['size' => 6, 'bold' => true, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
                             
                             $sell->addText('------------------------------------------', $borderFontStyle, $borderParagraphStyle);
                             
                             $sell->addText("{$blue_name} {$blue_type}", $blueFontStyle, $halfParagraphStyle);
                             $sell->addText("{$blue_date}{$blue_room}", $blueFontStyle, $halfParagraphStyle);
                             $sell->addText($blue_group, $blueFontStyle, $halfParagraphStyle);
-                            $blue_reschedule_massage ? $sell->addText('(Переносимое занятие)', ['size' => 6, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
-                            $blue_replacement_massage ? $sell->addText('(Заменяемое занятие)', ['size' => 6, 'bold' => true, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $blue_reschedule_massage ? $sell->addText('('.__('title.rescheduling_lesson').')', ['size' => 6, 'name' => 'Segoe Script', 'bold' => true], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
+                            $blue_replacement_massage ? $sell->addText('('.__('title.replaceable_lesson').')', ['size' => 6, 'bold' => true, 'shading' => array('fill' => '#DCDCDC')], ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]) : '';
                         } else {
                             $table->addCell(2000, $everyWeekCellStyle);
                         }
@@ -283,7 +283,7 @@ class DocExportHelpers
         $class_periods = ClassPeriod::get();
         $class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
         $other_partic = $data['other_participant'];
-        $week_days_ru = config('enum.week_days_ru');
+        $week_days = config('enum.week_days');
         $settings = Setting::pluck('value', 'name');
         $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
         $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
@@ -299,16 +299,16 @@ class DocExportHelpers
         ));
 
         if (isset($data['teacher_name'])) {
-            $participant_header = 'Преподаватель';
+            $participant_header = __('header.teacher');
             $participant = $data['teacher_name'];
         } elseif (isset($data['group_name'])) {
-            $participant_header = 'Группа';
+            $participant_header = __('header.group');
             $participant = $data['group_name'];
         } else {
             $participant_header = '';
             $participant = '';
         }
-        $section->addText('Расписание занятий на '.$data['month_name'], ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+        $section->addText(__('header.schedule_on_month_export_to_docx').$data['month_name'], ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText("{$participant_header}: {$participant}");
         
         $styleTable = array('borderSize' => 6, 'borderColor' => '999999');
@@ -325,7 +325,7 @@ class DocExportHelpers
         foreach ($weeks as $week) {
             $lessons = $week['lessons'];
             $week_dates = $week['week_dates'];
-            $week_color_name = $week['is_red_week'] ? 'Красная неделя' : 'Синяя неделя';
+            $week_color_name = $week['is_red_week'] ? __('title.red_week') : __('title.blue_week');
             $table = $section->addTable('Schedule');
             $table->addRow(null, array('tblHeader' => true));
             $table->addCell(1300, $headerCellStyle)->addText($week_color_name, $headerFontStyle, $headerParagraphStyle);
@@ -334,12 +334,12 @@ class DocExportHelpers
                 if ($week_day_id <= $week_days_limit) {
                     if (is_array($date) && isset($date['is_holiday'])) {
                         $date = date('d.m.y', strtotime($date['date']));
-                        $is_holiday_header = ' /праздничный день/';
+                        $is_holiday_header = ' /'.__('title.holiday').'/';
                     } else {
                         $date = date('d.m.y', strtotime($date));
                         $is_holiday_header = '';
                     }
-                    $table->addCell(2000, $headerCellStyle)->addText("{$week_days_ru[$week_day_id]} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
+                    $table->addCell(2000, $headerCellStyle)->addText("{__('week_day.'.$week_days[$week_day_id])} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
                 }
             }
             
@@ -402,14 +402,14 @@ class DocExportHelpers
         $week_period_string = '';
         if (isset($data['week_data']) && isset($data['is_red_week'])) {
             $week_data = json_decode($data['week_data'], true);
-            $week_color = $data['is_red_week'] ? 'красная' : 'синяя';
-            $week_period_string = " c {$week_data['start_date']} по {$week_data['end_date']} ( {$week_color} неделя )"; 
+            $week_color = $data['is_red_week'] ? __('header.red_week_color') : __('header.blue_week_color');
+            $week_period_string = str_replace(['?-1', '?-2', '?-3' ], [$week_data['start_date'], $week_data['end_date'], $week_color], __('header.week_period_string')); 
         }
         
-        $section->addText('Варианты замены занятия'.$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
-        $section->addText("Заменяемое занятие: {$header_data['class_period']} пара, {$header_data['week_day']}, {$header_data['weekly_period']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
-        $section->addText("Преподавателя: {$header_data['teacher']}", null, array('spaceBefore' => 0, 'spaceAfter' => 0));
-        $section->addText("Группы: {$header_data['group']}", null, array('spaceBefore' => 0, 'spaceAfter' => 100));
+        $section->addText(__('header.replacement_variants_export_to_docx').$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+        $section->addText(str_replace(['?-1', '?-2', '?-3' ], [$header_data['class_period'], $header_data['week_day'], $data['date_or_weekly_period']], __('header.replaceable_lesson_export_to_docx')), null, array('spaceBefore' => 0, 'spaceAfter' => 0));
+        $section->addText(__('header.of_teacher_export_to_docx').$header_data['teacher'], null, array('spaceBefore' => 0, 'spaceAfter' => 0));
+        $section->addText(__('header.of_group_export_to_docx').$header_data['group'], null, array('spaceBefore' => 0, 'spaceAfter' => 100));
         
         $styleTable = array('borderSize' => 6, 'borderColor' => '999999');
                 
@@ -426,7 +426,7 @@ class DocExportHelpers
         $table = $section->addTable('Replacement');
         $table->addRow(null, array('tblHeader' => true));
         foreach ($table_properties as $property) {
-            if (isset($data['is_red_week']) && $property['header'] == 'Недельная периодичность') {
+            if (isset($data['is_red_week']) && $property['header'] == __('header.weekly_periods')) {
                 continue;
             }
             $table->addCell(2000, $headerCellStyle)->addText($property['header'], $headerFontStyle, $headerParagraphStyle); 

@@ -34,7 +34,7 @@
             <form method="POST" action="{{ route('teacher-schedule', ['schedule_teacher_id' => $data['schedule_instance_id']]) }}" target="_blank">
             @csrf
                 <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}">
-                <button type="submit" class="btn btn-primary">За эту неделю</button>
+                <button type="submit" class="btn btn-primary">{{ __('form.this_week') }}</button>
             </form>
             <form method="POST" action="{{ route('teacher-schedule-doc-export') }}">
             @csrf
@@ -54,22 +54,22 @@
                     <tr class="bg-light-gray">
                         <th class="text-uppercase">{{ __('header.period') }}</th>
                         @php
-                            $week_days_ru = config('enum.week_days_ru');
+                            $week_days = config('enum.week_days');
                         @endphp
                         @if(isset($data['week_dates']))
                             @foreach($data['week_dates'] as $week_day_id => $date)
                                 @if($week_day_id <= $data['week_days_limit'])
                                     @if(is_array($date) && isset($date['is_holiday']))
-                                        <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                        <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                     @else
-                                        <th class="text-uppercase">{{ $week_days_ru[$week_day_id] }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                        <th class="text-uppercase">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                     @endif
                                 @endif
                             @endforeach
                         @else
-                            @foreach($week_days_ru as $week_day_id => $week_day_name)
+                            @foreach($week_days as $week_day_id => $week_day_name)
                                 @if($week_day_id <= $data['week_days_limit'])
-                                    <th class="text-uppercase">{{ $week_day_name }}</th>
+                                    <th class="text-uppercase">{{ __('week_day.'.$week_day_name) }}</th>
                                 @endif
                             @endforeach
                         @endif
