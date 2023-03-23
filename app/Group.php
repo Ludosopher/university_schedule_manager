@@ -54,13 +54,13 @@ class Group extends Model
     
     public function getNameAttribute()
     {
-        $study_degree = $this->study_degree->abbreviation;
-        $study_form = $this->study_form->abbreviation;
-        $faculty = $this->faculty->abbreviation;
+        $study_degree = __('dictionary.'.$this->study_degree->abbreviation);
+        $study_form =  __('dictionary.'.$this->study_form->abbreviation);
+        $faculty =  __('dictionary.'.$this->faculty->abbreviation);
         $cours = $this->course->number;
-        $study_program = $this->study_program->abbreviation;
-        $study_orientation = mb_strtolower($this->study_orientation->abbreviation);
-        $additional_id = isset($this->additional_id) ? "/$this->additional_id" : "";
+        $study_program =  __('dictionary.'.$this->study_program->abbreviation);
+        $study_orientation = __('dictionary.'.$this->study_orientation->abbreviation);
+        $additional_id = isset($this->additional_id) ? "/".__('dictionary.'.$this->additional_id) : "";
         
         return "{$study_degree}.{$study_form}.{$faculty}-{$cours}-{$study_program}({$study_orientation}){$additional_id}";
     }

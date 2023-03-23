@@ -186,6 +186,7 @@ class ModelHelpers
         $model_name = $config['model_name'];
         $instance_name = $config['instance_name'];
         $schedule_instance_id = $incoming_data["schedule_{$config['instance_name']}_id"];
+        $data['schedule_instance_id'] = $schedule_instance_id;
         $instance_name_field = $config['instance_name_field'];
         $profession_level_name_field = $config['profession_level_name_field'];
         $other_lesson_participant = $config['other_lesson_participant'];
@@ -197,7 +198,8 @@ class ModelHelpers
         $data['weekly_periods'] = config('enum.weekly_periods');
         $data['weekly_period_ids'] = config('enum.weekly_period_ids');
         $data['weekly_period_colors'] = config('enum.weekly_period_colors');
-        $data['class_period_ids'] = config('enum.class_period_ids'); 
+        $data['class_period_ids'] = config('enum.class_period_ids');
+        $data['month_number'] = $incoming_data['month_number'];
         
         $weekly_period_ids = config('enum.weekly_period_ids');
         $class_periods = ClassPeriod::get();
@@ -223,7 +225,7 @@ class ModelHelpers
         $month_value = date('n', strtotime($incoming_data['month_number']));
         $months_genitive = config('enum.months');
 
-        $data['month_name'] = date("{$months_genitive[$month_value]} Y").' года';
+        $data['month_name'] = __('header.'.$months_genitive[$month_value]).' '.date('Y', strtotime($incoming_data['month_number'])).' '.__('header.of_year');
 
         foreach ($month_week_numbers as $week_number) {
             

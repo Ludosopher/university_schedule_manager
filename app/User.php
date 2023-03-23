@@ -83,12 +83,12 @@ class User extends Authenticatable
 
     public function getModeratorAttribute()
     {
-        return $this->is_moderator ? 'Да' : 'Нет';
+        return $this->is_moderator ? __('content.yes') : __('content.no');
     }
 
     public function getAdminAttribute()
     {
-        return $this->is_admin ? 'Да' : 'Нет';
+        return $this->is_admin ? __('content.yes') : __('content.no');
     }
 
 }

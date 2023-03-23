@@ -38,7 +38,7 @@ class ReplacementRequestHelpers
             }
 
             $replacing_user_ids = $request->replacing_lesson->teacher->users->pluck('id')->toArray();
-            if (in_array($initiator_id, $replacing_user_ids) && $request->status_id != $replacement_request_status_ids['in drafting']) {
+            if (in_array($initiator_id, $replacing_user_ids) && $request->status_id != $replacement_request_status_ids['in_drafting']) {
                 $result['to_me_requests'][] = $request;
             }
         }

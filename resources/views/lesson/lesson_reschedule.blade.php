@@ -24,7 +24,7 @@
             @else
                 <h1 class="top-header">{{ __('header.regular_reschedule_variants') }}</h1>
             @endif
-            <h4>{{ __('header.rescheduling_lesson') }}: {{ $data['lesson_name'] }} - {{ $data['lesson_week_day'] }} - {{ $data['lesson_weekly_period'] }} - {{ $data['lesson_class_period'] }} пара</h4>
+            <h4>{{ __('header.rescheduling_lesson') }}: {{ __('dictionary.'.$data['lesson_name']) }} - {{ __('dictionary.'.$data['lesson_week_day']) }} - {{ __('dictionary.'.$data['lesson_weekly_period']) }} - {{ __('dictionary.'.$data['lesson_class_period']) }} {{ __('header.class_period') }}</h4>
             <h4>{{ __('header.teacher') }}: {{ $data['teacher_name'] ?? ''}}</h4>
         </div>
         <div class="replacement-schedule-header-div">

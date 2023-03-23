@@ -81,7 +81,7 @@
                                             </svg>
                                         </button>
                                     </form>
-                                    @if ($instance->status_id == $replacement_request_status_ids['in drafting'])
+                                    @if ($instance->status_id == $replacement_request_status_ids['in_drafting'])
                                         <form method="POST" action="{{ route('replacement-request-send') }}" title="{{ __('title.send') }}" target="_blank">
                                         @csrf
                                             <input type="hidden" name="updating_id" value="{{ $instance->id }}">
@@ -108,7 +108,7 @@
                                             </svg>
                                         </a>
                                     @endif
-                                    @if ($instance->status_id == $replacement_request_status_ids['in drafting']
+                                    @if ($instance->status_id == $replacement_request_status_ids['in_drafting']
                                         || $instance->status_id == $replacement_request_status_ids['cancelled']
                                         || $instance->status_id == $replacement_request_status_ids['declined']
                                         || $instance->status_id == $replacement_request_status_ids['completed']
@@ -134,11 +134,11 @@
                                             }
                                         }
                                     @endphp
-                                    <td class="regular-cell">{{ $value }}</td>
+                                    <td class="regular-cell">{{ \Lang::has('dictionary.'.$value) ? __('dictionary.'.$value) : $value }}</td>
                                 @elseif($field == 'full_name')
-                                    <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}" title="{{ __('title.teacher_schedule') }}">{{ $instance->$field }}</a></td>
+                                    <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}" title="{{ __('title.teacher_schedule') }}">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</a></td>
                                 @else
-                                    <td class="regular-cell">{{ $instance->$field }}</td>
+                                    <td class="regular-cell">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</td>
                                 @endif
                             @endforeach
                         </tr>
@@ -258,11 +258,11 @@
                                             }
                                         }
                                     @endphp
-                                    <td class="regular-cell">{{ $value }}</td>
+                                    <td class="regular-cell">{{ \Lang::has('dictionary.'.$value) ? __('dictionary.'.$value) : $value }}</td>
                                 @elseif($field == 'full_name')
-                                    <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}" title="{{ __('title.teacher_schedule') }}">{{ $instance->$field }}</a></td>
+                                    <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}" title="{{ __('title.teacher_schedule') }}">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</a></td>
                                 @else
-                                    <td class="regular-cell">{{ $instance->$field }}</td>
+                                    <td class="regular-cell">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</td>
                                 @endif
                             @endforeach
                         </tr>

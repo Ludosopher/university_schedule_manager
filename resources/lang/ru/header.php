@@ -55,6 +55,27 @@
         'schedule_export_to_docx' => 'Расписание занятий',
         'schedule_on_month_export_to_docx' => 'Расписание занятий на ',
         'weekly_periods' => 'Недельная периодичность',
+        'class_period' => 'пара',
+        'of_year' => 'года',
+        'contact_details' => 'Контактные данные',
+        'phone' => 'Телефон',
+        'email' => 'Электронная почта',
+        'level' => 'Уровень',
+        'access_to_teacher_schedule_management' => 'Допуск к управлению расписанием преподавателей',
+        'access_to_group_schedule_management' => 'Допуск к управлению расписанием групп',
+        //moths
+        'january' => 'январь',
+        'february' => 'февраль',
+        'march' => 'март',
+        'april' => 'апрель',
+        'may' => 'май',
+        'june' => 'июнь',
+        'july' => 'июль',
+        'august' => 'август',
+        'september' => 'сентябрь',
+        'october' => 'октябрь',
+        'november' => 'ноябрь',
+        'december' => 'декабрь',
 
 
         

@@ -1,0 +1,37 @@
+<?php
+
+    return [
+        'room' => 'room',
+        'yes' => 'Yes',
+        'no' => 'No',
+        'there_is_no_access_to_teacher_schedule_management' => 'There is no access to teacher schedule management',
+        'there_is_no_access_to_group_schedule_management' => 'There is no access to group schedule management',
+        'administrator' => 'Administrator',
+        'moderator' => 'Moderator',
+        'ordinary_user' => 'Ordinary User',
+        //subjects
+        'history' => 'History',
+        'psychology' => 'Psychology',
+        'sociology' => 'Sociology',
+        'social_psychology' => 'Social Psychology',
+        'business_ethics' => 'Business Ethics',
+        'philosophy' => 'Philosophy',
+        'political_science' => 'Political Science',
+        'biology' => 'Biology',
+        'chemistry' => 'Chemistry',
+        'geography' => 'Geography',
+        'economic_geography' => 'Economic Geography',
+        'logic' => 'Logic',
+        'history_of_managerial_thought' => 'The history of managerial thought',
+        'higher_mathematics' => 'Higher Mathematics',
+        'english_language' => 'English language',
+        'economic_theory' => 'Economic theory',
+        'history_of_economic_studies' => 'History of economic studies',
+        'management' => 'Management',
+        'marketing' => 'Marketing',
+        'personnel_management' => 'Personnel management',
+        'strategic_management' => 'Strategic management',
+        'quality_management' => 'Quality Management',
+        'economic_analysis' => 'Economic analisis',
+
+    ];

@@ -9,7 +9,7 @@
     @endif
     <h1 class="top-header">{{ str_replace('?', $data['month_name'], __('header.group_schedule_on')) }}</h1>
     <div class="replacement-schedule-header-div">
-        <h3>Группа: {{ $data['instance_name'] ?? ''}}</h3>
+        <h3>{{ __('header.group') }}: {{ $data['instance_name'] ?? ''}}</h3>
         <div class="schedule-button-group">
             <form method="POST" action="{{ route('group-month-schedule-doc-export') }}">
             @csrf
@@ -94,8 +94,8 @@
                                                     <td class="month-schedule-cell" style="background-color: {{ $cell_bg_color }}" title="{{ $title }}">
                                                         <div class="dropdown month-schedule-actions-div">
                                                             <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                <div class="margin-10px-top font-size14 month-schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
-                                                                <div class="font-size13 text-light-gray month-schedule-room">ауд. {{ $lesson['room'] }}</div>
+                                                                <div class="margin-10px-top font-size14 month-schedule-subject">{{ __('content.'.$lesson['name']) }} ({{ __('dictionary.'.$lesson['type']) }})</div>
+                                                                <div class="font-size13 text-light-gray month-schedule-room">{{ __('content.room') }} {{ $lesson['room'] }}</div>
                                                                 <div class="font-size13 text-light-gray month-schedule-group">{{ $lesson['teacher'] }}</div>
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">

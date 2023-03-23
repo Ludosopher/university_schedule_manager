@@ -198,11 +198,11 @@ class LessonHelpers
         }
 
         if ($is_prev_lesson && $is_next_lesson) {
-            $result = ['id' => 1, 'name' => 'Между двумя имеющимися парами'];
+            $result = ['id' => 1, 'name' => 'between_two_available_pairs'];
         } elseif ($is_prev_lesson || $is_next_lesson) {
-            $result = ['id' => 2, 'name' => 'Рядом с одной из имеющихся пар'];
+            $result = ['id' => 2, 'name' => 'next_to_one_of_available_pairs'];
         } else {
-            $result = ['id' => 3, 'name' => 'Нет рядом имеющихся пар'];
+            $result = ['id' => 3, 'name' => 'there_are_no_pairs_available_nearby'];
         }
 
         return $result;
@@ -310,7 +310,7 @@ class LessonHelpers
         $week_days = WeekDay::select('id', 'name')->get();
         $class_periods = ClassPeriod::get();
         
-        if (isset($incoming_data['week_data'])) {
+        if (isset($incoming_data['week_data']) && isset($incoming_data['week_data']['week_number'])) {
             $week_data = json_decode($incoming_data['week_data'], true);
             $week_number = $week_data['week_number'];
             $week_dates = json_decode($incoming_data['week_dates'], true);

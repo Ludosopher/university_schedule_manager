@@ -115,9 +115,9 @@
                                                             $color = 'PaleGreen';
                                                             $title = __('title.reschedule_variant');
                                                         } else {
-                                                            $lesson_subject = $lesson['name'];
-                                                            $lesson_type = "({$lesson['type']})";
-                                                            $lesson_room = "ауд. {$lesson['room']}";
+                                                            $lesson_subject = __('content.'.$lesson['name']);
+                                                            $lesson_type = "(".__('dictionary.'.$lesson['type']).")";
+                                                            $lesson_room = __('content.room').' '.$lesson['room'];
                                                             $other_lesson_participant = $lesson[$other_lesson_participant_name];
                                                             $color = '';
                                                             $title = '';
@@ -153,9 +153,9 @@
                                                                     $color = 'PaleGreen';
                                                                     $title = __('title.reschedule_variant');
                                                                 } else {
-                                                                    $lesson_subject = $lesson_red['name'];
-                                                                    $lesson_type = "({$lesson_red['type']})";
-                                                                    $lesson_room = "ауд. {$lesson_red['room']}";
+                                                                    $lesson_subject = __('content.'.$lesson_red['name']);
+                                                                    $lesson_type = "(".__('dictionary.'.$lesson_red['type']).")";
+                                                                    $lesson_room = __('content.room').' '.$lesson_red['room'];
                                                                     $other_lesson_participant = $lesson_red[$other_lesson_participant_name];
                                                                     $color = '';
                                                                     $title = '';

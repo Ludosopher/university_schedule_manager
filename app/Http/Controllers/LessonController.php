@@ -101,7 +101,6 @@ class LessonController extends Controller
 
     public function getReschedulingVariants (RescheduleLessonRequest $request)
     {
-//dd($request->validated());        
         $request->flash();
         $data = LessonHelpers::getReschedulingData($request->validated());
 

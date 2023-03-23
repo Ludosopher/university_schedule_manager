@@ -24,7 +24,7 @@
         'subject' => 'Subject',
         'lesson_type' => 'Lesson type',
         'lesson_room' => 'Lesson room',
-        'week_day' => 'Week day (date)',
+        'week_day' => 'Week day',
         'weekly_period' => 'Weekly period',
         'group' => 'Group(s)',
         'teacher' => 'Teacher',

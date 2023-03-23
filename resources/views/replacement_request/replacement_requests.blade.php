@@ -56,19 +56,22 @@
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
+                                            @php
+                                                $localized_value = $field['is_localized'] ? __('dictionary.'.$value->name) : $value->name;
+                                            @endphp
                                             @if(old($field_name) !== null
                                                 && count(request()->all())
                                                 && (old($field_name) == $value->id
                                                    || (is_array(old($field_name)) && in_array($value->id, old($field_name)))))
-                                                    <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                    <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) && $data['updating_instance']->$field_name == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance'])
                                                     && is_array($data['updating_instance']->$field_name)
                                                     && in_array($value->id, $data['updating_instance']->$field_name))
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @else
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -123,22 +126,22 @@
                         <tr>
                             <th class="th-sm text-center align-top" rowspan="2">Действия</th>
                             @foreach($data['table_properties'] as $property)
-                                @if(in_array($property['header'], ['День недели', 'Пара', 'Аудитория', 'Преподаватель']))
+                                @if(in_array($property['header'], ['week_day', 'class_period', 'lesson_room', 'teacher']))
                                     @continue
                                 @endif
                                 @php
                                     $rowspan = '';
                                     $colspan = '';
-                                    $header = $property['header'];
-                                    if (in_array($property['header'], ['Группа(ы)', 'Постоянная замена', 'Статус', 'Инициатор'])) {
+                                    $header = __('table_header.'.$property['header']);
+                                    if (in_array($property['header'], ['group', 'is_regular', 'status', 'initiator'])) {
                                         $rowspan = 2;
                                     }
-                                    if ($property['header'] == 'Дата') {
+                                    if ($property['header'] == 'date') {
                                         $colspan = 5;
                                         if ($property['field'] == 'replaceable_date') {
-                                            $header = 'Заменяемое занятие';
+                                            $header = __('table_header.replaceable_lesson');
                                         } else {
-                                            $header = 'Заменяющее занятие';
+                                            $header = __('table_header.replacing_lesson');
                                         }
                                         $was_first_lesson = true;
                                     }
@@ -148,28 +151,28 @@
                         </tr>
                         <tr>
                             @foreach($data['table_properties'] as $property)
-                                @if(in_array($property['header'], ['Группа(ы)', 'Постоянная замена', 'Статус', 'Инициатор']))
+                                @if(in_array($property['header'], ['group', 'is_regular', 'status', 'initiator']))
                                     @continue
                                 @endif
                                 @if($property['sorting'])
                                     @if(is_array($property['field']) && isset($property['sort_name']))
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], __('table_header.'.$property['header']), [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @elseif(is_array($property['field']))
                                         @php
                                             $full_field = implode('.', $property['field']);
                                         @endphp
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, __('table_header.'.$property['header']), [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @else
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], __('table_header.'.$property['header']), [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @endif
                                 @else
-                                    <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                                    <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                                 @endif
                             @endforeach
                         </tr>
@@ -181,7 +184,7 @@
                                 $replacement_request_status_colors = config('enum.replacement_request_status_colors');
                                 $status_color = $replacement_request_status_colors[$instance->status_id];
                             @endphp
-                            @if($instance->status_id !== $replacement_request_status_ids['in drafting'])
+                            @if($instance->status_id !== $replacement_request_status_ids['in_drafting'])
                                 <tr style="background-color: {{ $status_color }}">
                                     <td>
                                         <div style="display: flex; justify-content: space-around;">
@@ -216,11 +219,11 @@
                                                     }
                                                 }
                                             @endphp
-                                            <td class="regular-cell">{{ $value }}</td>
+                                            <td class="regular-cell">{{ \Lang::has('dictionary.'.$value) ? __('dictionary.'.$value) : $value }}</td>
                                         @elseif($field == 'full_name')
-                                            <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}" title="Расписание преподавателя">{{ $instance->$field }}</a></td>
+                                            <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}" title="Расписание преподавателя">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</a></td>
                                         @else
-                                            <td class="regular-cell">{{ $instance->$field }}</td>
+                                            <td class="regular-cell">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</td>
                                         @endif
                                     @endforeach
                                 </tr>    
@@ -230,10 +233,10 @@
                     <tfoot>
                         <tr>
                             @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
-                                {{-- <th class="th-sm text-center align-top"></th> --}}
+                                <th class="th-sm text-center align-top">{{ __('table_header.actions') }}</th>
                             @endif
                             @foreach($data['table_properties'] as $property)
-                                <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                                <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                             @endforeach
                         </tr>
                     </tfoot>

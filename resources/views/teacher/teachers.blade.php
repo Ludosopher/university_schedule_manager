@@ -70,19 +70,22 @@
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
+                                            @php
+                                                $localized_value = $field['is_localized'] ? __('dictionary.'.$value->name) : $value->name;
+                                            @endphp
                                             @if(old($field_name) !== null
                                                 && count(request()->all())
                                                 && (old($field_name) == $value->id
                                                    || (is_array(old($field_name)) && in_array($value->id, old($field_name)))))
-                                                    <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                    <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) && $data['updating_instance']->$field_name == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance'])
                                                     && is_array($data['updating_instance']->$field_name)
                                                     && in_array($value->id, $data['updating_instance']->$field_name))
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @else
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -173,11 +176,11 @@
                                                 }
                                             }
                                         @endphp
-                                        <td class="regular-cell">{{ $value }}</td>
+                                        <td class="regular-cell">{{ \Lang::has('dictionary.'.$value) ? __('dictionary.'.$value) : $value }}</td>
                                     @elseif($field == 'full_name')
-                                        <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}" title="{{ __('title.teacher_schedule') }}">{{ $instance->$field }}</a></td>
+                                        <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $instance->id]) }}" title="{{ __('title.teacher_schedule') }}">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</a></td>
                                     @else
-                                        <td class="regular-cell">{{ $instance->$field }}</td>
+                                        <td class="regular-cell">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</td>
                                     @endif
                                 @endforeach
                             </tr>

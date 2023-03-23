@@ -18,7 +18,7 @@
                 $bg_color = '#ffb3b9';
             }
         @endphp
-        <h1 class="top-header">{{ str_replace(['?-1', '?-2'], [$data['week_data']['start_date'], $data['week_data']['end_date']], __('header.teacher_dated_schedule')) }}<span style="background-color: {{ $bg_color }};">{{ str_replace('?', $week_color, __('header.week_color')) }}</span></h1>   
+        <h1 class="top-header">{{ str_replace(['?-1', '?-2'], [$data['week_data']['start_date'], $data['week_data']['end_date']], __('header.teacher_dated_schedule')) }} <span style="background-color: {{ $bg_color }};">{{ str_replace('?', $week_color, __('header.week_color')) }}</span></h1>   
     @else
         <h1 class="top-header">{{ __('header.teacher_regular_schedule') }}</h1>
     @endif
@@ -117,8 +117,8 @@
                                                 <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}" title="{{ $title }}">
                                                     <div class="dropdown schedule-actions-div">
                                                         <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
-                                                            <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
+                                                            <div class="margin-10px-top font-size14 schedule-subject">{{ __('content.'.$lesson['name']) }} ({{ __('dictionary.'.$lesson['type']) }})</div>
+                                                            <div class="font-size13 text-light-gray schedule-room">{{ __('content.room') }} {{ $lesson['room'] }}</div>
                                                             <div class="font-size13 text-light-gray schedule-group">{{ $lesson['group'] }}</div>
                                                         </a>
                                                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -169,8 +169,8 @@
                                                     @if($lesson_red)
                                                         <div class="schedule-cell-top" style="background-color: {{ $weekly_period_color[$weekly_period_id['red_week']] }}">
                                                             <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
-                                                                <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_red['room'] }}</div>
+                                                                <div class="margin-10px-top font-size14 schedule-subject-half">{{ __('content.'.$lesson_red['name']) }} ({{ __('dictionary.'.$lesson_red['type']) }})</div>
+                                                                <div class="font-size13 text-light-gray schedule-room-half">{{ __('content.room') }} {{ $lesson_red['room'] }}</div>
                                                                 <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red['group'] }}</div>
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -205,8 +205,8 @@
                                                     @if($lesson_blue)
                                                         <div class="schedule-cell-bottom" style="background-color: {{ $weekly_period_color[$weekly_period_id['blue_week']] }}">
                                                             <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                                <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
-                                                                <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>
+                                                                <div class="margin-10px-top font-size14 schedule-subject-half">{{ __('content.'.$lesson_blue['name']) }} ({{ __('dictionary.'.$lesson_blue['type']) }})</div>
+                                                                <div class="font-size13 text-light-gray schedule-room-half">{{ __('content.room') }} {{ $lesson_blue['room'] }}</div>
                                                                 <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue['group'] }}</div>
                                                             </a>
                                                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">

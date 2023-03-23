@@ -47,12 +47,15 @@
                                     </label>
                                     <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                         @foreach($data[$field['plural_name']] as $value)
+                                            @php
+                                                $localized_value = $field['is_localized'] ? __('dictionary.'.$value) : $value;
+                                            @endphp
                                             @if(old($field_name) !== null && old($field_name) == $value)
-                                                <option selected value="{{ $value }}">{{ ucfirst($value) }}</option>
+                                                <option selected value="{{ $value }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) && $data['updating_instance']->$field_name == $value)
-                                                <option selected value="{{ $value }}">{{ ucfirst($value) }}</option>
+                                                <option selected value="{{ $value }}">{{ $localized_value }}</option>
                                             @else
-                                                <option value="{{ $value }}">{{ ucfirst($value) }}</option>
+                                                <option value="{{ $value }}">{{ $localized_value }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -73,12 +76,15 @@
                                     </label>
                                     <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                         @foreach($data[$field['plural_name']] as $value)
+                                            @php
+                                                $localized_value = $field['is_localized'] ? __('dictionary.'.$value->name) : $value->name;
+                                            @endphp
                                             @if(old($field_name) !== null && old($field_name) == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) && $data['updating_instance']->$field_name == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @else
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @endif
                                         @endforeach
                                     </select>

@@ -67,9 +67,9 @@ class Lesson extends Model
 
     public function getGroupsNameAttribute()
     {
-        $study_degree = $this->groups[0]->study_degree->abbreviation;
-        $study_form = $this->groups[0]->study_form->abbreviation;
-        $faculty = $this->groups[0]->faculty->abbreviation;
+        $study_degree = __('dictionary.'.$this->groups[0]->study_degree->abbreviation);
+        $study_form = __('dictionary.'.$this->groups[0]->study_form->abbreviation);
+        $faculty = __('dictionary.'.$this->groups[0]->faculty->abbreviation);
         $cours = $this->groups[0]->course->number;
 
         $groups_name = "{$study_degree}.{$study_form}.{$faculty}-{$cours}-";
@@ -77,15 +77,15 @@ class Lesson extends Model
         if (count($this->groups) > 1) {
             $variative_part_arr = [];
             foreach ($this->groups as $group) {
-                $study_program = $group->study_program->abbreviation;
+                $study_program = __('dictionary.'.$group->study_program->abbreviation);
                 $variative_part_arr[] = $study_program;
             }
             return $groups_name.'['.implode('; ', $variative_part_arr).']';
         }
 
-        $study_program = $this->groups[0]->study_program->abbreviation;
-        $study_orientation = mb_strtolower($this->groups[0]->study_orientation->abbreviation);
-        $additional_id = isset($this->groups[0]->additional_id) ? "/$this->additional_id" : "";
+        $study_program = __('dictionary.'.$this->groups[0]->study_program->abbreviation);
+        $study_orientation = mb_strtolower(__('dictionary.'.$this->groups[0]->study_orientation->abbreviation));
+        $additional_id = isset($this->groups[0]->additional_id) ? "/".__('dictionary.'.$this->additional_id) : "";
 
         return "{$groups_name}{$study_program}({$study_orientation}){$additional_id}";
     }

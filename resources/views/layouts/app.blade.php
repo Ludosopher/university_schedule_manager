@@ -115,10 +115,14 @@
                                 <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                 <input type="hidden" name="is_red_week" value="{{ isset($data['is_red_week']) ? ($data['is_red_week'] ? 1 : 0) : '' }}">
                                 <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
-                                <input type="hidden" name="week_number" value="{{ isset($data['week_number']) ? $data['week_number'] : '' }}">
-                                <input type="hidden" name="teacher_id" value="{{ isset($data['teacher_id']) ? $data['teacher_id'] : '' }}">
-                                <input type="hidden" name="group_id" value="{{ isset($data['group_id']) ? $data['group_id'] : '' }}">
-                                <input type="hidden" name="lesson_id" value="{{ isset($data['rescheduling_lesson_id']) ? $data['rescheduling_lesson_id'] : '' }}">
+                                {{-- <input type="hidden" name="week_number" value="{{ $data['week_number'] ?? '' }}"> --}}
+                                <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] ?? '' }}">
+                                <input type="hidden" name="month_number" value="{{ $data['month_number'] ?? '' }}">
+                                <input type="hidden" name="schedule_teacher_id" value="{{ $data['schedule_instance_id'] ?? '' }}">
+                                <input type="hidden" name="schedule_group_id" value="{{ $data['schedule_instance_id'] ?? '' }}">
+                                <input type="hidden" name="teacher_id" value="{{ $data['teacher_id'] ?? '' }}">
+                                <input type="hidden" name="group_id" value="{{ $data['group_id'] ?? '' }}">
+                                <input type="hidden" name="lesson_id" value="{{ $data['rescheduling_lesson_id'] ?? ($data['lesson_id'] ?? '') }}">
                                 <input type="hidden" name="previous_route" value="{{ \Route::current()->getName() }}">
                                 <button type="submit" style="border-style: none; background-color: inherit; color: Gray;" title="{{ __('title.update') }}">▼</button>
                             </form>

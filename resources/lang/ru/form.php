@@ -61,4 +61,8 @@
         '' => 'Группа',
         // add_lesson_replacement_filter_form
         'schedule_position' => 'Позиция в расписании заменяющего преподавателя',
+        //add_users_form
+        'is_admin' => 'Администратор',
+        'is_moderator' => 'Модератор',
+        
     ];

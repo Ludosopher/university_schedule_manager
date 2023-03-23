@@ -14,11 +14,7 @@ return [
       'land_management' => 3
    ],
 
-   'genders' => [
-      'male' => 'мужчина',
-      'female' => 'женщина',
-      'not_specified' => 'не указано'
-   ],
+   'genders' => ['male', 'female', 'not_specified'],
 
    'class_period_ids' => [
       'first' => 1,
@@ -92,11 +88,11 @@ return [
 
    'schedule_positions' => [
       ['id' => 1,
-      'name' => 'Между двумя имеющимися парами'],
+      'name' => 'between_two_available_pairs'],
       ['id' => 2,
-      'name' => 'Рядом с одной из имеющихся пар'],
+      'name' => 'next_to_one_of_available_pairs'],
       ['id' => 3,
-      'name' => 'Нет рядом имеющихся пар'],
+      'name' => 'there_are_no_pairs_available_nearby'],
    ],
 
    'schedule_position_ids' => [
@@ -106,18 +102,18 @@ return [
    ],
 
    'months' => [
-      1 => 'январь',
-      2 => 'февраль',
-      3 => 'март',
-      4 => 'апрель',
-      5 => 'май',
-      6 => 'июнь',
-      7 => 'июль',
-      8 => 'август',
-      9 => 'сентябрь',
-      10 => 'октябрь',
-      11 => 'ноябрь',
-      12 => 'декабрь',
+      1 => 'january',
+      2 => 'february',
+      3 => 'march',
+      4 => 'april',
+      5 => 'may',
+      6 => 'june',
+      7 => 'july',
+      8 => 'august',
+      9 => 'september',
+      10 => 'october',
+      11 => 'november',
+      12 => 'december',
    ],
 
    'replacement_request_statuses' => [
@@ -133,7 +129,7 @@ return [
    ],
 
    'replacement_request_status_ids' => [
-      'in drafting' => 1,
+      'in_drafting' => 1,
       'in_consent_waiting' => 2,
       'in_permission_waiting' => 3,
       'permitted' => 4,

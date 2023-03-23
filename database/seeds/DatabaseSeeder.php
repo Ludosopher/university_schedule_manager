@@ -39,71 +39,71 @@ class DatabaseSeeder extends Seeder
         \DB::table('academic_degrees')->insert([
             [
                 'id' => 1,
-                'name' => 'Кандидат экономических наук',
-                'short_name' => 'к.экон.наук',
+                'name' => 'candidate_of_economic_sciences',
+                'short_name' => 'c_econ_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Доктор экономических наук',
-                'short_name' => 'д.экон.наук',
+                'name' => 'doctor_of_economic_sciences',
+                'short_name' => 'd_econ_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Кандидат философских наук',
-                'short_name' => 'к.филос.наук',
+                'name' => 'candidate_of_philosophical_sciences',
+                'short_name' => 'c_philos_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 4,
-                'name' => 'Доктор философских наук',
-                'short_name' => 'д.филос.наук',
+                'name' => 'doctor_of_philosophical_sciences',
+                'short_name' => 'd_philos_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 5,
-                'name' => 'Кандидат технических наук',
-                'short_name' => 'к.техн.наук',
+                'name' => 'candidate_of_technical_sciences',
+                'short_name' => 'c_tech_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 6,
-                'name' => 'Доктор технических наук',
-                'short_name' => 'д.техн.наук',
+                'name' => 'doctor_of_technical_sciences',
+                'short_name' => 'd_tech_science',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 7,
-                'name' => 'Кандидат социологических наук',
-                'short_name' => 'к.соц.наук',
+                'name' => 'candidate_of_sociological_sciences',
+                'short_name' => 'c_soc_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 8,
-                'name' => 'Доктор социологических наук',
-                'short_name' => 'д.соц.наук',
+                'name' => 'doctor_of_sociological_sciences',
+                'short_name' => 'd_soc_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 9,
-                'name' => 'Кандидат сельскохозяйственных наук',
-                'short_name' => 'к.с.-х.наук',
+                'name' => 'candidate_of_agricultural_sciences',
+                'short_name' => 'c_agri_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 10,
-                'name' => 'Доктор сельскохозяйственных наук',
-                'short_name' => 'д.с.-х.наук',
+                'name' => 'doctor_of_agricultural_sciences',
+                'short_name' => 'd_agri_sciences',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
@@ -112,32 +112,32 @@ class DatabaseSeeder extends Seeder
         \DB::table('professional_levels')->insert([
             [
                 'id' => 1,
-                'name' => 'Ассистент',
-                'short_name' => 'асс.',
+                'name' => 'assistant',
+                'short_name' => 'ass',
                 'level' => 1,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Старший преподаватель',
-                'short_name' => 'ст.преп.',
+                'name' => 'senior_teacher',
+                'short_name' => 'sen_teach',
                 'level' => 2,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Доцент',
-                'short_name' => 'доц.',
+                'name' => 'docent',
+                'short_name' => 'doc',
                 'level' => 3,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 4,
-                'name' => 'Профессоор',
-                'short_name' => 'проф.',
+                'name' => 'professor',
+                'short_name' => 'prof',
                 'level' => 4,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
@@ -147,35 +147,35 @@ class DatabaseSeeder extends Seeder
         \DB::table('positions')->insert([
             [
                 'id' => 1,
-                'name' => 'Преподаватель',
+                'name' => 'lecturer',
                 'level' => 1,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Заведующий кафедрой',
+                'name' => 'head_of_department',
                 'level' => 2,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Декан факультета',
+                'name' => 'dean_of_faculty',
                 'level' => 3,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 4,
-                'name' => 'Заместитель директора',
+                'name' => 'associate_director',
                 'level' => 4,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 5,
-                'name' => 'Директор',
+                'name' => 'director',
                 'level' => 5,
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
@@ -185,36 +185,36 @@ class DatabaseSeeder extends Seeder
         \DB::table('lesson_types')->insert([
             [
                 'id' => 1,
-                'name' => 'Лекция',
-                'short_notation' => 'Л',
+                'name' => 'lecture',
+                'short_notation' => 'l',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Практическое занятие',
-                'short_notation' => 'ПЗ',
+                'name' => 'practical',
+                'short_notation' => 'pl',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Лабораторная работа',
-                'short_notation' => 'ЛР',
+                'name' => 'laboratory',
+                'short_notation' => 'll',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 4,
-                'name' => 'Экзамен',
-                'short_notation' => 'Экз.',
+                'name' => 'exam',
+                'short_notation' => 'ex',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 5,
-                'name' => 'Зачёт',
-                'short_notation' => 'Зач.',
+                'name' => 'test',
+                'short_notation' => 't',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ]
@@ -223,50 +223,50 @@ class DatabaseSeeder extends Seeder
         \DB::table('week_days')->insert([
             [
                 'id' => 1,
-                'name' => 'Понедельник',
-                'short_notation' => 'ПН',
+                'name' => 'monday',
+                'short_notation' => 'mo',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Вторник',
-                'short_notation' => 'ВТ',
+                'name' => 'tuesday',
+                'short_notation' => 'tu',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Среда',
-                'short_notation' => 'СР',
+                'name' => 'wednesday',
+                'short_notation' => 'we',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 4,
-                'name' => 'Четверг',
-                'short_notation' => 'ЧТ',
+                'name' => 'thursday',
+                'short_notation' => 'th',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 5,
-                'name' => 'Пятница',
-                'short_notation' => 'ПТ',
+                'name' => 'friday',
+                'short_notation' => 'fr',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 6,
-                'name' => 'Суббота',
-                'short_notation' => 'СБ',
+                'name' => 'saturday',
+                'short_notation' => 'sa',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 7,
-                'name' => 'Воскресенье',
-                'short_notation' => 'ВС',
+                'name' => 'sunday',
+                'short_notation' => 'su',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
@@ -275,19 +275,19 @@ class DatabaseSeeder extends Seeder
         \DB::table('weekly_periods')->insert([
             [
                 'id' => 1,
-                'name' => 'Каждую неделю',
+                'name' => 'every_week',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'По красной неделе',
+                'name' => 'red_week',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'По синей неделе',
+                'name' => 'blue_week',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ]
@@ -296,7 +296,7 @@ class DatabaseSeeder extends Seeder
         \DB::table('class_periods')->insert([
             [
                 'id' => 1,
-                'name' => 'Первая',
+                'name' => 'first',
                 'start' => '08:00:00',
                 'end' => '09:35:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -304,7 +304,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'name' => 'Вторая',
+                'name' => 'second',
                 'start' => '09:45:00',
                 'end' => '11:20:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -312,7 +312,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'name' => 'Третья',
+                'name' => 'third',
                 'start' => '12:00:00',
                 'end' => '13:35:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -320,7 +320,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 4,
-                'name' => 'Четвёртая',
+                'name' => 'fourth',
                 'start' => '13:45:00',
                 'end' => '15:20:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -328,7 +328,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'name' => 'Пятая',
+                'name' => 'fifth',
                 'start' => '15:30:00',
                 'end' => '17:05:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -336,7 +336,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 6,
-                'name' => 'Шестая',
+                'name' => 'sixth',
                 'start' => '17:15:00',
                 'end' => '18:50:00',
                 'created_at' => '2022-08-22 00:00:00',
@@ -347,15 +347,15 @@ class DatabaseSeeder extends Seeder
         \DB::table('study_degrees')->insert([
             [
                 'id' => 1,
-                'name' => 'Бакалавриат',
-                'abbreviation' => 'Б',
+                'name' => 'bachelor',
+                'abbreviation' => 'b',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Магистратура',
-                'abbreviation' => 'М',
+                'name' => 'magistracy',
+                'abbreviation' => 'm',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
@@ -364,22 +364,22 @@ class DatabaseSeeder extends Seeder
         \DB::table('study_forms')->insert([
             [
                 'id' => 1,
-                'name' => 'Очная',
-                'abbreviation' => 'O',
+                'name' => 'full_time',
+                'abbreviation' => 'ft',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Заочная',
-                'abbreviation' => 'З',
+                'name' => 'part_time',
+                'abbreviation' => 'pt',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Очно-заочная',
-                'abbreviation' => 'ОЗ',
+                'name' => 'full_part_time',
+                'abbreviation' => 'fpt',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ]
@@ -389,35 +389,35 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 1,
                 'number' => 1,
-                'name' => 'Первый',
+                'name' => 'first',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
                 'number' => 2,
-                'name' => 'Второй',
+                'name' => 'second',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
                 'number' => 3,
-                'name' => 'Третий',
+                'name' => 'third',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 4,
                 'number' => 4,
-                'name' => 'Четвёртый',
+                'name' => 'fourth',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 5,
                 'number' => 5,
-                'name' => 'Пятый',
+                'name' => 'fifth',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
@@ -426,22 +426,22 @@ class DatabaseSeeder extends Seeder
         \DB::table('faculties')->insert([
             [
                 'id' => 1,
-                'name' => 'Инженерно-мелиоративный',
-                'abbreviation' => 'ИМ',
+                'name' => 'engineering_and_reclamation',
+                'abbreviation' => 'er',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Бизнеса и социальных технологий',
-                'abbreviation' => 'БиСТ',
+                'name' => 'business_and_social_technologies',
+                'abbreviation' => 'bst',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Землеустроительный',
-                'abbreviation' => 'З',
+                'name' => 'land_management',
+                'abbreviation' => 'lm',
                 'created_at' => '2022-05-17 00:00:00',
                 'updated_at' => '2022-05-17 00:00:00',
             ],
@@ -451,8 +451,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 1,
                 'code' => '08.03.01',
-                'name' => 'Строительство',
-                'abbreviation' => 'С',
+                'name' => 'building',
+                'abbreviation' => 'bu',
                 'faculty_id' => 1,
                 'study_degree_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
@@ -461,8 +461,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 2,
                 'code' => '20.03.02',
-                'name' => 'Природообустройство и водопользование',
-                'abbreviation' => 'ПО',
+                'name' => 'environmental_management_and_water_use',
+                'abbreviation' => 'emwu',
                 'faculty_id' => 1,
                 'study_degree_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
@@ -471,8 +471,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 3,
                 'code' => '35.03.11',
-                'name' => 'Гидромелиорация',
-                'abbreviation' => 'ГМ',
+                'name' => 'hydromelioration',
+                'abbreviation' => 'hy',
                 'faculty_id' => 1,
                 'study_degree_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
@@ -481,8 +481,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 4,
                 'code' => '38.03.01',
-                'name' => 'Экономика',
-                'abbreviation' => 'Э',
+                'name' => 'economy',
+                'abbreviation' => 'emy',
                 'faculty_id' => 2,
                 'study_degree_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
@@ -491,8 +491,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 5,
                 'code' => '38.03.02',
-                'name' => 'Менеджмент',
-                'abbreviation' => 'М',
+                'name' => 'management',
+                'abbreviation' => 'men',
                 'faculty_id' => 2,
                 'study_degree_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
@@ -501,8 +501,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 6,
                 'code' => '38.03.05',
-                'name' => 'Бизнес-информатика',
-                'abbreviation' => 'БИ',
+                'name' => 'business_informatics',
+                'abbreviation' => 'bi',
                 'faculty_id' => 2,
                 'study_degree_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
@@ -511,8 +511,8 @@ class DatabaseSeeder extends Seeder
             [
                 'id' => 7,
                 'code' => '21.03.02',
-                'name' => 'Землеустройство и кадастры',
-                'abbreviation' => 'ЗК',
+                'name' => 'land_management_and_cadastres',
+                'abbreviation' => 'lmc',
                 'faculty_id' => 3,
                 'study_degree_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
@@ -523,64 +523,64 @@ class DatabaseSeeder extends Seeder
         \DB::table('study_orientations')->insert([
             [
                 'id' => 1,
-                'name' => 'Гидротехническое строительство',
-                'abbreviation' => 'ГС',
+                'name' => 'hydrauli_ engineering_construction',
+                'abbreviation' => 'hec',
                 'study_program_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Инженерные системы сельскохозяйственного водоснабжения, обводнения и водоотведения',
-                'abbreviation' => 'СВ',
+                'name' => 'engineering_systems_of_agricultural_water_supply_irrigation_and_drainage',
+                'abbreviation' => 'esawsid',
                 'study_program_id' => 2,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Гидромелиорация',
-                'abbreviation' => 'ГМ',
+                'name' => 'hydromelioration',
+                'abbreviation' => 'hy',
                 'study_program_id' => 3,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 4,
-                'name' => 'Экономика предприятий и организаций',
-                'abbreviation' => 'ЭП',
+                'name' => 'economics_of_enterprises_and_organizations',
+                'abbreviation' => 'eeo',
                 'study_program_id' => 4,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 5,
-                'name' => 'Производственный менеджмент',
-                'abbreviation' => 'ПМ',
+                'name' => 'production_management',
+                'abbreviation' => 'pm',
                 'study_program_id' => 5,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 6,
-                'name' => 'Электронный бизнес',
-                'abbreviation' => 'ЭБ',
+                'name' => 'electronic_business',
+                'abbreviation' => 'eb',
                 'study_program_id' => 6,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 7,
-                'name' => 'Землеустройство',
-                'abbreviation' => 'З',
+                'name' => 'land_management',
+                'abbreviation' => 'lm',
                 'study_program_id' => 7,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 8,
-                'name' => 'Кадастр недвижимости',
-                'abbreviation' => 'КН',
+                'name' => 'real_estate_cadastre',
+                'abbreviation' => 'rec',
                 'study_program_id' => 7,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
@@ -590,63 +590,63 @@ class DatabaseSeeder extends Seeder
         \DB::table('departments')->insert([
             [
                 'id' => 1,
-                'name' => 'Водоснабжение и использование водных ресурсов',
+                'name' => 'water_supply_and_use_of_water_resources',
                 'faculty_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'Гидротехническое строительство',
+                'name' => 'hydraulic_engineering_construction',
                 'faculty_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'Мелиорации земель',
+                'name' => 'land_ reclamation',
                 'faculty_id' => 1,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 4,
-                'name' => 'Экономики',
+                'name' => 'economy',
                 'faculty_id' => 2,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 5,
-                'name' => 'Менеджмента и информатики',
+                'name' => 'management_and_computer_science',
                 'faculty_id' => 2,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 6,
-                'name' => 'Истории, философии и социальных технологий',
+                'name' => 'history_philosophy_and_social_technologies',
                 'faculty_id' => 2,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 7,
-                'name' => 'Землепользование и землеустройство',
+                'name' => 'land_use_and_land_management',
                 'faculty_id' => 3,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 8,
-                'name' => 'Кадастр и мониторинг земель',
+                'name' => 'cadastre_and_land_monitoring',
                 'faculty_id' => 3,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
             ],
             [
                 'id' => 9,
-                'name' => 'Почвоведение, орошаемое земледелие и геодезия',
+                'name' => 'soil_science_irrigated_agriculture_and_geodesy',
                 'faculty_id' => 3,
                 'created_at' => '2022-08-22 00:00:00',
                 'updated_at' => '2022-08-22 00:00:00',
@@ -2141,7 +2141,7 @@ class DatabaseSeeder extends Seeder
         \DB::table('lessons')->insert([
             [
                 'id' => 1,
-                'name' => 'История',
+                'name' => 'history',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2154,7 +2154,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'name' => 'История',
+                'name' => 'history',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2167,7 +2167,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'name' => 'История',
+                'name' => 'history',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2180,7 +2180,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 4,
-                'name' => 'Психология',
+                'name' => 'psychology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2193,7 +2193,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'name' => 'Психология',
+                'name' => 'psychology',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2206,7 +2206,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 6,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2219,7 +2219,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 7,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2232,7 +2232,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 8,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 3,
@@ -2245,7 +2245,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 9,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 3,
@@ -2258,7 +2258,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 10,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2271,7 +2271,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 11,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2284,7 +2284,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 12,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 3,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2297,7 +2297,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 13,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2310,7 +2310,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 14,
-                'name' => 'Социальная психология',
+                'name' => 'social_psychology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2323,7 +2323,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 15,
-                'name' => 'Этика бизнеса',
+                'name' => 'business_ethics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 3,
@@ -2336,7 +2336,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 16,
-                'name' => 'Этика бизнеса',
+                'name' => 'business_ethics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 2,
@@ -2349,7 +2349,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 17,
-                'name' => 'Философия',
+                'name' => 'philosophy',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 2,
@@ -2362,7 +2362,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 18,
-                'name' => 'Философия',
+                'name' => 'philosophy',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2375,7 +2375,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 19,
-                'name' => 'Философия',
+                'name' => 'philosophy',
                 'lesson_type_id' => 3,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2388,7 +2388,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 20,
-                'name' => 'Философия',
+                'name' => 'philosophy',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2401,7 +2401,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 21,
-                'name' => 'Политология',
+                'name' => 'political_science',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2414,7 +2414,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 22,
-                'name' => 'Философия',
+                'name' => 'philosophy',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2427,7 +2427,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 23,
-                'name' => 'Социология',
+                'name' => 'sociology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2440,7 +2440,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 24,
-                'name' => 'Политология',
+                'name' => 'political_science',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 2,
@@ -2453,7 +2453,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 25,
-                'name' => 'Политология',
+                'name' => 'political_science',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2466,7 +2466,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 26,
-                'name' => 'Политология',
+                'name' => 'political_science',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2479,7 +2479,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 27,
-                'name' => 'Биология',
+                'name' => 'biology',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 2,
@@ -2492,7 +2492,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 28,
-                'name' => 'Биология',
+                'name' => 'biology',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2505,7 +2505,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 29,
-                'name' => 'Биология',
+                'name' => 'biology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2518,7 +2518,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 30,
-                'name' => 'Химия',
+                'name' => 'chemistry',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2531,7 +2531,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 32,
-                'name' => 'Химия',
+                'name' => 'chemistry',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2544,7 +2544,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 33,
-                'name' => 'Биология',
+                'name' => 'biology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2557,7 +2557,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 34,
-                'name' => 'Химия',
+                'name' => 'chemistry',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2570,7 +2570,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 35,
-                'name' => 'Химия',
+                'name' => 'chemistry',
                 'lesson_type_id' => 3,
                 'week_day_id' => 4,
                 'weekly_period_id' => 3,
@@ -2583,7 +2583,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 36,
-                'name' => 'Биология',
+                'name' => 'biology',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2596,7 +2596,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 37,
-                'name' => 'Биология',
+                'name' => 'biology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2609,7 +2609,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 38,
-                'name' => 'Биология',
+                'name' => 'biology',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2622,7 +2622,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 39,
-                'name' => 'Биология',
+                'name' => 'biology',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2635,7 +2635,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 40,
-                'name' => 'География',
+                'name' => 'geography',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2648,7 +2648,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 41,
-                'name' => 'Экономическая география',
+                'name' => 'economic_geography',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2661,7 +2661,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 42,
-                'name' => 'Экономическая география',
+                'name' => 'economic_geography',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2674,7 +2674,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 43,
-                'name' => 'Экономическая география',
+                'name' => 'economic_geography',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 2,
@@ -2687,7 +2687,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 44,
-                'name' => 'Экономическая география',
+                'name' => 'economic_geography',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2700,7 +2700,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 45,
-                'name' => 'География',
+                'name' => 'geography',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2713,7 +2713,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 46,
-                'name' => 'География',
+                'name' => 'geography',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2726,7 +2726,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 47,
-                'name' => 'География',
+                'name' => 'geography',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2739,7 +2739,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 48,
-                'name' => 'География',
+                'name' => 'geography',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 3,
@@ -2752,7 +2752,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 49,
-                'name' => 'Экономическая география',
+                'name' => 'economic_geography',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2765,7 +2765,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 50,
-                'name' => 'Экономическая география',
+                'name' => 'economic_geography',
                 'lesson_type_id' => 3,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2778,7 +2778,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 51,
-                'name' => 'Экономическая география',
+                'name' => 'economic_geography',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2791,7 +2791,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 52,
-                'name' => 'Логика',
+                'name' => 'logic',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 3,
@@ -2804,7 +2804,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 53,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2817,7 +2817,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 54,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2830,7 +2830,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 55,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2843,7 +2843,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 56,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -2856,7 +2856,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 57,
-                'name' => 'Логика',
+                'name' => 'logic',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2869,7 +2869,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 58,
-                'name' => 'Логика',
+                'name' => 'logic',
                 'lesson_type_id' => 3,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -2882,7 +2882,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 59,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 3,
@@ -2895,7 +2895,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 60,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2908,7 +2908,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 61,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -2921,7 +2921,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 62,
-                'name' => 'Логика',
+                'name' => 'logic',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2934,7 +2934,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 63,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2947,7 +2947,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 64,
-                'name' => 'История управленческой мысли',
+                'name' => 'history_of_managerial_thought',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -2960,7 +2960,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 65,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 2,
@@ -2973,7 +2973,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 66,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 3,
@@ -2986,7 +2986,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 67,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -2999,7 +2999,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 68,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3012,7 +3012,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 69,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3025,7 +3025,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 70,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3038,7 +3038,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 71,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3051,7 +3051,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 72,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3064,7 +3064,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 73,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3077,7 +3077,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 74,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 3,
                 'week_day_id' => 4,
                 'weekly_period_id' => 3,
@@ -3090,7 +3090,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 75,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3103,7 +3103,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 76,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3116,7 +3116,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 77,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3129,7 +3129,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 78,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 2,
@@ -3142,7 +3142,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 79,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 3,
@@ -3155,7 +3155,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 80,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3168,7 +3168,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 81,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3181,7 +3181,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 82,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 3,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3194,7 +3194,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 83,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3207,7 +3207,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 84,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3220,7 +3220,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 85,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3233,7 +3233,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 86,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3246,7 +3246,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 87,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3259,7 +3259,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 88,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3272,7 +3272,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 89,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 3,
@@ -3285,7 +3285,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 90,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 3,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3298,7 +3298,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 91,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3311,7 +3311,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 92,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3324,7 +3324,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 93,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3337,7 +3337,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 94,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3350,7 +3350,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 95,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3363,7 +3363,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 96,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3376,7 +3376,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 98,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3389,7 +3389,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 99,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 3,
@@ -3402,7 +3402,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 100,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3415,7 +3415,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 101,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3428,7 +3428,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 102,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3441,7 +3441,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 103,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3454,7 +3454,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 104,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 3,
@@ -3467,7 +3467,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 105,
-                'name' => 'Высшая математика',
+                'name' => 'higher_mathematics',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 3,
@@ -3480,7 +3480,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 106,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3493,7 +3493,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 107,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3506,7 +3506,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 108,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 2,
@@ -3519,7 +3519,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 109,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3532,7 +3532,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 110,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3545,7 +3545,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 112,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3558,7 +3558,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 113,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 2,
@@ -3571,7 +3571,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 114,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3584,7 +3584,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 115,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3597,7 +3597,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 116,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3610,7 +3610,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 117,
-                'name' => 'Английский язык',
+                'name' => 'english_language',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3623,7 +3623,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 118,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3636,7 +3636,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 119,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 2,
@@ -3649,7 +3649,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 120,
-                'name' => 'История эконоических учений',
+                'name' => 'history_of_economic_studies',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3662,7 +3662,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 121,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3675,7 +3675,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 122,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 3,
@@ -3688,7 +3688,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 123,
-                'name' => 'История эконоических учений',
+                'name' => 'history_of_economic_studies',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3701,7 +3701,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 124,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3714,7 +3714,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 125,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3727,7 +3727,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 126,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3740,7 +3740,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 127,
-                'name' => 'История эконоических учений',
+                'name' => 'history_of_economic_studies',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 2,
@@ -3753,7 +3753,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 128,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 2,
@@ -3766,7 +3766,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 129,
-                'name' => 'История эконоических учений',
+                'name' => 'history_of_economic_studies',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3779,7 +3779,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 130,
-                'name' => 'История эконоических учений',
+                'name' => 'history_of_economic_studies',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3792,7 +3792,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 131,
-                'name' => 'Экономическая теория',
+                'name' => 'economic_theory',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3805,7 +3805,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 132,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -3818,7 +3818,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 133,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 3,
@@ -3831,7 +3831,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 134,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3844,7 +3844,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 135,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3857,7 +3857,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 136,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 2,
@@ -3870,7 +3870,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 137,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 3,
@@ -3883,7 +3883,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 139,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -3896,7 +3896,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 141,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -3909,7 +3909,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 142,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 3,
@@ -3922,7 +3922,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 143,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 5,
                 'weekly_period_id' => 3,
@@ -3935,7 +3935,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 145,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3948,7 +3948,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 146,
-                'name' => 'Менеджмент',
+                'name' => 'management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -3961,7 +3961,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 147,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -3974,7 +3974,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 148,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 2,
@@ -3987,7 +3987,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 149,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4000,7 +4000,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 150,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4013,7 +4013,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 151,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 3,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4026,7 +4026,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 152,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 3,
@@ -4039,7 +4039,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 153,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4052,7 +4052,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 154,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4065,7 +4065,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 155,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 3,
                 'week_day_id' => 4,
                 'weekly_period_id' => 2,
@@ -4078,7 +4078,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 156,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4091,7 +4091,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 157,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 2,
@@ -4104,7 +4104,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 158,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4117,7 +4117,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 159,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 3,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4130,7 +4130,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 160,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4143,7 +4143,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 161,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4156,7 +4156,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 162,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 2,
@@ -4169,7 +4169,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 163,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4182,7 +4182,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 164,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4195,7 +4195,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 165,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4208,7 +4208,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 166,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4221,7 +4221,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 167,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4234,7 +4234,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 168,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4247,7 +4247,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 169,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 2,
@@ -4260,7 +4260,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 170,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4273,7 +4273,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 171,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 5,
                 'weekly_period_id' => 3,
@@ -4286,7 +4286,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 172,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 2,
@@ -4299,7 +4299,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 173,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4312,7 +4312,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 174,
-                'name' => 'Управление персоналом',
+                'name' => 'personnel_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4325,7 +4325,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 175,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4338,7 +4338,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 177,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4351,7 +4351,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 178,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 2,
@@ -4364,7 +4364,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 179,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4377,7 +4377,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 180,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 2,
@@ -4390,7 +4390,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 181,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 2,
@@ -4403,7 +4403,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 182,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4416,7 +4416,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 183,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4429,7 +4429,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 184,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4442,7 +4442,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 185,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4455,7 +4455,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 187,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4468,7 +4468,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 188,
-                'name' => 'Стратегический менеджмент',
+                'name' => 'strategic_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4481,7 +4481,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 189,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 3,
@@ -4494,7 +4494,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 190,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 1,
                 'weekly_period_id' => 3,
@@ -4507,7 +4507,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 191,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4520,7 +4520,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 192,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 3,
@@ -4533,7 +4533,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 193,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4546,7 +4546,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 194,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4559,7 +4559,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 195,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4572,7 +4572,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 196,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4585,7 +4585,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 197,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4598,7 +4598,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 198,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4611,7 +4611,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 199,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 3,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4624,7 +4624,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 200,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 3,
@@ -4637,7 +4637,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 201,
-                'name' => 'Управление качеством',
+                'name' => 'quality_management',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4650,7 +4650,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 202,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 3,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4663,7 +4663,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 203,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 1,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4676,7 +4676,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 204,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 2,
                 'week_day_id' => 2,
                 'weekly_period_id' => 1,
@@ -4689,7 +4689,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 205,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4702,7 +4702,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 206,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 3,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4715,7 +4715,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 207,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4728,7 +4728,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 208,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4741,7 +4741,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 209,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 1,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4754,7 +4754,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 210,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 3,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4767,7 +4767,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 211,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 1,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4780,7 +4780,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 212,
-                'name' => 'Экономический анализ',
+                'name' => 'economic_analysis',
                 'lesson_type_id' => 2,
                 'week_day_id' => 5,
                 'weekly_period_id' => 1,
@@ -4793,7 +4793,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 213,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4806,7 +4806,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 214,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 2,
                 'week_day_id' => 4,
                 'weekly_period_id' => 1,
@@ -4819,7 +4819,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 215,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 2,
                 'week_day_id' => 6,
                 'weekly_period_id' => 1,
@@ -4832,7 +4832,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 216,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 1,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -4845,7 +4845,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 217,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4858,7 +4858,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 218,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 2,
                 'week_day_id' => 1,
                 'weekly_period_id' => 1,
@@ -4871,7 +4871,7 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'id' => 219,
-                'name' => 'Маркетинг',
+                'name' => 'marketing',
                 'lesson_type_id' => 2,
                 'week_day_id' => 3,
                 'weekly_period_id' => 1,
@@ -5762,55 +5762,55 @@ class DatabaseSeeder extends Seeder
         \DB::table('replacement_request_statuses')->insert([
             [
                 'id' => 1,
-                'name' => 'В подготовке',
+                'name' => 'in_drafting',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],
             [
                 'id' => 2,
-                'name' => 'В ожидании согласия',
+                'name' => 'in_consent_waiting',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],
             [
                 'id' => 3,
-                'name' => 'В ожидании разрешения',
+                'name' => 'in_permission_waiting',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],
             [
                 'id' => 4,
-                'name' => 'Разрешено',
+                'name' => 'permitted',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],
             [
                 'id' => 5,
-                'name' => 'В реализации',
+                'name' => 'in_realization',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],
             [
                 'id' => 6,
-                'name' => 'Завершено',
+                'name' => 'completed',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],
             [
                 'id' => 7,
-                'name' => 'Отменено',
+                'name' => 'cancelled',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],
             [
                 'id' => 8,
-                'name' => 'Отклонено',
+                'name' => 'declined',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],
             [
                 'id' => 9,
-                'name' => 'Не разрешено',
+                'name' => 'not_permitted',
                 'created_at' => '2022-12-26 00:00:00',
                 'updated_at' => '2022-12-26 00:00:00',
             ],

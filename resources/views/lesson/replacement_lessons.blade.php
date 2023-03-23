@@ -66,18 +66,24 @@
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
+                                            @php
+                                                $localized_value = $field['is_localized'] ? (is_object($value) ? __('dictionary.'.$value->name) 
+                                                                                                               : __('dictionary.'.$value['name'])) 
+                                                                                          : (is_object($value) ? $value->name 
+                                                                                                               : $value['name']);
+                                            @endphp
                                             @if(old($field_name) !== null
                                                 && (old($field_name) == (is_object($value) ? $value->id : $value['id'])
                                                    || (is_array(old($field_name)) && in_array((is_object($value) ? $value->id : $value['id']), old($field_name)))))
-                                                    <option selected value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ is_object($value) ? $value->name : $value['name'] }}</option>
+                                                    <option selected value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) && $data['updating_instance']->$field_name == $value->id)
-                                                <option selected value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ is_object($value) ? $value->name : $value['name'] }}</option>
+                                                <option selected value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) 
                                                     && is_array($data['updating_instance']->$field_name) 
                                                     && in_array($value->id, $data['updating_instance']->$field_name))
-                                                <option selected value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ is_object($value) ? $value->name : $value['name'] }}</option>    
+                                                <option selected value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ $localized_value }}</option>    
                                             @else
-                                                <option value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ is_object($value) ? $value->name : $value['name'] }}</option>
+                                                <option value="{{ is_object($value) ? $value->id : $value['id'] }}">{{ $localized_value }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -128,7 +134,7 @@
                 @else
                     <h1 class="top-header">{{ __('header.regular_replacement_variants') }}</h1>
                 @endif
-                <h5>{{ __('header.replaceable_lesson') }}: {{ $data['header_data']['class_period'] }} пара, {{ $data['header_data']['week_day'] }}, ({{ $data['date_or_weekly_period'] }})</h5>
+                <h5>{{ __('header.replaceable_lesson') }}: {{ __('dictionary.'.$data['header_data']['class_period']) }} {{ __('header.class_period') }}, {{ __('dictionary.'.$data['header_data']['week_day']) }}, ({{ __('dictionary.'.$data['date_or_weekly_period']) }})</h5>
                 <h5>{{ __('header.teacher') }}: {{ $data['header_data']['teacher'] }}</h5>
                 <div class="replacement-schedule-header-div">
                     <h5>{{ __('header.group') }}: {{ $data['header_data']['group'] }}</h5>
@@ -170,9 +176,15 @@
                                 )
                                 <tr>
                                     @foreach($data['table_properties'] as $property)
-                                        @php $field = $property['field'] @endphp
+                                        @php 
+                                            $field = $property['field'];
+                                            $localized_value = is_array($lesson[$field]) ? (\Lang::has('dictionary.'.$lesson[$field]['name']) ? __('dictionary.'.$lesson[$field]['name']) 
+                                                                                                                                              : $lesson[$field]['name']) 
+                                                                                         : (\Lang::has('dictionary.'.$lesson[$field]) ? __('dictionary.'.$lesson[$field]) 
+                                                                                                                                      : $lesson[$field]);
+                                        @endphp
                                         @if($field == 'profession_level_name')
-                                            <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $lesson['teacher_id']]) }}">{{ is_array($lesson[$field]) ? $lesson[$field]['name'] : $lesson[$field] }}</a></td>
+                                            <td class="regular-cell"><a href="{{ route('teacher-schedule', ['schedule_teacher_id' => $lesson['teacher_id']]) }}">{{ $localized_value }}</a></td>
                                         @elseif($field == 'week_day_id')
                                             @php
                                                 $lesson_date = "";
@@ -180,9 +192,9 @@
                                                     $lesson_date = ' ('.$lesson['date'].')';
                                                 }
                                             @endphp
-                                            <td class="regular-cell">{{ $lesson[$field]['name'] }}{{ $lesson_date }}</td>
+                                            <td class="regular-cell">{{ $localized_value }}{{ $lesson_date }}</td>
                                         @else
-                                            <td class="regular-cell">{{ is_array($lesson[$field]) ? $lesson[$field]['name'] : $lesson[$field] }}</td>    
+                                            <td class="regular-cell">{{ $localized_value }}</td>    
                                         @endif
                                     @endforeach
                                 </tr>    
@@ -330,14 +342,14 @@
                                                                                 <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                                 <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                                                                                 <button type="submit" class="schedule-replace-link">
-                                                                                    <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
-                                                                                    <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
+                                                                                    <div class="margin-10px-top font-size14 schedule-subject">{{ __('content.'.$lesson['name']) }} ({{ __('dictionary.'.$lesson['type']) }})</div>
+                                                                                    <div class="font-size13 text-light-gray schedule-room">{{ __('content.room') }} {{ $lesson['room'] }}</div>
                                                                                     <div class="font-size13 text-light-gray schedule-group">{{ $lesson[$other_lesson_participant] }}</div>
                                                                                 </button>
                                                                             </form>    
                                                                         @else
-                                                                            <div class="margin-10px-top font-size14 schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
-                                                                            <div class="font-size13 text-light-gray schedule-room">ауд. {{ $lesson['room'] }}</div>
+                                                                            <div class="margin-10px-top font-size14 schedule-subject">{{ __('content.'.$lesson['name']) }} ({{ __('dictionary.'.$lesson['type']) }})</div>
+                                                                            <div class="font-size13 text-light-gray schedule-room">{{ __('content.room') }} {{ $lesson['room'] }}</div>
                                                                             <div class="font-size13 text-light-gray schedule-group">{{ $lesson[$other_lesson_participant] }}</div>
                                                                         @endif
                                                                     </div>
@@ -391,14 +403,14 @@
                                                                                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                                                                                     <button type="submit" class="schedule-replace-link">
-                                                                                        <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
-                                                                                        <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_red['room'] }}</div>
+                                                                                        <div class="margin-10px-top font-size14 schedule-subject-half">{{ __('content.'.$lesson_red['name']) }} ({{ __('dictionary.'.$lesson_red['type']) }})</div>
+                                                                                        <div class="font-size13 text-light-gray schedule-room-half">{{ __('content.room') }} {{ $lesson_red['room'] }}</div>
                                                                                         <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red[$other_lesson_participant] }}</div>
                                                                                     </button>
                                                                                 </form>    
                                                                             @else
-                                                                                <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
-                                                                                <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_red['room'] }}</div>
+                                                                                <div class="margin-10px-top font-size14 schedule-subject-half">{{ __('content.'.$lesson_red['name']) }} ({{ __('dictionary.'.$lesson_red['type']) }})</div>
+                                                                                <div class="font-size13 text-light-gray schedule-room-half">{{ __('content.room') }} {{ $lesson_red['room'] }}</div>
                                                                                 <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red[$other_lesson_participant] }}</div>
                                                                             @endif
                                                                         </div>
@@ -446,14 +458,14 @@
                                                                                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                                                                                     <button type="submit" class="schedule-replace-link">
-                                                                                        <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
-                                                                                        <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>
+                                                                                        <div class="margin-10px-top font-size14 schedule-subject-half">{{ __('content.'.$lesson_blue['name']) }} ({{ __('dictionary.'.$lesson_blue['type']) }})</div>
+                                                                                        <div class="font-size13 text-light-gray schedule-room-half">{{ __('content.room') }} {{ $lesson_blue['room'] }}</div>
                                                                                         <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue[$other_lesson_participant] }}</div>
                                                                                     </button>
                                                                                 </form>    
                                                                             @else
-                                                                                <div class="margin-10px-top font-size14 schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
-                                                                                <div class="font-size13 text-light-gray schedule-room-half">ауд. {{ $lesson_blue['room'] }}</div>
+                                                                                <div class="margin-10px-top font-size14 schedule-subject-half">{{ __('content.'.$lesson_blue['name']) }} ({{ __('dictionary.'.$lesson_blue['type']) }})</div>
+                                                                                <div class="font-size13 text-light-gray schedule-room-half">{{ __('content.room') }} {{ $lesson_blue['room'] }}</div>
                                                                                 <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue[$other_lesson_participant] }}</div>
                                                                             @endif
                                                                         </div>

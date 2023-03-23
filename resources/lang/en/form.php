@@ -61,4 +61,8 @@
         '' => 'Group',
         // add_lesson_replacement_filter_form
         'schedule_position' => 'Position in the substitute teachers schedule',
+        //add_users_form
+        'is_admin' => 'Administrator',
+        'is_moderator' => 'Moderator',
+        
     ];

@@ -7,6 +7,7 @@ return [
          'plural_name' => 'genders',
          'name' => 'gender',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'input',
@@ -49,30 +50,35 @@ return [
          'plural_name' => 'faculties',
          'name' => 'faculty',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'departments',
          'name' => 'department',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'professional_levels',
          'name' => 'professional_level',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'positions',
          'name' => 'position',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'academic_degrees',
          'name' => 'academic_degree',
          'is_required' => true,
+         'is_localized' => true,
       ],
    ],
    'teacher_filter' => [
@@ -97,6 +103,7 @@ return [
          ],
          'plural_name' => 'faculties',
          'name' => 'faculty',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -106,6 +113,7 @@ return [
          ],
          'plural_name' => 'departments',
          'name' => 'department',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -115,6 +123,7 @@ return [
          ],
          'plural_name' => 'professional_levels',
          'name' => 'professional_level',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -124,6 +133,7 @@ return [
          ],
          'plural_name' => 'positions',
          'name' => 'position',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -133,6 +143,7 @@ return [
          ],
          'plural_name' => 'academic_degrees',
          'name' => 'academic_degree',
+         'is_localized' => true,
       ]
    ],
    'group' => [
@@ -141,36 +152,42 @@ return [
          'plural_name' => 'faculties',
          'name' => 'faculty',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'study_programs',
          'name' => 'study_program',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'study_orientations',
          'name' => 'study_orientation',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'study_degrees',
          'name' => 'study_degree',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'study_forms',
          'name' => 'study_form',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'courses',
          'name' => 'course',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'input',
@@ -188,6 +205,7 @@ return [
          ],
          'plural_name' => 'groups',
          'name' => '',
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
@@ -197,6 +215,7 @@ return [
          ],
          'plural_name' => 'faculties',
          'name' => 'faculty',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -206,6 +225,7 @@ return [
          ],
          'plural_name' => 'study_programs',
          'name' => 'study_program',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -215,6 +235,7 @@ return [
          ],
          'plural_name' => 'study_orientations',
          'name' => 'study_orientation',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -224,6 +245,7 @@ return [
          ],
          'plural_name' => 'study_degrees',
          'name' => 'study_degree',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -233,6 +255,7 @@ return [
          ],
          'plural_name' => 'study_forms',
          'name' => 'study_form',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -242,6 +265,7 @@ return [
          ],
          'plural_name' => 'courses',
          'name' => 'course',
+         'is_localized' => true,
       ],
       [
          'type' => 'between',
@@ -264,24 +288,28 @@ return [
          'plural_name' => 'lesson_types',
          'name' => 'lesson_type',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'week_days',
          'name' => 'week_day',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'weekly_periods',
          'name' => 'weekly_period',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'class_periods',
          'name' => 'class_period',
          'is_required' => true,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -292,18 +320,21 @@ return [
          'plural_name' => 'groups',
          'name' => 'group',
          'is_required' => true,
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'teachers',
          'name' => 'teacher',
          'is_required' => true,
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
          'plural_name' => 'lesson_rooms',
          'name' => 'lesson_room',
          'is_required' => true,
+         'is_localized' => false,
       ],
       [
          'type' => 'input',
@@ -326,6 +357,7 @@ return [
          ],
          'plural_name' => 'lesson_types',
          'name' => 'lesson_type',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -335,6 +367,7 @@ return [
          ],
          'plural_name' => 'week_days',
          'name' => 'week_day',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -344,6 +377,7 @@ return [
          ],
          'plural_name' => 'weekly_periods',
          'name' => 'weekly_period',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -353,6 +387,7 @@ return [
          ],
          'plural_name' => 'class_periods',
          'name' => 'class_period',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -362,6 +397,7 @@ return [
          ],
          'plural_name' => 'groups',
          'name' => 'group',
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
@@ -371,6 +407,7 @@ return [
          ],
          'plural_name' => 'teachers',
          'name' => 'teacher',
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
@@ -380,6 +417,7 @@ return [
          ],
          'plural_name' => 'lesson_rooms',
          'name' => 'lesson_room',
+         'is_localized' => false,
       ],
    ],
    'lesson_replacement_filter' => [
@@ -391,6 +429,7 @@ return [
          ],
          'plural_name' => 'week_days',
          'name' => 'week_day',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -400,6 +439,7 @@ return [
          ],
          'plural_name' => 'weekly_periods',
          'name' => 'weekly_period',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -409,6 +449,7 @@ return [
          ],
          'plural_name' => 'class_periods',
          'name' => 'class_period',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -418,6 +459,7 @@ return [
          ],
          'plural_name' => 'faculties',
          'name' => 'faculty',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -427,6 +469,7 @@ return [
          ],
          'plural_name' => 'departments',
          'name' => 'department',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -436,6 +479,7 @@ return [
          ],
          'plural_name' => 'professional_levels',
          'name' => 'professional_level',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -445,6 +489,7 @@ return [
          ],
          'plural_name' => 'positions',
          'name' => 'position',
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -454,6 +499,7 @@ return [
          ],
          'plural_name' => 'lesson_rooms',
          'name' => 'lesson_room',
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
@@ -463,6 +509,7 @@ return [
          ],
          'plural_name' => 'schedule_positions',
          'name' => 'schedule_position',
+         'is_localized' => true,
       ],
    ],
    'user' => [
@@ -487,6 +534,7 @@ return [
          'plural_name' => 'teachers',
          'name' => 'teacher',
          'is_required' => false,
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
@@ -497,6 +545,7 @@ return [
          'plural_name' => 'groups',
          'name' => 'group',
          'is_required' => false,
+         'is_localized' => false,
       ],
    ],
    'user_filter' => [
@@ -527,6 +576,7 @@ return [
             'plural_name' => 'teachers',
             'name' => 'teacher',
             'is_required' => true,
+            'is_localized' => false,
          ],
          [
             'type' => 'objects-select',
@@ -537,6 +587,7 @@ return [
             'plural_name' => 'groups',
             'name' => 'group',
             'is_required' => true,
+            'is_localized' => false,
          ],
    ],
    'replacement_request_filter' => [
@@ -549,6 +600,7 @@ return [
          'plural_name' => 'groups',
          'name' => 'group',
          'is_required' => true,
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
@@ -559,6 +611,7 @@ return [
          'plural_name' => 'teachers',
          'name' => 'teacher',
          'is_required' => true,
+         'is_localized' => false,
       ],
       [
          'type' => 'between',
@@ -583,6 +636,7 @@ return [
          'plural_name' => 'users',
          'name' => 'user',
          'is_required' => true,
+         'is_localized' => false,
       ],
       [
          'type' => 'objects-select',
@@ -593,6 +647,7 @@ return [
          'plural_name' => 'statuses',
          'name' => 'status',
          'is_required' => true,
+         'is_localized' => true,
       ],
    ],
    'settings' => [

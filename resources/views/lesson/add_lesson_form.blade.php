@@ -83,17 +83,20 @@
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
+                                            @php
+                                                $localized_value = $field['is_localized'] ? __('dictionary.'.$value->name) : $value->name;
+                                            @endphp
                                             @if(old($field_name) !== null && (old($field_name) == $value->id
                                                                              || is_array(old($field_name)) && in_array($value->id, old($field_name))))
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) && $data['updating_instance']->$field_name == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance'])
                                                     && is_array($data['updating_instance']->$field_name)
                                                     && in_array($value->id, $data['updating_instance']->$field_name))
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @else
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @endif
                                         @endforeach
                                     </select>

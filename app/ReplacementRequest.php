@@ -40,7 +40,7 @@ class ReplacementRequest extends Model
 
     public function getRegularAttribute()
     {
-        return $this->is_regular ? 'Да' : 'Нет';
+        return $this->is_regular ? __('content.yes') : __('content.no');
     }
 
     public function getNameAttribute()

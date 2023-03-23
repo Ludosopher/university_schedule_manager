@@ -67,19 +67,22 @@
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
+                                            @php
+                                                $localized_value = $field['is_localized'] ? __('dictionary.'.$value->name) : $value->name;
+                                            @endphp
                                             @if(old($field_name) !== null
                                                 && count(request()->all())
                                                 && (old($field_name) == $value->id
                                                    || (is_array(old($field_name)) && in_array($value->id, old($field_name)))))
-                                                    <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                    <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) && $data['updating_instance']->$field_name == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance'])
                                                     && is_array($data['updating_instance']->$field_name)
                                                     && in_array($value->id, $data['updating_instance']->$field_name))
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @else
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -121,22 +124,22 @@
                                 @if($property['sorting'])
                                     @if(is_array($property['field']) && isset($property['sort_name']))
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], {{ __('table_header.'.$property['header']) }}, [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @elseif(is_array($property['field']))
                                         @php
                                             $full_field = implode('.', $property['field']);
                                         @endphp
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($full_field, {{ __('table_header.'.$property['header']) }}, [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @else
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['field'], {{ __('table_header.'.$property['header']) }}, [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], __('table_header.'.$property['header']), [], ['title' => "{{ __('title.sort') }}", 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @endif
                                 @else
-                                    <th class="th-sm text-center align-top">{{ {{ __('table_header.'.$property['header']) }} }}</th>
+                                    <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                                 @endif
                             @endforeach
                         </tr>
@@ -171,11 +174,11 @@
                                                 }
                                             }
                                         @endphp
-                                        <td>{{ $value }}</td>
+                                        <td>{{ \Lang::has('dictionary.'.$value) ? __('dictionary.'.$value) : $value }}</td>
                                     @elseif($field == 'name')
-                                        <td><a href="{{ route('group-schedule', ['schedule_group_id' => $instance->id]) }}" title="{{ __('title.group_schedule') }}">{{ $instance->$field }}</a></td>
+                                        <td><a href="{{ route('group-schedule', ['schedule_group_id' => $instance->id]) }}" title="{{ __('title.group_schedule') }}">{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</a></td>
                                     @else
-                                        <td>{{ $instance->$field }}</td>
+                                        <td>{{ \Lang::has('dictionary.'.$instance->$field) ? __('dictionary.'.$instance->$field) : $instance->$field }}</td>
                                     @endif
                                 @endforeach
                             </tr>
@@ -187,7 +190,7 @@
                                 <th class="th-sm text-center align-top"></th>
                             @endif
                             @foreach($data['table_properties'] as $property)
-                                <th class="th-sm text-center align-top">{{ {{ __('table_header.'.$property['header']) }} }}</th>
+                                <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                             @endforeach
                         </tr>
                     </tfoot>
