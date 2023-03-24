@@ -92,12 +92,12 @@
                     }
                     if (socket_data.new_partisipant !== undefined) {
                         message = '<div>' +
-                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-success" style="font-size: 100%; letter-spacing: 0.1em;"> Пользователь ' + socket_data.new_partisipant + ' вошёл в чат</p>' +
+                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-success" style="font-size: 100%; letter-spacing: 0.1em;">' + ' User ' + socket_data.new_partisipant + ' logged into the chat</p>' +
                                       '</div>'
                     }
                     if (socket_data.left_partisipant !== undefined) {
                         message = '<div>' +
-                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-info" style="font-size: 100%; letter-spacing: 0.1em;"> Пользователь ' + socket_data.left_partisipant + ' вышел из чата</p>' +
+                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-info" style="font-size: 100%; letter-spacing: 0.1em;"> User ' + socket_data.left_partisipant + ' left the chat</p>' +
                                       '</div>'
                     }
                     if (socket_data.existing_messages !== undefined && socket_data.existing_messages.length !== 0) {

@@ -59,7 +59,7 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span style="color: red;">*</span></label>
+                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span class="settings-red-star">*</span></label>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">    
                                     @else
                                         <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
@@ -109,12 +109,12 @@
                             @endif    
                         @endforeach    
                     @endif
-                    <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}" style="margin-bottom: 20px;">
+                    <input class="input_week_number" type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}">
                     <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
                     <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
                     <input type="hidden" name="is_red_week" value="{{ isset($data['is_red_week']) ? ($data['is_red_week'] ? 1 : 0) : '' }}">
                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
-                    <p for="{{ $field_name }}" class="form-explanation"><span style="color: red;">*</span>{{ __('form.multiple_fields_select') }}</p>
+                    <p for="{{ $field_name }}" class="form-explanation"><span class="settings-red-star">*</span>{{ __('form.multiple_fields_select') }}</p>
                     <button type="submit" class="btn btn-primary form-button">{{ __('form.show') }}</button>
                 </form>
             </div>
@@ -231,7 +231,7 @@
                                         @foreach($data['week_dates'] as $week_day_id => $date)
                                             @if($week_day_id <= $data['week_days_limit'])
                                                 @if(is_array($date) && isset($date['is_holiday']))
-                                                    <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                                    <th class="text-uppercase holiday-header" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                                 @else
                                                     <th class="text-uppercase">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                                 @endif

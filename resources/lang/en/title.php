@@ -14,6 +14,8 @@
         'replacement_variant' => 'Replacement variant',
         'overdue_replacement_variant' => 'Replacement variant. Overdue!',
         'replaceable_lesson' => 'Replaceable lesson',
+        'replaceable_lesson_of_other_teacher' => 'Replaceable lesson of other teacher',
+        'your_replacement_lesson' => 'Your replacement lesson',
         'overdue_replaceable_lesson' => 'Replaceable lesson. Overdue!',
         'ask_for_replacement' => 'Ask for a replacement for this option',
         'log_in_chat' => 'Log in chat',

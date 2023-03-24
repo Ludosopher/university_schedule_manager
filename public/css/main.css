@@ -154,6 +154,10 @@ h3 {
     width: 30%;
 }
 
+.ad_up_form_h2 {
+    margin-top: 1.5rem !important;
+}
+
 /*/teacher/schedule*/
 
 .schedule-table {
@@ -357,7 +361,7 @@ h3 {
     height: 250px;
     margin: 80px 0px 0px 150px;
 }
-
+/* about */
 .hp-main-header {
     margin: 1.5rem 0px 3.5rem 0px;
     width: 70%;
@@ -394,6 +398,10 @@ h3 {
     color: Grey;
     font-style: italic;
     letter-spacing: 2px;
+}
+
+.hp-gap {
+    height: 100px;
 }
 
 /* Month schedule */
@@ -477,3 +485,57 @@ h3 {
     line-height: 40%  !important;
 }
 
+/* settings */
+.settings-container {
+    width: 30% !important;
+}
+
+.settings-h2 {
+    margin-top: 1.5rem !important;
+}
+
+.settings-form-tr {
+    height: 50px !important;
+}
+
+.settings-form-label {
+    margin: 0px !important; 
+    line-height: 100% !important;
+}
+
+.settings-red-star {
+    color: red !important;
+}
+
+.settings-green-star {
+    color: green !important;
+}
+
+.settings-second-td {
+    width: 10% !important;
+}
+
+.settings-input {
+    padding: 0px !important; 
+    text-align: center !important;
+}
+
+.settings-button {
+    float: right !important;
+}
+/* -------------- */
+.holiday-header {
+    color: red !important;
+}
+
+.p-green-star {
+    margin-top: 10px !important;
+}
+
+.input-type-input {
+    width: 90%;
+}
+
+.input_week_number {
+    margin-bottom: 20px !important;
+}

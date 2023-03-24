@@ -40,6 +40,7 @@
         'teacher_regular_reschedule_variants' => 'Regular options for rescheduling lessons in the teacher schedule',
         'teacher_dated_schedule' => 'Lesson schedule of teacher from ?-1 by ?-2',
         'teacher_regular_schedule' => 'Regular schedule of teacher lessons',
+        'teacher_regular_schedule_of' => 'Regular schedule of lessons of :teacher',
         'lesson_update' => 'Lesson update',
         'lesson_add' => 'Lesson add',
         'user_update' => 'User update',
@@ -77,4 +78,6 @@
         'october' => 'october',
         'november' => 'november',
         'december' => 'december',
+        // ----
+        'requesting_letter' => 'A letter requesting the replacement of classes',
     ];

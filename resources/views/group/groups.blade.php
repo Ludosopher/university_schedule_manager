@@ -60,7 +60,7 @@
                                 @php $field_name = !empty($field['name']) ? $field['name'].'_id' : 'id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span style="color: green;">*</span></label>
+                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span class="settings-green-star">*</span></label>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">
                                     @else
                                         <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
@@ -98,7 +98,7 @@
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
-                                    <input style="width: 90%;" name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm filter-input" id="{{ $field_name }}" value="{{ old($field_name) !== null && count(request()->all()) ? old($field_name) : '' }}">
+                                    <input class="input-type-input" name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm filter-input" id="{{ $field_name }}" value="{{ old($field_name) !== null && count(request()->all()) ? old($field_name) : '' }}">
                                     @if ($errors !== null && $errors->has($field_name))
                                         @foreach($errors->get($field_name) as $error)
                                             <div class="validationErrorText">{{ $error }}</div>
@@ -108,7 +108,7 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation" style="margin-top: 10px;"><span style="color: green;">*</span>{{ __('form.multiple_fields_select') }}</p>
+                    <p class="form-explanation p-green-star"><span class="settings-green-star">*</span>{{ __('form.multiple_fields_select') }}</p>
                     <button type="submit" class="btn btn-primary form-button">{{ __('form.show') }}</button>
                 </form>
             </div>

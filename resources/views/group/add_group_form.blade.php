@@ -25,9 +25,9 @@
         <div class="external-form-container">
             <div class="internal-form-container">
                 @if(isset($data['updating_instance']))
-                <h2 style="margin-top: 1.5rem">{{ __('header.group_update') }}</h2>
+                <h2 class="ad_up_form_h2">{{ __('header.group_update') }}</h2>
                 @else
-                    <h2 style="margin-top: 1.5rem">{{ __('header.group_add') }}</h2>
+                    <h2 class="ad_up_form_h2">{{ __('header.group_add') }}</h2>
                 @endif
 
                 <form method="POST" action="{{ route('group-add-update') }}">
@@ -42,7 +42,7 @@
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
-                                            <span style="color: red;">*</span>
+                                            <span class="settings-red-star">*</span>
                                         @endif
                                     </label>
                                     <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
@@ -68,7 +68,7 @@
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
-                                            <span style="color: red;">*</span>
+                                            <span class="settings-red-star">*</span>
                                         @endif
                                     </label>
                                     <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
@@ -97,7 +97,7 @@
                                 <div class="mb-3">
                                     <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
-                                            <span style="color: red;">*</span>
+                                            <span class="settings-red-star">*</span>
                                         @endif
                                     </label>
                                     <input name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm" id="{{ $field_name }}" value="{{old($field_name) !== null ? old($field_name) : (isset($data['updating_instance']) ? $data['updating_instance']->$field_name : '') }}">
@@ -110,7 +110,7 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation"><span style="color: red;">*</span>{{ __('form.required_field') }}</p>
+                    <p class="form-explanation"><span class="settings-red-star">*</span>{{ __('form.required_field') }}</p>
                     <button type="submit" class="btn btn-primary">{{isset($data['updating_instance']) ? __('form.update') : __('form.add') }}</button>
                 </form>
             </div>
