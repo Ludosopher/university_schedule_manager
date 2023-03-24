@@ -21,29 +21,28 @@
             <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         </head>
         <body>
-            <section style="background-color: #eee;">
+            <section class="body-section">
                 <div class="container py-5">
                     <div class="row d-flex justify-content-center">
                         <div class="col-md-8 col-lg-6 col-xl-4">
-                            <h2 class="mb-0">Чат по замене</h2>
+                            <h2 class="mb-0">Replacement chat</h2>
                             <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center p-3"
-                                    style="border-top: 4px solid #ffa900;">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3 replace_description">
                                     <h5 class="mb-0">{{ $data['replacement_request_name'] }}</h5>
                                 </div>
-                                <div id="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px; padding: 0px 10px 0px 10px; overflow-y: scroll;">
+                                <div id="card-body chat-place" data-mdb-perfect-scrollbar="true">
                                         {{--  --}}
                                 </div>
                                 <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
                                     <div class="input-group mb-0">
-                                        <form id="form" method="POST" action="" style="width: 100%;">
+                                        <form id="form chat-form" method="POST" action="">
                                         @csrf
                                             <input type="hidden" name="replacement_request_id" value="{{ $data['replacement_request_id'] }}">
                                             <input type="hidden" name="author_id" value="{{ $data['author_id'] }}">
                                             <input type="hidden" name="author_name" value="{{ $data['author_name'] }}">
-                                            <div style="display: flex; width: 100%">
+                                            <div id="chat-button-group">
                                                 <input type="text" name="body" class="form-control" placeholder="Type message" aria-label="Recipient's username"/>
-                                                <button type="submit" class="btn btn-dark" style="padding-top: .55rem; margin-left: 1%">Отправить</button>
+                                                <button type="submit" class="btn btn-dark chat-button">Send</button>
                                             </div>
                                         </form>
                                     </div>

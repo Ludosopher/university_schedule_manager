@@ -6,7 +6,7 @@
         <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
             <thead>
                 <tr>
-                    <th class="th-sm text-center align-top" rowspan="2" style="width: 7%;">{{ __('table_header.actions') }}</th>
+                    <th class="th-sm text-center align-top mrp-table-header" rowspan="2">{{ __('table_header.actions') }}</th>
                     @foreach($data['table_properties'] as $property)
                         @if(in_array($property['header'], ['week_day', 'class_period', 'lesson_room', 'teacher']))
                             @continue
@@ -68,7 +68,7 @@
                         @endphp
                         <tr style="background-color: {{ $status_color }}">
                             <td>
-                                <div style="display: flex; justify-content: space-around;">
+                                <div class="mrp-icon-group">
                                     <form method="POST" action="{{ route('replacement-request-chat') }}" title="{{ __('title.log_in_chat') }}" target="_blank">
                                     @csrf
                                         <input type="hidden" name="replacement_request_id" value="{{ $instance->id }}">
@@ -151,7 +151,7 @@
         <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
             <thead>
                 <tr>
-                    <th class="th-sm text-center align-top" rowspan="2" style="width: 7%;">{{ __('table_header.actions') }}</th>
+                    <th class="th-sm text-center align-top mrp-table-header" rowspan="2">{{ __('table_header.actions') }}</th>
                     @foreach($data['table_properties'] as $property)
                         @if(in_array($property['header'], ['week_day', 'class_period', 'lesson_room', 'teacher']))
                             @continue
@@ -213,7 +213,7 @@
                         @endphp
                         <tr style="background-color: {{ $status_color }}">
                             <td>
-                                <div style="display: flex; justify-content: space-around;">
+                                <div class="mrp-icon-group">
                                     <form method="POST" action="{{ route('replacement-request-chat') }}" title="{{ __('title.log_in_chat') }}" target="_blank">
                                     @csrf
                                         <input type="hidden" name="replacement_request_id" value="{{ $instance->id }}">

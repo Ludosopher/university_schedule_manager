@@ -55,7 +55,7 @@
                                 @foreach($week_content['week_dates'] as $week_day_id => $date)
                                     @if($week_day_id <= $data['week_days_limit'])
                                         @if(is_array($date) && isset($date['is_holiday']))
-                                            <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                            <th class="text-uppercase holiday-header" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                         @else
                                             <th class="text-uppercase">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                         @endif

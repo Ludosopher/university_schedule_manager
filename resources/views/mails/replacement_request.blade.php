@@ -131,15 +131,15 @@
         @else
             <h4 class="top-header">{{ __('header.teacher_regular_schedule_of', ['teacher' => ($data['instance_name'] ?? '')]) }}</h4>
         @endif
-        <table style="border-collapse: collapse; border: 1px solid grey; width: 80%">
+        <table class="table-mail">
             <thead>
                 <tr>
-                    <th style="border: 1px solid grey; text-align: center;">{{ __('header.period') }}</th>
+                    <th class="th-mail">{{ __('header.period') }}</th>
                     @if(isset($data['week_dates']))
                         @foreach($data['week_dates'] as $week_day_id => $date)
                             @if($week_day_id <= $data['week_days_limit'])
                                 @if(is_array($date) && isset($date['is_holiday']))
-                                    <th class="text-uppercase" style="color: red;" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                    <th class="text-uppercase holiday-header" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                 @else
                                     <th class="text-uppercase">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                 @endif
@@ -171,7 +171,7 @@
                                 $class_period_start_time = date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start']));
                                 $class_period_end_time = date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])); 
                             @endphp
-                            <td class="schedule-period" style="border: 1px solid grey; text-align: center;">
+                            <td class="schedule-period th-mail">
                                 <div class="schedule-period-name">{{ $class_period_id }}</div>
                                 <div class="schedule-period-time">
                                     {{ $class_period_start_time }} - {{ $class_period_end_time }}
@@ -238,7 +238,7 @@
                                             $title_blue = '';
                                         }
                                     @endphp
-                                    <td class="schedule-cell" style="border: 1px solid grey;">
+                                    <td class="schedule-cell th-mail">
                                         @if($lesson_red)
                                             <div class="schedule-cell-top" style="background-color: {{ $cell_red_bg_color }}" title="{{ $title_red }}">
                                                 <div class="schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
@@ -255,7 +255,7 @@
                                         @endif
                                     </td>
                                 @else
-                                    <td class="schedule-cell" style="border: 1px solid grey;"></td>
+                                    <td class="schedule-cell th-mail"></td>
                                 @endif
                             @endforeach
                         </tr>

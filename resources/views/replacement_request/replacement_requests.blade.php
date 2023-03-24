@@ -49,7 +49,7 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label class="form-label">{{ __('replacement_request_form.'.$field['name']) }}<span style="color: green;">*</span></label>
+                                        <label class="form-label">{{ __('replacement_request_form.'.$field['name']) }}<span class="settings-green-star">*</span></label>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">
                                     @else
                                         <label for="{{ $field_name }}" class="form-label">{{ __('replacement_request_form.'.$field['name']) }}</label>
@@ -84,7 +84,7 @@
                             @endif
                             @if($field['type'] == 'switch')
                                 @php $field_name = $field['name']; @endphp
-                                <div style="height: 20px;"></div>
+                                <div class="rp-switch"></div>
                                 <div class="mb-3">
                                     <div class="form-check form-switch">
                                         @if(old($field_name) !== null && count(request()->all()))
@@ -115,7 +115,7 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation"><span style="color: green;">*</span>{{ __('form.multiple_fields_select') }}</p>
+                    <p class="form-explanation"><span class="settings-green-star">*</span>{{ __('form.multiple_fields_select') }}</p>
                     <button type="submit" class="btn btn-primary form-button">{{ __('form.show') }}</button>
                 </form>
             </div>
@@ -187,7 +187,7 @@
                             @if($instance->status_id !== $replacement_request_status_ids['in_drafting'])
                                 <tr style="background-color: {{ $status_color }}">
                                     <td>
-                                        <div style="display: flex; justify-content: space-around;">
+                                        <div class="mrp-icon-group">
                                             @if ($instance->status_id == $replacement_request_status_ids['in_permission_waiting']
                                                 || $instance->status_id == $replacement_request_status_ids['not_permitted'])
                                                 <a class="" href="{{ route('replacement-request-update', ['updating_id' => $instance->id, 'is_permitted' => 1]) }}" title="Разрешить">

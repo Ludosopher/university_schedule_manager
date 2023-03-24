@@ -57,7 +57,7 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span style="color: green;">*</span></label>
+                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span class="settings-green-star">*</span></label>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">
                                     @else
                                         <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
@@ -119,7 +119,7 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation"><span style="color: green;">*</span>{{ __('form.multiple_fields_select') }}</p>
+                    <p class="form-explanation"><span class="settings-green-star">*</span>{{ __('form.multiple_fields_select') }}</p>
                     <button type="submit" class="btn btn-primary form-button">{{ __('form.show') }}</button>
                 </form>
             </div>

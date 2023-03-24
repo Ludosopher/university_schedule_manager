@@ -91,6 +91,21 @@ h3 {
     height: 130px;
 } */
 
+.li-nav-item {
+    padding: 0.5rem 1rem;
+}
+
+.select-lang {
+    border: 1px solid Gainsboro; 
+    color: Gray;
+}
+
+.button-lang {
+    border-style: none; 
+    background-color: inherit; 
+    color: Gray;
+}
+
 .main-nav-link {
     font-size: 17px !important;
 }
@@ -312,6 +327,21 @@ h3 {
 
 .top-header {
     margin-top: 1.5rem;
+}
+
+.table-mail {
+    border-collapse: collapse; 
+    border: 1px solid grey; 
+    width: 80%
+}
+
+.th-mail {
+    border: 1px solid grey !important;
+    text-align: center !important; 
+}
+
+.td-mail {
+    border: 1px solid grey !important; 
 }
 
 .replacement-schedule-header-div {
@@ -538,4 +568,48 @@ h3 {
 
 .input_week_number {
     margin-bottom: 20px !important;
+}
+
+/* chat */
+.body-section {
+    background-color: #eee;
+}
+
+.replace_description {
+    border-top: 4px solid #ffa900 !important;
+}
+
+#chat-place {
+    position: relative; 
+    height: 400px; 
+    padding: 0px 10px 0px 10px; 
+    overflow-y: scroll;
+}
+
+#chat-button-group {
+    display: flex; 
+    width: 100%
+}
+
+#chat-form {
+    width: 100%;
+}
+
+.chat-button {
+    padding-top: .55rem !important; 
+    margin-left: 1% !important;
+}
+
+/* my_replacement_request */
+.mrp-table-header {
+    width: 7% !important;
+}
+
+.mrp-icon-group {
+    display: flex; 
+    justify-content: space-around;
+}
+
+.rp-switch {
+    height: 20px;
 }

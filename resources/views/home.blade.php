@@ -8,6 +8,7 @@
                 {{ __('user_validation.permission_error') }}
             </div>
         @endif
+        
     </div>
     <footer class="text-center text-lg-start fixed-bottom bg-dark text-light">
         <div class="container">

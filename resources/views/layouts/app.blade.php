@@ -96,10 +96,10 @@
                     </ul>
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item" style="padding: 0.5rem 1rem;">
+                        <li class="nav-item li-nav-item">
                             <form method="POST" action="{{ route('user-set-locate') }}">
                             @csrf
-                                <select name="lang" aria-label="Default select example" style="border: 1px solid Gainsboro; color: Gray;">
+                                <select class="select-lang" name="lang" aria-label="Default select example">
                                     @foreach(config('enum.languages') as $lang)
                                         @if (\Session::has('applocale') && $lang == \Session::get('applocale'))
                                             <option selected value="{{ $lang }}">{{ $lang }}</option>    
@@ -124,7 +124,7 @@
                                 <input type="hidden" name="group_id" value="{{ $data['group_id'] ?? '' }}">
                                 <input type="hidden" name="lesson_id" value="{{ $data['rescheduling_lesson_id'] ?? ($data['lesson_id'] ?? '') }}">
                                 <input type="hidden" name="previous_route" value="{{ \Route::current()->getName() }}">
-                                <button type="submit" style="border-style: none; background-color: inherit; color: Gray;" title="{{ __('title.update') }}">▼</button>
+                                <button class="button-lang" type="submit" title="{{ __('title.update') }}">▼</button>
                             </form>
                         </li>
                         <li class="nav-item">
