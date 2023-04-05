@@ -601,7 +601,6 @@ return [
          'name' => 'group',
          'is_required' => true,
          'is_localized' => false,
-
       ],
       [
          'type' => 'objects-select',
@@ -706,4 +705,6 @@ return [
          'is_required' => true,
       ],
    ],
+
+
 ];
