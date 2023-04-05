@@ -63,6 +63,6 @@
         //add_users_form
         'name' => 'Имя',
         'is_admin' => 'Администратор',
-        'is_moderator' => 'Модератор',
+        'is_moderator' => 'Модератор'
         
     ];
