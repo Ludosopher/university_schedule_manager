@@ -37,7 +37,6 @@
         'course' => 'Course',
         'size' => 'Size',
         // add_lesson_form
-        'name' => 'Subject',
         'lesson_type' => 'Lesson type',
         'week_day' => 'Week day',
         'weekly_period' => 'Weekly period',
@@ -62,6 +61,7 @@
         // add_lesson_replacement_filter_form
         'schedule_position' => 'Position in the substitute teachers schedule',
         //add_users_form
+        'name' => 'Name',
         'is_admin' => 'Administrator',
         'is_moderator' => 'Moderator',
         
