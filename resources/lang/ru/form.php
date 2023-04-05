@@ -37,7 +37,6 @@
         'course' => 'Курс',
         'size' => 'Численность',
         // add_lesson_form
-        'name' => 'Предмет',
         'lesson_type' => 'Вид занятия',
         'week_day' => 'День недели',
         'weekly_period' => 'Недельная периодичность',
@@ -62,6 +61,7 @@
         // add_lesson_replacement_filter_form
         'schedule_position' => 'Позиция в расписании заменяющего преподавателя',
         //add_users_form
+        'name' => 'Имя',
         'is_admin' => 'Администратор',
         'is_moderator' => 'Модератор',
         
