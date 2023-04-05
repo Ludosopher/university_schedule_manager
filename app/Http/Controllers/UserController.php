@@ -2,30 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\ClassPeriod;
-use App\Group;
-use App\Helpers\DocExportHelpers;
-use App\Helpers\FilterHelpers;
-use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
-use App\Helpers\TeacherHelpers;
-use App\Helpers\UniversalHelpers;
+use App\Helpers\ResponseHelpers;
 use App\Helpers\UserHelpers;
-use App\Helpers\ValidationHelpers;
-use App\Http\Requests\teacher\ExportScheduleToDocTeacherRequest;
-use App\Http\Requests\teacher\FilterTeacherRequest;
-use App\Http\Requests\teacher\RescheduleTeacherRequest;
-use App\Http\Requests\teacher\ScheduleTeacherRequest;
-use App\Http\Requests\teacher\StoreTeacherRequest;
+use App\Http\Requests\user\DeleteUserRequest;
+use App\Http\Requests\user\AdminStoreUserRequest;
 use App\Http\Requests\user\FilterUserRequest;
-use App\Http\Requests\user\StoreUserRequest;
-use App\Lesson;
-use App\Teacher;
-use App\WeekDay;
-use App\WeeklyPeriod;
+use App\Http\Requests\user\SelfStoreUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -64,28 +50,47 @@ class UserController extends Controller
         return view("user.add_user_form")->with('data', $data);
     }
 
-    public function updateUser (StoreUserRequest $request)
+    public function adminUpdateUser (AdminStoreUserRequest $request)
     {
         $validated = $request->validated();
-//  dd($validated);
-        $validated = UniversalHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
-        $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
+        $validated = ModelHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
         
+        $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
         ModelHelpers::addOrUpdateManyToManyAttributes($validated, $user['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);
 
-        return redirect()->route("users", ['updated_instance_name' => $user['updated_instance_name']]);
+        $response_content = ResponseHelpers::getContent($user, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
-    public function deleteUser (Request $request)
+    public function selfUpdateUser (SelfStoreUserRequest $request)
+    {
+        $validated = $request->validated();
+        
+        $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
+        
+        $response_content = ResponseHelpers::getContent($user, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
+    }
+
+    public function deleteUser (DeleteUserRequest $request)
     {
         $attributes = array_values($this->config['many_to_many_attributes']);
-        $relations_deleted_result = ModelHelpers::deleteManyToManyAttributes($request->deleting_id, $this->config['model_name'], $attributes);
-        if (!$relations_deleted_result) {
-            return redirect()->route("users", ['deleting_instance_not_found' => true]);
-        }
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
-        $instance_name_field = $this->config['instance_name_field'];
-        return redirect()->route("users", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+        ModelHelpers::deleteManyToManyAttributes($request->validated()['deleting_id'], $this->config['model_name'], $attributes);
+        
+        $deleted_instance = ModelHelpers::deleteInstance($request->validated()['deleting_id'], $this->config);
+        $response_content = ResponseHelpers::getContent($deleted_instance, $this->config['instance_name']);
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
     public function getAccountMain (Request $request)
@@ -93,6 +98,23 @@ class UserController extends Controller
         $data = UserHelpers::getAccountMain(Auth::user());
 
         return view("user.account_main")->with('data', $data);
+    }
+
+    public function setLocate (Request $request)
+    {
+        if (in_array($request->lang, config('enum.languages'))) {
+            Session::put('applocale', $request->lang);
+        }
+
+        if (isset($request->prev_replace_rules)) {
+            return redirect()->route("lesson-replacement", ResponseHelpers::getLessonReplacementBackData($request->all()));
+        }
+        
+        if (isset($request->previous_route)) {
+            return redirect()->route($request->previous_route, $request->all());
+        }
+     
+        return redirect()->back();
     }
 
 }

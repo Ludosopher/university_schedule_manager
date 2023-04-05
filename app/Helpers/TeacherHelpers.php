@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use App\Http\Controllers\TeacherController;
 use App\Lesson;
-use Illuminate\Support\Facades\Auth;
+
 
 class TeacherHelpers
 {
@@ -23,12 +23,12 @@ class TeacherHelpers
         if (! $data['is_regular'] && isset($data['replaceable_date']) && isset($data['replacing_date'])) {
             $incom_replaceable_data = [
                 'schedule_teacher_id' => $data['replacing_teacher_id'], 
-                'week_number' => UniversalHelpers::getWeekNumberFromDate($data['replaceable_date']),
+                'week_number' => DateHelpers::getWeekNumberFromDate($data['replaceable_date']),
             ];
             if (date('W', strtotime($data['replaceable_date'])) !== date('W', strtotime($data['replacing_date']))) {
                 $incom_replacing_data = [
                     'schedule_teacher_id' => $data['replacing_teacher_id'], 
-                    'week_number' => UniversalHelpers::getWeekNumberFromDate($data['replacing_date']),
+                    'week_number' => DateHelpers::getWeekNumberFromDate($data['replacing_date']),
                 ];
                 $replacing_schedule_data = ModelHelpers::getSchedule($incom_replacing_data, $config);
             }
@@ -46,8 +46,8 @@ class TeacherHelpers
         if ($data['is_regular']) {
             $replaceable_weekly_period_id = $replaceable_lesson->weekly_period_id;
             $replacing_weekly_period_id = $replacing_lesson->weekly_period_id;
-            $replaceable_lesson_description = 'Вам проводить своё занятие: "'.$replacing_lesson->name.'", '.mb_strtolower($replaceable_lesson->weekly_period->name).', '.mb_strtolower($replaceable_lesson->week_day->name).', '.mb_strtolower($replaceable_lesson->class_period->name).' пара.';
-            $replacing_lesson_description = 'тогда как я буду проводить своё: "'.$replaceable_lesson->name.'", '.mb_strtolower($replacing_lesson->weekly_period->name).', '.mb_strtolower($replacing_lesson->week_day->name).', '.mb_strtolower($replacing_lesson->class_period->name).' пара.';
+            $replaceable_lesson_description = __('mail.regular_replaceable_lesson_description').$replacing_lesson->name.'", '.__('dictionary.'.$replaceable_lesson->weekly_period->name).', '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
+            $replacing_lesson_description = __('mail.regular_replacing_lesson_descript').$replaceable_lesson->name.'", '.__('dictionary.'.$replaceable_lesson->weekly_period->name).', '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
         } else {
             $replaceable_date = '';
             if (isset($replaceable_schedule_data['week_dates'])) {
@@ -63,8 +63,8 @@ class TeacherHelpers
             }
             $replaceable_weekly_period_id = $weekly_period_ids['every_week'];
             $replacing_weekly_period_id = $weekly_period_ids['every_week'];
-            $replaceable_lesson_description = 'провести своё вместо моего: '.$replaceable_date.', "'.$replacing_lesson->name.'", '.mb_strtolower($replaceable_lesson->week_day->name).', '.mb_strtolower($replaceable_lesson->class_period->name).' пара.';
-            $replacing_lesson_description = 'тогда как я проведу моё вместо Вашего: '.$replacing_date.', "'.$replaceable_lesson->name.'", '.mb_strtolower($replacing_lesson->week_day->name).', '.mb_strtolower($replacing_lesson->class_period->name).' пара.';
+            $replaceable_lesson_description = __('mail.dated_replaceable_lesson_description').$replaceable_date.', "'.$replacing_lesson->name.'", '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
+            $replacing_lesson_description = __('mail.dated_replacing_lesson_descript').$replacing_date.', "'.$replaceable_lesson->name.'", '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
         }
 
         $mails_to = [];
@@ -73,7 +73,7 @@ class TeacherHelpers
         }
 
         $result = [
-            'mails_to' => ['ludosopher@yandex.ru'],//[Auth::user()->email], // $mails_to, // $replacing_lesson->teacher->users
+            'mails_to' => $mails_to,
             'addressee_name' => $replacing_lesson->teacher->first_name_patronymic,
             'requester_name' => $replaceable_lesson->teacher->profession_level_name,
             'replaceable_lesson_description' => $replaceable_lesson_description,
@@ -116,6 +116,5 @@ class TeacherHelpers
 
         return false;
     }
-
 
 }

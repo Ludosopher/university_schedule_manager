@@ -21,14 +21,13 @@
             <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         </head>
         <body>
-            <section style="background-color: #eee;">
+            <section class="body-section">
                 <div class="container py-5">
                     <div class="row d-flex justify-content-center">
                         <div class="col-md-8 col-lg-6 col-xl-4">
-                            <h2 class="mb-0">Чат по замене</h2>
+                            <h2 class="mb-0">{{ __('header.replacement_chat') }}</h2>
                             <div class="card">
-                                <div class="card-header d-flex justify-content-between align-items-center p-3"
-                                    style="border-top: 4px solid #ffa900;">
+                                <div class="card-header d-flex justify-content-between align-items-center p-3 replace_description">
                                     <h5 class="mb-0">{{ $data['replacement_request_name'] }}</h5>
                                 </div>
                                 <div id="card-body" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px; padding: 0px 10px 0px 10px; overflow-y: scroll;">
@@ -41,9 +40,9 @@
                                             <input type="hidden" name="replacement_request_id" value="{{ $data['replacement_request_id'] }}">
                                             <input type="hidden" name="author_id" value="{{ $data['author_id'] }}">
                                             <input type="hidden" name="author_name" value="{{ $data['author_name'] }}">
-                                            <div style="display: flex; width: 100%">
+                                            <div id="chat-button-group">
                                                 <input type="text" name="body" class="form-control" placeholder="Type message" aria-label="Recipient's username"/>
-                                                <button type="submit" class="btn btn-dark" style="padding-top: .55rem; margin-left: 1%">Отправить</button>
+                                                <button type="submit" class="btn btn-dark chat-button">{{ __('form.send') }}</button>
                                             </div>
                                         </form>
                                     </div>
@@ -92,12 +91,12 @@
                     }
                     if (socket_data.new_partisipant !== undefined) {
                         message = '<div>' +
-                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-success" style="font-size: 100%; letter-spacing: 0.1em;"> Пользователь ' + socket_data.new_partisipant + ' вошёл в чат</p>' +
+                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-success" style="font-size: 100%; letter-spacing: 0.1em;">' + socket_data.new_partisipant + ' logged into the chat</p>' +
                                       '</div>'
                     }
                     if (socket_data.left_partisipant !== undefined) {
                         message = '<div>' +
-                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-info" style="font-size: 100%; letter-spacing: 0.1em;"> Пользователь ' + socket_data.left_partisipant + ' вышел из чата</p>' +
+                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-info" style="font-size: 100%; letter-spacing: 0.1em;">' + socket_data.left_partisipant + ' left the chat</p>' +
                                       '</div>'
                     }
                     if (socket_data.existing_messages !== undefined && socket_data.existing_messages.length !== 0) {
@@ -125,7 +124,6 @@
                             }
                         });
                     }
-                    
                     messages.insertAdjacentHTML('beforeend', message);
                     document.getElementById('card-body').scrollTop = 9999999;
                 };

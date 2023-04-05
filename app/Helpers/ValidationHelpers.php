@@ -2,18 +2,13 @@
 
 namespace App\Helpers;
 
-use App\ClassPeriod;
-use App\Lesson;
-use App\Teacher;
-use DateTime;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Schema;
+use App\ReplacementRequest;
 use Illuminate\Support\Facades\Validator;
 
 class ValidationHelpers
 {
-    public static function validation($data, $rules, $messages = [], $attributes = []) {
-        
+    public static function validation($data, $rules, $messages = [], $attributes = []) 
+    {
         $validator = Validator::make($data, $rules, $messages, $attributes);
         if ($validator->fails()) {
             return [
@@ -41,13 +36,15 @@ class ValidationHelpers
             'schedule_position' => 'nullable|array',
             'week_number' => 'nullable|string',
             'week_data' => 'nullable|string',
-            'week_dates' => 'nullable|string',
+            'week_dates' => 'nullable|string', 
             'is_red_week' => 'nullable|boolean',
       
+            'replace_rules' => 'nullable|array',
             'replace_rules.*.week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
             'replace_rules.*.weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
             'replace_rules.*.class_period_id' => 'nullable|integer|exists:App\ClassPeriod,id',
-            'replace_rules.*.teacher_id' => 'nullable|integer|exists:App\Teacher,id',
+            'replace_rules.*.teacher_id' => 'nullable|integer|exists:App\Teacher,id', 
+            'replace_rules.*.lesson_id' => 'nullable|integer|exists:App\Lesson,id',
             'replace_rules.*.date' => 'nullable|date',
         ];
         
@@ -66,11 +63,6 @@ class ValidationHelpers
             'lesson_room_id' => __('attribute_names.lesson_room_id'),
             'schedule_position' => __('attribute_names.schedule_position'),
             'week_data' => __('attribute_names.week_data'),
-      
-            'replace_rules.*.week_day_id' => __('attribute_names.replace_rules_week_day_id'),
-            'replace_rules.*.weekly_period_id' => __('attribute_names.replace_rules_weekly_period_id'),
-            'replace_rules.*.class_period_id' => __('attribute_names.replace_rules_class_period_id'),
-            'replace_rules.*.teacher_id' => __('attribute_names.replace_rules_teacher_id'),
         ];
 
         return self::validation($data, $rules, $messages, $attributes);
@@ -139,6 +131,7 @@ class ValidationHelpers
             'week_data' => 'nullable|string',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
+            'date_or_weekly_period' => 'nullable|string',
         ];
         
         return self::validation($data, $rules);
@@ -164,7 +157,7 @@ class ValidationHelpers
         $rules = [
             "month_name" => "required|string",
             "teacher_name" => "required|string",
-            "weeks" => "required|string", 
+            "weeks" => "required|string",
         ];
         
         return self::validation($data, $rules);
@@ -184,10 +177,21 @@ class ValidationHelpers
     public static function addReplacementRequestValidation($data) {
         
         $min_replacement_period = config('site.min_replacement_period');
-                
+        $replacement_request_status_groups = config('enum.replacement_request_status_groups');
+                        
         $rules = [
             'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id',
             'replacing_lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'replacing_lesson_id' => function ($attribute, $value, $fail) use ($data, $replacement_request_status_groups) {
+                $same_replacement_request = ReplacementRequest::where([
+                                                                ['replaceable_lesson_id', $data['replaceable_lesson_id']],
+                                                                ['replacing_lesson_id', $value],
+                                                            ])->whereDate('replaceable_date', date('Y-m-d', strtotime($data['replaceable_date'])))
+                                                              ->whereDate('replacing_date', date('Y-m-d', strtotime($data['replacing_date'])))
+                                                              ->whereIn('status_id', $replacement_request_status_groups['in_management'])
+                                                              ->exists();
+                if ($same_replacement_request) $fail(__('user_validation.request_already_exists')); 
+            },
             'replaceable_date' => 'nullable|string',
             'replaceable_date' => function ($attribute, $value, $fail) use ($min_replacement_period) {
                 if (isset($value)) {

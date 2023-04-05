@@ -91,6 +91,21 @@ h3 {
     height: 130px;
 } */
 
+.li-nav-item {
+    padding: 0.5rem 1rem;
+}
+
+.select-lang {
+    border: 1px solid Gainsboro; 
+    color: Gray;
+}
+
+.button-lang {
+    border-style: none; 
+    background-color: inherit; 
+    color: Gray;
+}
+
 .main-nav-link {
     font-size: 17px !important;
 }
@@ -152,6 +167,10 @@ h3 {
 
 .internal-form-container {
     width: 30%;
+}
+
+.ad_up_form_h2 {
+    margin-top: 1.5rem !important;
 }
 
 /*/teacher/schedule*/
@@ -323,16 +342,79 @@ h3 {
 }
 
 /* home page */
-/* #home-main {
-    width: 100%;
-    height: 650px;
-    background-image: url('../storage/home-page/schedule.png');
-    background-repeat: no-repeat;
-    background-position: 87% 100%;
-    background-size: 37%;
-} */
-
 #home-main {
+    width: 100%;
+    height: 845px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('../storage/home-page/schedule_foto.jpg');
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+    background-size: cover;
+}
+
+#home-content {
+    padding: 10% 0px 0px 18%; 
+    color: white;
+}
+
+#home-header-div {
+    width: 60%;
+}
+
+#home-header-p {
+    font-size: 60pt;
+    font-weight: 600; 
+    font-family: 'Montserrat', sans-serif; 
+    line-height: 1; 
+    padding-left: 3%; 
+    color: rgb(80, 255, 80);
+}
+
+#home-list-div {
+    padding-top: 3%;
+}
+
+#home-list-ul {
+    font-size: 25pt; 
+    font-family: 'Montserrat', sans-serif;  
+    list-style-type: none;
+}
+
+#home-main-li-list {
+    /* list-style-image: url('../storage/icons/list.png');
+    margin-bottom: 25px;
+    line-height: 1.2; */
+    background: url("../storage/icons/list.png") no-repeat left center;
+    padding-left: 4%;
+    line-height: 2;
+}
+
+#home-main-li-schedule {
+    /* list-style-image: url('../storage/icons/schedule.png');
+    margin-bottom: 25px;
+    line-height: 1.2; */
+    background: url('../storage/icons/schedule.png') no-repeat left center;
+    padding-left: 4%;
+    line-height: 2;
+}
+
+#home-main-li-schedule-change {
+    /* list-style-image: url('../storage/icons/shedule_change.png');
+    margin-bottom: 25px;
+    line-height: 1.2; */
+    background: url('../storage/icons/shedule_change.png') no-repeat left center;
+    padding-left: 4%;
+    line-height: 2;
+}
+
+#home-main-li-agree {
+    /* list-style-image: url('../storage/icons/agreement.png');
+    line-height: 1.2; */
+    background: url('../storage/icons/agreement.png') no-repeat left center;
+    padding-left: 4%;
+    line-height: 2;
+}
+
+/* #home-main {
     position: relative;
     padding: 0px !important;
     width: 100%;
@@ -340,8 +422,8 @@ h3 {
     background-image: url('../storage/home-page/MenegerR2.png');
     background-repeat: no-repeat;
     /* background-position: 87% 100%; */
-    background-size: cover;
-}
+    /* background-size: cover; */
+/* } */
 
 .fail-on-hp {
     position: absolute;
@@ -357,7 +439,7 @@ h3 {
     height: 250px;
     margin: 80px 0px 0px 150px;
 }
-
+/* about */
 .hp-main-header {
     margin: 1.5rem 0px 3.5rem 0px;
     width: 70%;
@@ -394,6 +476,10 @@ h3 {
     color: Grey;
     font-style: italic;
     letter-spacing: 2px;
+}
+
+.hp-gap {
+    height: 100px;
 }
 
 /* Month schedule */
@@ -454,3 +540,113 @@ h3 {
     padding: 0px 0px 0px 5px;
 }
 
+
+/* account_main */
+.account-contact-cell {
+    padding: 0px 5px 0px 5px;
+}
+
+.account-contact-label {
+    margin-bottom: 0px; 
+    font-weight: bold; 
+    line-height: 50%;
+}
+
+.account-contact-input {
+    background-color: rgb(250, 250, 250);
+    border: 0px;
+    height: 70%;
+}
+
+.account-contact-button {
+    height: 40%  !important;
+    line-height: 40%  !important;
+}
+
+/* settings */
+.settings-container {
+    width: 30% !important;
+}
+
+.settings-h2 {
+    margin-top: 1.5rem !important;
+}
+
+.settings-form-tr {
+    height: 50px !important;
+}
+
+.settings-form-label {
+    margin: 0px !important; 
+    line-height: 100% !important;
+}
+
+.settings-red-star {
+    color: red !important;
+}
+
+.settings-green-star {
+    color: green !important;
+}
+
+.settings-second-td {
+    width: 10% !important;
+}
+
+.settings-input {
+    padding: 0px !important; 
+    text-align: center !important;
+}
+
+.settings-button {
+    float: right !important;
+}
+/* -------------- */
+.holiday-header {
+    color: red !important;
+}
+
+.p-green-star {
+    margin-top: 10px !important;
+}
+
+.input-type-input {
+    width: 90%;
+}
+
+.input_week_number {
+    margin-bottom: 20px !important;
+}
+
+/* chat */
+.body-section {
+    background-color: #eee;
+}
+
+.replace_description {
+    border-top: 4px solid #ffa900 !important;
+}
+
+#chat-button-group {
+    display: flex; 
+    width: 100%
+}
+
+.chat-button {
+    padding-top: .55rem !important; 
+    margin-left: 1% !important;
+}
+
+/* my_replacement_request */
+.mrp-table-header {
+    width: 7% !important;
+}
+
+.mrp-icon-group {
+    display: flex; 
+    justify-content: space-around;
+}
+
+.rp-switch {
+    height: 20px;
+}

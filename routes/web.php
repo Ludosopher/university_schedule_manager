@@ -13,21 +13,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', 'HomeController@index')->name('home')->middleware('setlocate');
+Route::get('/about', 'HomeController@about')->name('about')->middleware('setlocate');
+Route::post('/user/set-locate', 'UserController@setLocate')->name('user-set-locate');
 
-Route::get('/', 'HomeController@index')->name('home');
-Route::get('/about', 'HomeController@about')->name('about');
-
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'setlocate'])->group(function () {
 
     Route::match(['get', 'post'],'/user/get-all', 'UserController@getUsers')->name('users')->middleware('admin');
     Route::get('/user/add-form', 'UserController@addUserForm')->name('user-form')->middleware('admin');
-    Route::post('/user/update', 'UserController@updateUser')->name('user-update')->middleware('admin');
+    Route::post('/user/admin-update', 'UserController@adminUpdateUser')->name('user-admin-update')->middleware('admin');
+    Route::post('/user/self-update', 'UserController@selfUpdateUser')->name('user-self-update')->middleware('user');
     Route::get('/user/delete', 'UserController@deleteUser')->name('user-delete')->middleware('admin');
     Route::get('/user/account-main', 'UserController@getAccountMain')->name('user-account-main');
-
+    
     Route::match(['get', 'post'], '/teacher/get-all', 'TeacherController@getTeachers')->name('teachers');
     Route::get('/teacher/add-form', 'TeacherController@addTeacherForm')->name('teacher-add-form')->middleware('moderator');
     Route::post('/teacher/add-update', 'TeacherController@addOrUpdateTeacher')->name('teacher-add-update')->middleware('moderator');
@@ -70,7 +68,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/replacement-request/send', 'ReplacementRequestController@sendReplacementRequest')->name('replacement-request-send');
     Route::post('/replacement-request/chat', 'ReplacementRequestController@openReplacementRequestChat')->name('replacement-request-chat');
 
-
+    Route::get('/settings/get', 'SettingController@getSettings')->name('settings-get')->middleware('admin');
+    Route::post('/settings/update', 'SettingController@updateSettings')->name('settings-update')->middleware('admin');
 });
 
 

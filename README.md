@@ -1,61 +1,31 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+Веб-приложение "Менеджер учебного расписания"
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Целевая аудитория - учащиеся, преподаватели и административный персонал ВУЗов и заведений среднего профессионального образования.
 
-## About Laravel
+Решаемые проблемы:
+1. В учебном заведении часто приходится выполнять замены и переносы занятий. Это требует сопоставления больших объёмов информации, согласования планов разных сторон. При этом данная работа чаще всего выполняется вручную, что приводит к большим затратам времени и сил, выбору неоптимальных вариантов, конфликтам.
+2. Кроме этого, используемый в учебных заведениях стандартный сервис работы с расписанием не предоставляет его в удобной форме.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Приложение предназначено для того, чтобы программными средствами автоматизировать, оптимизировать и ускорить получение расписания в разных форматах, подбор и выбор вариантов замены и переноса занятий, согласование возникающих при этом изменений в планах разных сторон.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Приложение содержит тестовые данные учебных занятий только для факультета "Бизнеса и социальных технологий".
 
-## Learning Laravel
+Презентация: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.g1d7221fd002_0_60
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+-------------------------------------------------------------------------------------------------------------------------------
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Web application "Training Schedule Manager"
 
-## Laravel Sponsors
+The target audience is students, teachers and administrative staff of universities and institutions of secondary vocational education.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Solved problems:
+1. In an educational institution, it is often necessary to perform substitutions and postponements of classes. This requires comparing large amounts of information, coordinating the plans of different parties. At the same time, this work is most often done manually, which leads to a lot of time and effort, the choice of suboptimal options, conflicts.
+2. In addition, the standard timetable service used in educational institutions does not provide it in a convenient form.
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+The application is designed to programmatically automate, optimize and speed up the receipt of schedules in different formats, the selection and selection of options for replacing and rescheduling classes, coordination of changes in the plans of different parties that arise.
 
-## Contributing
+The application contains test data of training sessions only for the Faculty of "Business and Social Technologies".
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Presentation: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.g1d7221fd002_0_60

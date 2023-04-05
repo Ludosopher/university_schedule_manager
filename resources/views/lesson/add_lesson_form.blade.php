@@ -1,26 +1,33 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if ($errors !== null && $errors->has('updating_id'))
-            @foreach($errors->get($field_name) as $error)
-                <div class="alertAccess">
+        @if ($errors->any() && $errors->has('updating_id'))
+            @foreach($errors->get('updating_id') as $error)
+                <div class="alertFail">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     {{ $error }}
                 </div>
             @endforeach
         @endif
-        @if (\Session::has('new_instance_name'))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                Данные занятия {{ \Session::get('new_instance_name') }} успешно добавлены.
-            </div>
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @endif
         @endif
         <div class="external-form-container">
             <div class="internal-form-container">
                 @if(isset($data['updating_instance']))
-                <h2 style="margin-top: 1.5rem">Обновление данных занятия</h2>
+                <h2 class="settings-h2">{{ __('header.lesson_update') }}</h2>
                 @else
-                    <h2 style="margin-top: 1.5rem">Добавление нового занятия</h2>
+                    <h2 class="settings-h2">{{ __('header.lesson_add') }}</h2>
                 @endif
 
                 <form method="POST" action="{{ route('lesson-add-update') }}">
@@ -33,9 +40,9 @@
                             @if($field['type'] == 'enum-select')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
-                                            <span style="color: red;">*</span>
+                                            <span class="settings-red-star">*</span>
                                         @endif
                                     </label>
                                     <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
@@ -60,34 +67,36 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                             @if (isset($field['is_required']) && $field['is_required'])
-                                                <span style="color: red;">*</span>
+                                                <span class="settings-red-star">*</span>
                                             @endif
                                         </label>
-                                        <p class="form-explanation">{{ $field['multiple_options']['explanation'] }}</p>
+                                        <p class="form-explanation">{{ __('form.multiple_fields_select') }}</p>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">
                                     @else
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                             @if (isset($field['is_required']) && $field['is_required'])
-                                                <span style="color: red;">*</span>
+                                                <span class="settings-red-star">*</span>
                                             @endif
                                         </label>
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
+                                            @php
+                                                $localized_value = $field['is_localized'] ? __('dictionary.'.$value->name) : $value->name;
+                                            @endphp
                                             @if(old($field_name) !== null && (old($field_name) == $value->id
                                                                              || is_array(old($field_name)) && in_array($value->id, old($field_name))))
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance']) && $data['updating_instance']->$field_name == $value->id)
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @elseif(isset($data['updating_instance'])
                                                     && is_array($data['updating_instance']->$field_name)
                                                     && in_array($value->id, $data['updating_instance']->$field_name))
-                                                {{-- <option selected value="{{ $value->id }}">{{ $field_name }}</option> --}}
-                                                <option selected value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option selected value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @else
-                                                <option value="{{ $value->id }}">{{ $value->name }}</option>
+                                                <option value="{{ $value->id }}">{{ $localized_value }}</option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -101,9 +110,9 @@
                             @if($field['type'] == 'input')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}
                                         @if (isset($field['is_required']) && $field['is_required'])
-                                            <span style="color: red;">*</span>
+                                            <span class="settings-red-star">*</span>
                                         @endif
                                     </label>
                                     <input name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm" id="{{ $field_name }}" value="{{old($field_name) !== null ? old($field_name) : (isset($data['updating_instance']) ? $data['updating_instance']->$field_name : '') }}">
@@ -116,8 +125,8 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation"><span style="color: red;">*</span> Поле, обязательное для заполнения</p>
-                    <button type="submit" class="btn btn-primary">{{isset($data['updating_instance']) ? 'Обновить' : 'Добавить'}}</button>
+                    <p class="form-explanation"><span class="settings-red-star">*</span>{{ __('form.required_field') }}</p>
+                    <button type="submit" class="btn btn-primary">{{isset($data['updating_instance']) ? __('form.update') : __('form.add') }}</button>
                 </form>
             </div>
         </div>

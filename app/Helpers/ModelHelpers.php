@@ -5,7 +5,7 @@ namespace App\Helpers;
 use App\ClassPeriod;
 use App\Group;
 use App\Lesson;
-use App\Teacher;
+use App\Setting;
 use App\WeekDay;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
@@ -33,14 +33,14 @@ class ModelHelpers
         return $instance;
     }
 
-    public static function deleteInstance($id, $model) {
-        $deleting_instance = $model::where('id', $id)->first();
-        if ($deleting_instance) {
-            $model::where('id', $id)->delete();
-            return $deleting_instance;
-        }
-
-        return false;
+    public static function deleteInstance($id, $config) 
+    {
+        $model_name = $config['model_name'];
+        $deleting_instance = $model_name::where('id', $id)->first();
+        
+        $instance_name_field = $config['instance_name_field'];
+        $model_name::where('id', $id)->delete();
+        return ['deleted_instance_name' => $deleting_instance->$instance_name_field];
     }
 
     public static function getAppends($data) {
@@ -61,6 +61,12 @@ class ModelHelpers
 
     public static function getSchedule($incoming_data, $config) {
 
+        $settings = Setting::pluck('value', 'name');
+        $data['week_day_ids'] = config('enum.week_day_ids');
+        $data['weekly_periods'] = config('enum.weekly_periods');
+        $data['weekly_period_ids'] = config('enum.weekly_period_ids');
+        $data['weekly_period_colors'] = config('enum.weekly_period_colors');
+        $data['class_period_ids'] = config('enum.class_period_ids');
         $model_name = $config['model_name'];
         $instance_name = $config['instance_name'];
         $schedule_instance_id = $incoming_data["schedule_{$config['instance_name']}_id"];
@@ -73,23 +79,27 @@ class ModelHelpers
         $week_number = null;
         if (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
-            $data['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
-            $data['week_dates'] = UniversalHelpers::weekDates($week_number);
+            $data['is_red_week'] = DateHelpers::weekColorIsRed($week_number);
+            $data['week_dates'] = DateHelpers::weekDates($week_number);
         }
         
-        $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
+        $week_border_dates = DateHelpers::weekStartEndDates($week_number);
         if ($week_border_dates) {
             $data['week_data'] = [
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
             ];
+            $data['week_days_limit'] = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
+            $data['class_periods_limit'] = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
         } else {
             $data['week_data'] = [
                 'week_number' => $week_number,
                 'start_date' => null,
                 'end_date' => null,
             ];
+            $data['week_days_limit'] = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
+            $data['class_periods_limit'] = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
         }
 
         $weekly_period_ids = config('enum.weekly_period_ids');
@@ -114,11 +124,11 @@ class ModelHelpers
         $data['lessons'] = [];
         foreach ($lessons as $lesson) {
 
-            if (! UniversalHelpers::testLessonDate($week_number, $lesson)) {
+            if (! DateHelpers::testLessonDate($week_number, $lesson)) {
                 continue;
             };
             
-            $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $lesson);
+            $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $lesson);
             if (isset($week_schedule_lesson)) {
                 if ($week_schedule_lesson) {
                     $lesson = $week_schedule_lesson;
@@ -175,11 +185,20 @@ class ModelHelpers
         $model_name = $config['model_name'];
         $instance_name = $config['instance_name'];
         $schedule_instance_id = $incoming_data["schedule_{$config['instance_name']}_id"];
-        // $data['schedule_instance_id'] = $schedule_instance_id;
+        $data['schedule_instance_id'] = $schedule_instance_id;
         $instance_name_field = $config['instance_name_field'];
         $profession_level_name_field = $config['profession_level_name_field'];
         $other_lesson_participant = $config['other_lesson_participant'];
         $other_lesson_participant_name = $config['other_lesson_participant_name'];
+        $settings = Setting::pluck('value', 'name');
+        $data['class_periods_limit'] = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
+        $data['week_days_limit'] = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
+        $data['week_day_ids'] = config('enum.week_day_ids');
+        $data['weekly_periods'] = config('enum.weekly_periods');
+        $data['weekly_period_ids'] = config('enum.weekly_period_ids');
+        $data['weekly_period_colors'] = config('enum.weekly_period_colors');
+        $data['class_period_ids'] = config('enum.class_period_ids');
+        $data['month_number'] = $incoming_data['month_number'];
         
         $weekly_period_ids = config('enum.weekly_period_ids');
         $class_periods = ClassPeriod::get();
@@ -200,24 +219,19 @@ class ModelHelpers
                              ->get();
         }
         
-        $month_week_numbers = UniversalHelpers::getMonthWeekNumbers($incoming_data['month_number']);
+        $month_week_numbers = DateHelpers::getMonthWeekNumbers($incoming_data['month_number']);
         
         $month_value = date('n', strtotime($incoming_data['month_number']));
         $months_genitive = config('enum.months');
 
-        $data['month_name'] = date("{$months_genitive[$month_value]} Y").' года';
+        $data['month_name'] = __('header.'.$months_genitive[$month_value]).' '.date('Y', strtotime($incoming_data['month_number'])).' '.__('header.of_year');
 
         foreach ($month_week_numbers as $week_number) {
             
-            $data['weeks'][$week_number]['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
-            
-            $preliminary_week_dates = UniversalHelpers::weekDates($week_number);
-            $week_days_ru = config('enum.week_days_ru');
-            foreach ($preliminary_week_dates as $key => $date) {
-                $data['weeks'][$week_number]['week_dates'][$week_days_ru[$key]] = date('d.m.y', strtotime($date));
-            }
-                        
-            $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
+            $data['weeks'][$week_number]['is_red_week'] = DateHelpers::weekColorIsRed($week_number);
+            $data['weeks'][$week_number]['week_dates'] = DateHelpers::weekDates($week_number);
+                                    
+            $week_border_dates = DateHelpers::weekStartEndDates($week_number);
             $data['weeks'][$week_number]['week_data'] = [
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
@@ -229,11 +243,11 @@ class ModelHelpers
            
             foreach ($iterated_lessons as $key => $lesson) {
 
-                if (! UniversalHelpers::testLessonDate($week_number, $lessons[$key])) {
+                if (! DateHelpers::testLessonDate($week_number, $lessons[$key])) {
                     continue;
                 };
                 
-                $week_schedule_lesson = UniversalHelpers::getMonthWeeklyScheduleLesson($week_number, $lesson);
+                $week_schedule_lesson = DateHelpers::getMonthWeeklyScheduleLesson($week_number, $lesson);
                 if (isset($week_schedule_lesson)) {
                     if ($week_schedule_lesson) {
                         $lesson = $week_schedule_lesson;
@@ -288,7 +302,8 @@ class ModelHelpers
     public static function getInstanceFormData ($incoming_data, $config)
     {
         $model_name = $config['model_name'];
-        $data = $model_name::getProperties();
+        $dictionary_function = 'get'.ucfirst($config['instance_name']).'Properties';
+        $data = DictionaryHelpers::$dictionary_function();
         $data['add_form_fields'] = config("forms.{$config['instance_name']}");
         if (isset($incoming_data['updating_id'])) {
             $updating_instance = $model_name::where('id', $incoming_data['updating_id'])->first();
@@ -319,8 +334,16 @@ class ModelHelpers
 
     public static function getInstances ($incoming_data, $config)
     {
-        $rows_per_page = config('site.rows_per_page');
+        $rows_per_page_setting = Setting::where('name', 'default_rows_per_page')->first();
+        $rows_per_page = $rows_per_page_setting ? $rows_per_page_setting->value : config('site.rows_per_page');
         $model_name = $config['model_name'];
+
+        $instance_name_arr = explode('_', $config['instance_name']);
+        foreach ($instance_name_arr as &$name_part) {
+            $name_part = ucfirst($name_part);
+        }
+        $dictionary_instance_name = implode('', $instance_name_arr);
+        $dictionary_function = 'get'.$dictionary_instance_name.'Properties';
 
         if (count($incoming_data)) {
             request()->flash();
@@ -328,25 +351,7 @@ class ModelHelpers
 
         $data['table_properties'] = config("tables.{$config['instance_plural_name']}");
         $data['filter_form_fields'] = config()->has("forms.{$config['instance_name']}_filter") ? config("forms.{$config['instance_name']}_filter") : [];
-        $properties = $model_name::getProperties();
-
-        // if (!isset($incoming_data['sort'])) {
-        //     if (isset($incoming_data['deleted_instance_name'])) {
-        //         $data['deleted_instance_name'] = $incoming_data['deleted_instance_name'];
-        //     }
-        //     if (isset($incoming_data['deleting_instance_not_found'])) {
-        //         $data['deleting_instance_not_found'] = true;
-        //     }
-        //     if (isset($incoming_data['updated_instance_name'])) {
-        //         $data['updated_instance_name'] = $incoming_data['updated_instance_name'];
-        //     }
-        //     if (isset($incoming_data['duplicated_lesson'])) {
-        //         $data['duplicated_lesson'] = $incoming_data['duplicated_lesson'];
-        //     }
-        //     if (isset($incoming_data['there_are_lessons_only_with_this_group'])) {
-        //         $data['there_are_lessons_only_with_this_group'] = $incoming_data['there_are_lessons_only_with_this_group'];
-        //     }
-        // }
+        $properties = DictionaryHelpers::$dictionary_function();
 
         $instances = FilterHelpers::getFilteredQuery($model_name::with($config['eager_loading_fields']), $incoming_data, $config['instance_name']);
         $appends = self::getAppends($incoming_data);
@@ -375,33 +380,19 @@ class ModelHelpers
             'other_lesson_participant_name' => $config['other_lesson_participant'],
             'teacher_name' => $rescheduling_lesson->teacher->profession_level_name,
             'teacher_id' => $rescheduling_lesson->teacher->id,
-            'group_id' => $incoming_data['group_id'] ?? null
+            'group_id' => $incoming_data['group_id'] ?? null,
+            'week_day_ids' => $schedule_data['week_day_ids'],
+            'weekly_periods' => $schedule_data['weekly_periods'],
+            'weekly_period_ids' => $schedule_data['weekly_period_ids'],
+            'weekly_period_colors' => $schedule_data['weekly_period_colors'],
+            'class_period_ids' => $schedule_data['class_period_ids'],
+            'week_days_limit' => $schedule_data['week_days_limit'],
+            'class_periods_limit' => $schedule_data['class_periods_limit'],
         ];
 
         $data['week_dates'] = $reschedule_data['week_dates'];
         $data['is_red_week'] = $reschedule_data['is_red_week'];
         $data['week_data'] = $reschedule_data['week_data'];
-
-        // $week_number = null;
-        // if (isset($incoming_data['week_number'])) {
-        //     $week_number = $incoming_data['week_number'];
-        //     $data['is_red_week'] = UniversalHelpers::weekColorIsRed($week_number);
-        //     $data['week_dates'] = UniversalHelpers::weekDates($week_number);
-        // }
-        // $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
-        // if ($week_border_dates) {
-        //     $data['week_data'] = [
-        //         'week_number' => $week_number,
-        //         'start_date' => $week_border_dates['start_date'],
-        //         'end_date' => $week_border_dates['end_date'],
-        //     ];
-        // } else {
-        //     $data['week_data'] = [
-        //         'week_number' => $week_number,
-        //         'start_date' => null,
-        //         'end_date' => null,
-        //     ];
-        // }
 
         if (isset($incoming_data['group_id'])) {
             $data['group_name'] = Group::find($incoming_data['group_id'])->name;
@@ -427,14 +418,6 @@ class ModelHelpers
         return $data;
     }
 
-    // public static function addOrUpdateManyToMany($model_id, $model_name, $attribute_ids, $attribute_name) {
-
-    //     $model = $model_name::find($model_id);
-    //     $model->$attribute_name()->sync($attribute_ids);
-
-    //     return true;
-    // }
-
     public static function addOrUpdateManyToManyAttributes($data, $model_id, $model_name, $attributes) {
 
         $model = $model_name::find($model_id);
@@ -449,15 +432,12 @@ class ModelHelpers
         return true;
     }
 
-    public static function deleteManyToManyAttributes($model_id, $model_name, $attributes) {
+    public static function deleteManyToManyAttributes($model_id, $model_name, $attributes) 
+    {
         $model = $model_name::with($attributes)->find($model_id);
-        if ($model) {
-            foreach ($attributes as $attribute) {
-                $model->$attribute()->detach();
-            }
-            return true;
+        foreach ($attributes as $attribute) {
+            $model->$attribute()->detach();
         }
-        return false;
     }
 
     public static function getManyToManyData($data, $attributes) {
@@ -469,6 +449,15 @@ class ModelHelpers
                 $attribute_ids[] = $elem->id;
             }
             $data['updating_instance']->$field = $attribute_ids;
+        }
+        return $data;
+    }
+
+    public static function preparingBooleans($data, $boolean_attributes) {
+        foreach ($boolean_attributes as $attribute) {
+            if (! isset($data[$attribute])) {
+                $data[$attribute] = 0;
+            }
         }
         return $data;
     }

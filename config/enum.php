@@ -14,11 +14,7 @@ return [
       'land_management' => 3
    ],
 
-   'genders' => [
-      'male' => 'мужчина',
-      'female' => 'женщина',
-      'not_specified' => 'не указано'
-   ],
+   'genders' => ['male', 'female', 'not_specified'],
 
    'class_period_ids' => [
       'first' => 1,
@@ -45,13 +41,13 @@ return [
       'saturday' => 6
    ],
 
-   'week_days_ru' => [
-      1 => 'понедельник',
-      2 => 'вторник',
-      3 => 'среда',
-      4 => 'четверг',
-      5 => 'пятница',
-      6 => 'суббота'
+   'week_days' => [
+      1 => 'monday',
+      2 => 'tuesday',
+      3 => 'wednesday',
+      4 => 'thursday',
+      5 => 'friday',
+      6 => 'saturday'
    ],
 
    'weekly_periods' => [
@@ -92,11 +88,11 @@ return [
 
    'schedule_positions' => [
       ['id' => 1,
-      'name' => 'Между двумя имеющимися парами'],
+      'name' => 'between_two_available_pairs'],
       ['id' => 2,
-      'name' => 'Рядом с одной из имеющихся пар'],
+      'name' => 'next_to_one_of_available_pairs'],
       ['id' => 3,
-      'name' => 'Нет рядом имеющихся пар'],
+      'name' => 'there_are_no_pairs_available_nearby'],
    ],
 
    'schedule_position_ids' => [
@@ -106,18 +102,18 @@ return [
    ],
 
    'months' => [
-      1 => 'январь',
-      2 => 'февраль',
-      3 => 'март',
-      4 => 'апрель',
-      5 => 'май',
-      6 => 'июнь',
-      7 => 'июль',
-      8 => 'август',
-      9 => 'сентябрь',
-      10 => 'октябрь',
-      11 => 'ноябрь',
-      12 => 'декабрь',
+      1 => 'january',
+      2 => 'february',
+      3 => 'march',
+      4 => 'april',
+      5 => 'may',
+      6 => 'june',
+      7 => 'july',
+      8 => 'august',
+      9 => 'september',
+      10 => 'october',
+      11 => 'november',
+      12 => 'december',
    ],
 
    'replacement_request_statuses' => [
@@ -133,7 +129,7 @@ return [
    ],
 
    'replacement_request_status_ids' => [
-      'in drafting' => 1,
+      'in_drafting' => 1,
       'in_consent_waiting' => 2,
       'in_permission_waiting' => 3,
       'permitted' => 4,
@@ -144,15 +140,29 @@ return [
       'not_permitted' => 9,
    ],
 
+   'replacement_request_status_groups' => [
+      'in_management' => [1, 2, 3, 4, 5],
+      'active' => [2, 3, 4, 5],
+   ],
+
    'replacement_request_status_colors' => [
-      1 => '#DCDCDC',
-      2 => '#F0E68C',
-      3 => '#B0E0E6',
-      4 => '#98FB98',
-      5 => '#FFFFFF',
-      6 => '#808080',
-      7 => '#ffc7c7',
-      8 => '#EE82EE',
-      9 => '#F08080',
+      1 => 'rgb(255, 255, 255)',
+      2 => 'rgb(255, 255, 215)',
+      3 => 'rgb(215, 255, 255)',
+      4 => 'rgb(150, 255, 150)',
+      5 => 'rgb(190, 190, 255)',
+      6 => 'rgb(230, 230, 230)',
+      7 => 'rgb(255, 180, 180)',
+      8 => 'rgb(255, 220, 255)',
+      9 => 'rgb(255, 200, 200)',
+   ],
+
+   'external_dataset_ids' => [
+      'xmlcalendar' => 1,
+   ],
+
+   'languages' => [
+      'english' => 'en',
+      'russian' => 'ru',
    ],
 ];

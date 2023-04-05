@@ -41,17 +41,21 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        //        'single' => [
+        //            'driver' => 'single',
+        //            'path' => storage_path('logs/laravel.log'),
+        //            'level' => 'debug',
+        //        ],
         'single' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
+            'days' => 5,
         ],
 
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
-            'level' => 'debug',
-            'days' => 14,
+            'days' => 5,
         ],
 
         'slack' => [
@@ -98,6 +102,42 @@ return [
 
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
+        ],
+
+        'cron' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/crons.log'),
+            'days' => 5,
+        ],
+
+        'mail' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/mails.log'),
+            'days' => 5,
+        ],
+
+        'notification_mail' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/notification_mails.log'),
+            'days' => 5,
+        ],
+
+        'queue' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/queues.log'),
+            'days' => 5,
+        ],
+
+        'websocket' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/websockets.log'),
+            'days' => 5,
+        ],
+
+        'production_calendar' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/production_calendars.log'),
+            'days' => 5,
         ],
     ],
 

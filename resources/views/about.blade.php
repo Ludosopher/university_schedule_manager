@@ -62,7 +62,7 @@
                 самены занятия.</p>
             </li>
         </ul>
-        <div style="height: 100px;"></div>
+        <div class="hp-gap"></div>
     </div>
 
     <footer class="text-center text-lg-start fixed-bottom bg-dark text-light">

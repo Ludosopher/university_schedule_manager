@@ -6,14 +6,16 @@ use App\Helpers\DocExportHelpers;
 use App\Helpers\GroupHelpers;
 use App\Helpers\LessonHelpers;
 use App\Helpers\ModelHelpers;
+use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
+use App\Http\Requests\group\DeleteGroupRequest;
 use App\Http\Requests\group\ExportScheduleToDocGroupRequest;
 use App\Http\Requests\group\FilterGroupRequest;
 use App\Http\Requests\group\MonthScheduleGroupRequest;
 use App\Http\Requests\group\ScheduleGroupRequest;
 use App\Http\Requests\group\StoreGroupRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+
 
 class GroupController extends Controller
 {
@@ -49,36 +51,45 @@ class GroupController extends Controller
     {
         $data = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
 
-        if (is_array($data)) {
-            if (isset($data['updated_instance_name'])) {
-                return redirect()->route("groups")->with('updated_instance_name', $data['updated_instance_name']); //route("groups", ['updated_instance_name' => $data['updated_instance_name']]);
-            } elseif (isset($data['new_instance_name'])) {
-                return redirect()->route("group-add-form")->with('new_instance_name', $data['new_instance_name']); //route("group-add-form", ['new_instance_name' => $data['new_instance_name']]);
-            }
-        }
+        $response_content = ResponseHelpers::getContent($data, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
-    public function deleteGroup (Request $request)
+    public function deleteGroup (DeleteGroupRequest $request)
     {
-        $relation_delited_result = GroupHelpers::deleteGroupLessonRelation($request->deleting_id);
-        if (!$relation_delited_result) {
-            return redirect()->route("groups")->with('deleting_instance_not_found', true); //route("groups", ['deleting_instance_not_found' => true]);
+        $relation_delited_result = GroupHelpers::deleteGroupLessonRelation($request->validated()['deleting_id']);
+        if (isset($relation_delited_result['there_are_lessons_only_with_this_group'])) {
+            $response_content = ResponseHelpers::getContent($relation_delited_result, $this->config['instance_name']);
+            
+            return redirect()->back()->with('response', [
+                'success' => $response_content['success'],
+                'message' => $response_content['message']
+            ]);
         }
-        if ($relation_delited_result === 'there_are_lessons_only_with_this_group') {
-            return redirect()->route("groups")->with('there_are_lessons_only_with_this_group', true); //route("groups", [$relation_delited_result => true]);
-        }
-
-        $deleted_instance = ModelHelpers::deleteInstance($request->deleting_id, $this->config['model_name']);
-        $instance_name_field = $this->config['instance_name_field'];
-        return redirect()->route("groups")->with('deleted_instance_name', $deleted_instance->$instance_name_field); //route("groups", ['deleted_instance_name' => $deleted_instance->$instance_name_field]);
+        
+        $deleted_instance = ModelHelpers::deleteInstance($request->validated()['deleting_id'], $this->config);
+        $response_content = ResponseHelpers::getContent($deleted_instance, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
     public function getGroupSchedule (ScheduleGroupRequest $request)
     {
         $data = ModelHelpers::getSchedule($request->validated(), $this->config);
-
         if (isset($data['duplicated_lesson'])) {
-            return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']);
+            $response_content = ResponseHelpers::getContent($data, $this->config['instance_name']);
+        
+            return redirect()->back()->with('response', [
+                'success' => $response_content['success'],
+                'message' => $response_content['message']
+            ]);
         }
 
         return view("group.group_schedule")->with('data', $data);
@@ -89,7 +100,12 @@ class GroupController extends Controller
         $data = ModelHelpers::getMonthSchedule($request->validated(), $this->config);
         request()->flash();
         if (isset($data['duplicated_lesson'])) {
-            return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']);
+            $response_content = ResponseHelpers::getContent($data, $this->config['instance_name']);
+        
+            return redirect()->back()->with('response', [
+                'success' => $response_content['success'],
+                'message' => $response_content['message']
+            ]);
         }
 
         return view("group.group_month_schedule")->with('data', $data);

@@ -2,13 +2,9 @@
 
 namespace App\Helpers;
 
-use App\Jobs\SendReplacementRequestMail;
-use App\Lesson;
-use App\Mail\MailReplacementRequest;
-use App\Notifications\ReplacementRequestStatusChanged;
 use App\Notifications\ReplacementRequestStatusChangedNotifi;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
+use Log;
 
 class NotificationHelpers
 {
@@ -22,11 +18,18 @@ class NotificationHelpers
             'old_status' => $replacement_request_statuses[$old_status_id],
             'new_status' => $replacement_request_statuses[$request->status_id],
         ];
+        
         $notifi_data['teacher_name'] = $request->replaceable_lesson->teacher->first_name_patronymic;
         Notification::send($replaceable_addressees, new ReplacementRequestStatusChangedNotifi($request, $notifi_data));
+        foreach ($replaceable_addressees as $addressee) {
+            Log::channel('notification_mail')->info('Email notification about replacement request status change was sent to '.$addressee->name.' on '.$addressee->email.'.');
+        }
         
         $notifi_data['teacher_name'] = $request->replacing_lesson->teacher->first_name_patronymic;
         Notification::send($replacing_addressees, new ReplacementRequestStatusChangedNotifi($request, $notifi_data));
+        foreach ($replacing_addressees as $addressee) {
+            Log::channel('notification_mail')->info('Email notification about replacement request status change was sent to '.$addressee->name.' on '.$addressee->email.'.');
+        }
     }
 
     

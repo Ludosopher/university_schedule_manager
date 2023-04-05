@@ -51,6 +51,22 @@ class CreateReplacementRequestTable extends Migration
             $table->timestamps();
         });
 
+        Schema::create('external_datasets', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('url_pattern')->nullable();
+            $table->text('body')->nullable();
+            $table->date('update_date')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('settings', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('value');
+            $table->timestamps();
+        });
+
        
     }
 
@@ -63,7 +79,9 @@ class CreateReplacementRequestTable extends Migration
     {
         Schema::dropIfExists('replacement_request_statuses');
         Schema::dropIfExists('replacement_requests');
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('replacement_request_messages');
+        Schema::dropIfExists('external_datasets');
+        Schema::dropIfExists('settings');
     
     }
 }

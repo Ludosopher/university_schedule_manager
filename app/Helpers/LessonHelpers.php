@@ -6,12 +6,12 @@ use App\ClassPeriod;
 use App\Group;
 use App\Http\Controllers\TeacherController;
 use App\Lesson;
+use App\Setting;
 use App\Teacher;
 use App\WeekDay;
-use App\WeeklyPeriod;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
+
 
 class LessonHelpers
 {
@@ -49,40 +49,10 @@ class LessonHelpers
         foreach ($groups_lessons as $g_lesson) {
             if (!in_array($g_lesson->teacher->id, $looked_teachers)) {
                 foreach ($g_lesson->teacher->lessons as $key => $dt_lesson) {
-                    //----------
-                    // if ($g_lesson->teacher->id == 7 && $dt_lesson->class_period_id == 1 && $dt_lesson->week_day_id == 4) {
-                    //     echo '<pre>';
-                    //     print_r($dt_lesson->class_period_id);
-                    //     print_r($dt_lesson->week_day_id);
-                    //     print_r($dt_lesson->weekly_period_id);
-                    //     echo '</pre>';
-                        
-                    //     echo '<pre>';
-                    //     print_r('__'.$data['class_period_id']);
-                    //     print_r('__'.$data['week_day_id']);
-                    //     print_r('__'.$data['weekly_period_id']);
-                    //     print_r('__'.$weekly_period_ids['every_week']);
-                    //     echo '</pre>';
-
-                    //     echo '<pre>';
-                    //     print_r($dt_lesson->class_period_id == $data['class_period_id']);
-                    //     print_r($dt_lesson->week_day_id == $data['week_day_id']);
-                    //     print_r($dt_lesson->weekly_period_id == $weekly_period_ids['every_week']);
-                    //     echo '</pre>';
-                    // }
-                    //----------
                     if ($dt_lesson->week_day_id == $data['week_day_id']
                         && ($dt_lesson->weekly_period_id == $data['weekly_period_id'] || $dt_lesson->weekly_period_id == $weekly_period_ids['every_week'] || $data['weekly_period_id'] == $weekly_period_ids['every_week'])
                         && $dt_lesson->class_period_id == $data['class_period_id'])
                     {
-                        
-                        //----------
-                        // if ($g_lesson->teacher->id == 7) {
-                        //     echo '<pre>';
-                        //     print_r('is_not_suitable_teacher');
-                        //     echo '</pre>';
-                        // }
-                        //----------
                         $is_suitable_teacher = false;
                         break;
                     }
@@ -90,10 +60,10 @@ class LessonHelpers
                 $looked_teachers[] = $g_lesson->teacher->id;
                 if ($is_suitable_teacher) {
                     foreach ($g_lesson->teacher->lessons as $dt_lesson) {
-                        if (!UniversalHelpers::testLessonDate($week_number, $dt_lesson)) {
+                        if (! DateHelpers::testLessonDate($week_number, $dt_lesson)) {
                             continue;
                         };
-                        $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $dt_lesson);
+                        $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $dt_lesson);
                         $w_p_field = 'weekly_period_id';
                         if (isset($week_schedule_lesson)) {
                             if ($week_schedule_lesson) {
@@ -108,14 +78,17 @@ class LessonHelpers
                         {
                             continue;
                         }
+                        if (isset($week_dates) && is_array($week_dates[$dt_lesson->weekly_period_id]) && isset($week_dates[$dt_lesson->weekly_period_id]['is_holiday'])) {
+                            continue;
+                        }
                         $dt_lesson_groups_ids = array_column($dt_lesson->groups->toArray(), 'id');
                         sort($dt_lesson_groups_ids);
                         if (count($dt_lesson_groups_ids) == count($groups_ids) && $dt_lesson_groups_ids === $groups_ids) {
                             foreach ($seeking_teacher->lessons as $st_lesson) {
-                                if (!UniversalHelpers::testLessonDate($week_number, $st_lesson)) {
+                                if (! DateHelpers::testLessonDate($week_number, $st_lesson)) {
                                     continue;
                                 };
-                                $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $st_lesson);
+                                $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $st_lesson);
                                 if (isset($week_schedule_lesson)) {
                                     if ($week_schedule_lesson) {
                                         $st_lesson = $week_schedule_lesson;
@@ -137,7 +110,7 @@ class LessonHelpers
                                 
                                 $replacing_date_time = null;
                                 $replacing_hours_diff = null;
-                                if (isset($week_dates)) {
+                                if (isset($week_dates) && ! is_array($week_dates[$dt_lesson->week_day->id])) {
                                     $lesson_date = $week_dates[$dt_lesson->week_day->id];
                                     $replacing_date = date('Y-m-d', strtotime(str_replace('"', '', $lesson_date)));
                                     $class_period_start_time = date('H:i', strtotime($normalaze_class_periods[$dt_lesson->class_period->id]['start']));
@@ -194,11 +167,11 @@ class LessonHelpers
         }
 
         if ($is_prev_lesson && $is_next_lesson) {
-            $result = ['id' => 1, 'name' => 'Между двумя имеющимися парами'];
+            $result = ['id' => 1, 'name' => 'between_two_available_pairs'];
         } elseif ($is_prev_lesson || $is_next_lesson) {
-            $result = ['id' => 2, 'name' => 'Рядом с одной из имеющихся пар'];
+            $result = ['id' => 2, 'name' => 'next_to_one_of_available_pairs'];
         } else {
-            $result = ['id' => 3, 'name' => 'Нет рядом имеющихся пар'];
+            $result = ['id' => 3, 'name' => 'there_are_no_pairs_available_nearby'];
         }
 
         return $result;
@@ -206,25 +179,30 @@ class LessonHelpers
 
     public static function getReplacementData($incoming_data)
     {
+        $settings = Setting::pluck('value', 'name');
+        $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
+        $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
         $replacement_lessons = [];
         $header_data = [];
         $date_or_weekly_period = '';
 
-        if (isset($incoming_data['week_data'])) {
-            $week_data = json_decode($incoming_data['week_data'], true);
-            $week_number = $week_data['week_number'];
-            $week_dates = json_decode($incoming_data['week_dates'], true);
-            $is_red_week = $incoming_data['is_red_week'];
-        } elseif (isset($incoming_data['week_number'])) {
+        if (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
-            $week_dates = UniversalHelpers::weekDates($week_number);
-            $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
-            $is_red_week = UniversalHelpers::weekColorIsRed($week_number);
+            $week_dates = DateHelpers::weekDates($week_number);
+            $week_border_dates = DateHelpers::weekStartEndDates($week_number);
+            $is_red_week = DateHelpers::weekColorIsRed($week_number);
             $week_data = [
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
             ];
+            $class_periods_limit = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
+            $week_days_limit = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
+        } elseif (isset($incoming_data['week_data'])) {
+            $week_data = json_decode($incoming_data['week_data'], true);
+            $week_number = $week_data['week_number'];
+            $week_dates = json_decode($incoming_data['week_dates'], true);
+            $is_red_week = $incoming_data['is_red_week'];
         } else {
             $week_data = null;
             $week_number = null;
@@ -253,7 +231,7 @@ class LessonHelpers
                 'teacher' => $replacemented_lesson->teacher->profession_level_name,
                 'group' => $replacemented_lesson->groups_name,
             ];
-            $date_or_weekly_period = mb_strtolower($replacemented_lesson->weekly_period->name);
+            $date_or_weekly_period = __('dictionary.'.$replacemented_lesson->weekly_period->name);
         }
 
         $replaceable_date_time = null;
@@ -278,46 +256,51 @@ class LessonHelpers
             'date_or_weekly_period' => $date_or_weekly_period,
             'replaceable_date_time' => $replaceable_date_time,
             'replaceable_hours_diff' => $replaceable_hours_diff,
+            'week_day_ids' => config('enum.week_day_ids'),
+            'weekly_periods' => config('enum.weekly_periods'),
+            'weekly_period_ids' => config('enum.weekly_period_ids'),
+            'weekly_period_colors' => config('enum.weekly_period_colors'),
+            'class_period_ids' => config('enum.class_period_ids'),
+            'week_days_limit' => $week_days_limit,
+            'class_periods_limit' => $class_periods_limit,
         ];
 
-        return array_merge($data, Lesson::getReplacementProperties());
+        return array_merge($data, DictionaryHelpers::getReplacementProperties());
     }
 
-    public static function getReschedulingData($incoming_data) {
-
+    public static function getReschedulingData($incoming_data) 
+    {
+        $settings = Setting::pluck('value', 'name');
+        $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
+        $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
         $teacher = Teacher::with(['lessons'])->where('id', $incoming_data['teacher_id'])->first();
         $lesson = Lesson::with(['groups.lessons'])->where('id', $incoming_data['lesson_id'])->first();
         $weekly_period_ids = config('enum.weekly_period_ids');
-        $week_days_limits = config('site.week_days_limits');
-        $class_periods_limits = config('site.class_periods_limits');
         $week_days = WeekDay::select('id', 'name')->get();
         $class_periods = ClassPeriod::get();
-        if (isset($incoming_data['week_data'])) {
+        
+        if (isset($incoming_data['week_data']) && isset($incoming_data['week_data']['week_number'])) {
             $week_data = json_decode($incoming_data['week_data'], true);
             $week_number = $week_data['week_number'];
-            $week_dates = json_decode($incoming_data['week_dates']);
+            $week_dates = json_decode($incoming_data['week_dates'], true);
             $is_red_week = $incoming_data['is_red_week'];
-            $class_periods_limit = $class_periods_limits['distance'];
-            $week_days_limit = $week_days_limits['distance'];
         } elseif (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
-            $week_dates = UniversalHelpers::weekDates($week_number);
-            $week_border_dates = UniversalHelpers::weekStartEndDates($week_number);
-            $is_red_week = UniversalHelpers::weekColorIsRed($week_number);
+            $week_dates = DateHelpers::weekDates($week_number);
+            $week_border_dates = DateHelpers::weekStartEndDates($week_number);
+            $is_red_week = DateHelpers::weekColorIsRed($week_number);
             $week_data = [
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
             ];
-            $class_periods_limit = $class_periods_limits['distance'];
-            $week_days_limit = $week_days_limits['distance'];
+            $class_periods_limit = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
+            $week_days_limit = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
         } else {
             $week_data = null;
             $week_number = null;
             $week_dates = null;
             $is_red_week = null;
-            $class_periods_limit = $class_periods_limits['full_time'];
-            $week_days_limit = $week_days_limits['full_time'];
         }
 
         $schedule_subjects[] = $teacher->lessons;
@@ -338,10 +321,10 @@ class LessonHelpers
                     if ($class_period->id <= $class_periods_limit) {
                         foreach ($schedule_subjects as $key => $subject_lessons) {
                             foreach ($subject_lessons as $sub_lesson) {
-                                if (!UniversalHelpers::testLessonDate($week_number, $sub_lesson)) {
+                                if (! DateHelpers::testLessonDate($week_number, $sub_lesson)) {
                                     continue;
                                 };
-                                $week_schedule_lesson = UniversalHelpers::getWeeklyScheduleLesson($week_number, $sub_lesson);
+                                $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $sub_lesson);
                                 if (isset($week_schedule_lesson)) {
                                     if ($week_schedule_lesson) {
                                         $sub_lesson = $week_schedule_lesson;
@@ -402,6 +385,14 @@ class LessonHelpers
             'week_data' => $week_data,
             'week_dates' => $week_dates,
             'is_red_week' => $is_red_week,
+            'week_day_ids' => config('enum.week_day_ids'),
+            'weekly_period' => config('enum.weekly_periods'),
+            'weekly_period_id' => config('enum.weekly_period_ids'),
+            'weekly_period_color' => config('enum.weekly_period_colors'),
+            'class_period_ids' => config('enum.class_period_ids'),
+            'week_days_limit' => $week_days_limit,
+            'class_periods_limit' => $class_periods_limit,
+            'free_weekly_period_colors' => config('enum.free_weekly_period_colors'),
         ];
 
         return $data;

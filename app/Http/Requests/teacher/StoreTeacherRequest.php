@@ -29,7 +29,7 @@ class StoreTeacherRequest extends FormRequest
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'patronymic' => 'nullable|string',
-            'gender' => 'required|in:мужчина,женщина,не указано',
+            'gender' => 'required|in:male,female,not_specified',
             'birth_year' => 'required|integer|min:1900|max:2099',
             'phone' => 'required|string',
             'email' => 'required|email',

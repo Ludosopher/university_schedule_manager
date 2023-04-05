@@ -78,7 +78,7 @@ class Teacher extends Model
 
     public function getProfessionLevelNameAttribute()
     {
-        $professional_level = $this->professional_level->short_name;
+        $professional_level = __('dictionary.'.$this->professional_level->short_name);
         // $academic_degree = isset($this->academic_degree_id) ? ', '.$this->academic_degree->short_name : '';
         $last_name = $this->last_name;
         $first_name_abbr = mb_substr($this->first_name, 0, 1).'.';
@@ -90,17 +90,6 @@ class Teacher extends Model
     public function getAgeAttribute()
     {
         return Carbon::parse("{$this->birth_year}-06-15")->diffInYears();
-    }
-
-    public static function getProperties() {
-        return [
-            'faculties' => Faculty::select('id', 'name')->get(),
-            'departments' => Department::select('id', 'name')->get(),
-            'professional_levels' => ProfessionalLevel::select('id', 'name')->get(),
-            'positions' => Position::select('id', 'name')->get(),
-            'academic_degrees' => AcademicDegree::select('id', 'name')->get(),
-            'genders' => config('enum.genders')
-        ];
     }
 
 }

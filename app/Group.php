@@ -54,26 +54,15 @@ class Group extends Model
     
     public function getNameAttribute()
     {
-        $study_degree = $this->study_degree->abbreviation;
-        $study_form = $this->study_form->abbreviation;
-        $faculty = $this->faculty->abbreviation;
+        $study_degree = __('dictionary.'.$this->study_degree->abbreviation);
+        $study_form =  __('dictionary.'.$this->study_form->abbreviation);
+        $faculty =  __('dictionary.'.$this->faculty->abbreviation);
         $cours = $this->course->number;
-        $study_program = $this->study_program->abbreviation;
-        $study_orientation = mb_strtolower($this->study_orientation->abbreviation);
-        $additional_id = isset($this->additional_id) ? "/$this->additional_id" : "";
+        $study_program =  __('dictionary.'.$this->study_program->abbreviation);
+        $study_orientation = __('dictionary.'.$this->study_orientation->abbreviation);
+        $additional_id = isset($this->additional_id) ? "/".__('dictionary.'.$this->additional_id) : "";
         
         return "{$study_degree}.{$study_form}.{$faculty}-{$cours}-{$study_program}({$study_orientation}){$additional_id}";
     }
 
-    public static function getProperties() {
-        return [
-            'groups' => Group::orderBy('study_degree_id')->orderBy('study_form_id')->orderBy('faculty_id')->orderBy('course_id')->get(),
-            'faculties' => Faculty::select('id', 'name')->get(),
-            'study_programs' => StudyProgram::select('id', 'name')->get(),
-            'study_orientations' => StudyOrientation::select('id', 'name')->get(),
-            'study_degrees' => StudyDegree::select('id', 'name')->get(),
-            'study_forms' => StudyForm::select('id', 'name')->get(),
-            'courses' => Course::select('id', 'name')->get(),
-        ];
-    }
 }

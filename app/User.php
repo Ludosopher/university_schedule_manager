@@ -83,30 +83,12 @@ class User extends Authenticatable
 
     public function getModeratorAttribute()
     {
-        return $this->is_moderator ? 'Да' : 'Нет';
+        return $this->is_moderator ? __('content.yes') : __('content.no');
     }
 
     public function getAdminAttribute()
     {
-        return $this->is_admin ? 'Да' : 'Нет';
+        return $this->is_admin ? __('content.yes') : __('content.no');
     }
 
-    public static function getProperties() {
-
-        $groups = Group::orderBy('study_form_id')
-                        ->orderBy('study_degree_id')
-                        ->orderBy('faculty_id')
-                        ->orderBy('course_id')
-                        ->get();
-
-        $teachers = Teacher::orderBy('last_name')->get();
-        foreach ($teachers as &$teacher) {
-            $teacher->name = $teacher->profession_level_name;
-        }
-
-        return [
-            'groups' => $groups,
-            'teachers' => $teachers
-        ];
-    }
 }

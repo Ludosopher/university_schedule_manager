@@ -1,30 +1,27 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if (isset($data['deleted_instance_name']))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', $data['deleted_instance_name'], __('user.user_removed')) }}
-            </div>
+        @if ($errors->any() && $errors->has('deleting_id'))
+            @foreach($errors->get('deleting_id') as $error)
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ $error }}
+                </div>
+            @endforeach
         @endif
-        @if (isset($data['deleting_instance_not_found']))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('user.user_not_found') }}
-            </div>
+        @if (\Session::has('response'))
+            @if(\Session::get('response')['success'])
+                <div class="alertAccess">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @else
+                <div class="alertFail">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    {{ \Session::get('response')['message'] }}
+                </div>
+            @endif
         @endif
-        @if (isset($data['updated_instance_name']))
-            <div class="alertAccess">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ str_replace('?', $data['updated_instance_name'], __('user.user_updated')) }}
-            </div>
-        @endif
-        {{-- @if($errors->any() && ($errors->has('schedule_teacher_id') || $errors->has('week_number')))
-            <div class="alertFail">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                {{ __('user_validation.invalid_input_data') }}
-            </div>
-        @endif --}}
         <div class="getAllContainer">
             <div class="getAllLeft">
                 <h4>Найти</h4>
@@ -34,7 +31,7 @@
                         @foreach($data['filter_form_fields'] as $field)
                             @if($field['type'] == 'between')
                                 @php $field_name = $field['name']; @endphp
-                                <h6>{{ $field['header'] }}</h6>
+                                <h6>{{ __('form.'.$field['name']) }}</h6>
                                 <div class="birthYear">
                                     <div class="integer-input-div">
                                         <label for="{{$field_name}}_from" class="form-label">От</label>
@@ -60,10 +57,10 @@
                                 @php $field_name = $field['name'].'_id'; @endphp
                                 <div class="mb-3">
                                     @if(isset($field['multiple_options']) && is_array($field['multiple_options']) && $field['multiple_options']['is_multiple'])
-                                        <label class="form-label">{{ $field['header'] }}<span style="color: green;">*</span></label>
+                                        <label class="form-label">{{ __('form.'.$field['name']) }}<span class="settings-green-star">*</span></label>
                                         <select multiple size="{{ $field['multiple_options']['size'] }}" name="{{ $field_name }}[]" class="form-select" aria-label="Default select example">
                                     @else
-                                        <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
+                                        <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
                                         <select name="{{ $field_name }}" class="form-select" aria-label="Default select example">
                                     @endif
                                         @foreach($data[$field['plural_name']] as $value)
@@ -99,7 +96,7 @@
                                         @else
                                             <input class="form-check-input" name="{{ $field_name }}" type="checkbox" id="{{ $field_name }}" value="{{ true }}">
                                         @endif
-                                        <label class="form-check-label" for="{{ $field_name }}">{{ $field['header'] }}</label>
+                                        <label class="form-check-label" for="{{ $field_name }}">{{ __('form.'.$field['name']) }}</label>
                                     </div>
                                     @if ($errors !== null && $errors->has($field_name))
                                         @foreach($errors->get($field_name) as $error)
@@ -111,7 +108,7 @@
                             @if($field['type'] == 'input')
                                 @php $field_name = $field['name']; @endphp
                                 <div class="mb-3">
-                                    <label for="{{ $field_name }}" class="form-label">{{ $field['header'] }}</label>
+                                    <label for="{{ $field_name }}" class="form-label">{{ __('form.'.$field['name']) }}</label>
                                     <input name="{{ $field_name }}" type="{{ $field['input_type'] }}" class="form-control form-control-sm filter-input" id="{{ $field_name }}" value="{{ old($field_name) !== null && count(request()->all()) ? old($field_name) : '' }}">
                                     @if ($errors !== null && $errors->has($field_name))
                                         @foreach($errors->get($field_name) as $error)
@@ -122,12 +119,12 @@
                             @endif
                         @endforeach
                     @endif
-                    <p class="form-explanation"><span style="color: green;">*</span> Для выбора нескольких полей нажмите и удерживайте клавишу 'Ctrl'. Также и для отмены выбора.</p>
-                    <button type="submit" class="btn btn-primary form-button">Показать</button>
+                    <p class="form-explanation"><span class="settings-green-star">*</span>{{ __('form.multiple_fields_select') }}</p>
+                    <button type="submit" class="btn btn-primary form-button">{{ __('form.show') }}</button>
                 </form>
             </div>
             <div class="getAllRight">
-                <h1>Пользователи</h1>
+                <h1>{{ __('header.users') }}</h1>
                 <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
                     <thead>
                         <tr>
@@ -136,22 +133,22 @@
                                 @if($property['sorting'])
                                     @if(is_array($property['field']) && isset($property['sort_name']))
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], __('table_header.'.$property['header']), [], ['title' => __('title.sort'), 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @elseif(is_array($property['field']))
                                         @php
                                             $full_field = implode('.', $property['field']);
                                         @endphp
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, __('table_header.'.$property['header']), [], ['title' => __('title.sort'), 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @else
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], $property['header'], [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], __('table_header.'.$property['header']), [], ['title' => __('title.sort'), 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @endif
                                 @else
-                                    <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                                    <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                                 @endif
                             @endforeach
                         </tr>
@@ -198,7 +195,7 @@
                         <tr>
                             <th class="th-sm text-center align-top"></th>
                             @foreach($data['table_properties'] as $property)
-                                <th class="th-sm text-center align-top">{{ $property['header'] }}</th>
+                                <th class="th-sm text-center align-top">{{ __('table_header.'.$property['header']) }}</th>
                             @endforeach
                         </tr>
                     </tfoot>

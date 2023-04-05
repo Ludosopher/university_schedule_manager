@@ -2,7 +2,7 @@
 
 return [
    
-   'rows_per_page' => 10,
+   'rows_per_page' => 15,
 
    'week_days_limits' => [
       'full_time' => 5,

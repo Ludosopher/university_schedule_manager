@@ -53,9 +53,11 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
+        'setlocate' => \App\Http\Middleware\SetLocate::class,
         'replacer' => \App\Http\Middleware\CheckReplacementRequestPermission::class,
         'moderator' => \App\Http\Middleware\CheckModeratorPermission::class,
         'admin' => \App\Http\Middleware\CheckAdminPermission::class,
+        'user' => \App\Http\Middleware\CheckUserUpdatePermission::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,

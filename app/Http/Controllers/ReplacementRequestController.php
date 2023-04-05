@@ -5,15 +5,16 @@ namespace App\Http\Controllers;
 use App\Helpers\MailHelpers;
 use App\Helpers\ModelHelpers;
 use App\Helpers\ReplacementRequestHelpers;
+use App\Helpers\ResponseHelpers;
 use App\Helpers\TeacherHelpers;
 use App\Helpers\ValidationHelpers;
+use App\Http\Requests\replacement_request\DeleteReplacementReqRequest;
 use App\Http\Requests\replacement_request\FilterReplacementReqRequest;
 use App\Http\Requests\replacement_request\SendReplacementReqRequest;
 use App\Http\Requests\replacement_request\StoreReplacementReqRequest;
-use App\Mail\MailReplacementRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
+
 
 class ReplacementRequestController extends Controller
 {
@@ -50,37 +51,42 @@ class ReplacementRequestController extends Controller
     {
         $validation = ValidationHelpers::addReplacementRequestValidation($request->all());
         if (! $validation['success']) {
-            $replace_rules = json_decode($request->all()['prev_replace_rules'], true);
-            return redirect()->route("lesson-replacement", [
-                'replace_rules' => $replace_rules,
-                'week_data' => $request->week_data,
-                'week_dates' => $request->week_dates,
-                'is_red_week' => $request->is_red_week,
-            ])->withErrors($validation['validator']);
+            return redirect()->route("lesson-replacement", ResponseHelpers::getLessonReplacementBackData($request->all()))
+                             ->withErrors($validation['validator']);
         }
 
         $new_request = ModelHelpers::addOrUpdateInstance($validation['validated'], $this->config);
 
-        return redirect()->route("my_replacement_requests")->with('new_instance_name', $new_request['new_instance_name']);
+        $response_content = ResponseHelpers::getContent($new_request, $this->config['instance_name']);
+        
+        return redirect()->route("my_replacement_requests")->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
     public function updateReplacementRequest (StoreReplacementReqRequest $request)
     {
         $replacement_request = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
 
-        return redirect()->back()->with('updated_instance_name', $replacement_request['updated_instance_name']);
+        $response_content = ResponseHelpers::getContent($replacement_request, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
-    public function deleteReplacementRequest (Request $request)
+    public function deleteReplacementRequest (DeleteReplacementReqRequest $request)
     {
-        $deleted_instance = ReplacementRequestHelpers::deleteReplacementRequest($request->deleting_id, $this->config['model_name']);
+        $deleted_instance = ReplacementRequestHelpers::deleteReplacementRequest($request->validated()['deleting_id'], $this->config);
 
-        if ($deleted_instance) {
-            $instance_name_field = $this->config['instance_name_field'];
-            return redirect()->route("my_replacement_requests")->with('deleted_instance_name', $deleted_instance->$instance_name_field);
-        } else {
-            return redirect()->route("my_replacement_requests")->with('deleting_instance_not_found', true);
-        }
+        $response_content = ResponseHelpers::getContent($deleted_instance, $this->config['instance_name']);
+        
+        return redirect()->back()->with('response', [
+            'success' => $response_content['success'],
+            'message' => $response_content['message']
+        ]);
     }
 
     public function sendReplacementRequest (SendReplacementReqRequest $request)
@@ -89,18 +95,11 @@ class ReplacementRequestController extends Controller
         MailHelpers::sendReplacementRequest($data);
         $replacement_request = ModelHelpers::addOrUpdateInstance($request->validated(), $this->config);
 
-        // if ($message_errors) {
-        //     return redirect()->back()->with('response', [
-        //         'errors' => "При отправке просьбы о замене возникли ошибки: \n".implode("\n", $message_errors),
-        //         'results' => [$replacement_request['updated_instance_name']. ' успешно обновлена.'],
-        //     ]);
-        // }
-
+        $response_content = ResponseHelpers::getContent($replacement_request, $this->config['instance_name']);
+        
         return redirect()->back()->with('response', [
-            'results' => [
-                "Просьба о замене успешно отправлена",
-                $replacement_request['updated_instance_name']. 'успешно обновлена.',
-            ],
+            'success' => $response_content['success'],
+            'message' => __('replacement_request.replacement_request_sended')."\n".$response_content['message']
         ]);
     }
 

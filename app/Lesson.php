@@ -67,9 +67,9 @@ class Lesson extends Model
 
     public function getGroupsNameAttribute()
     {
-        $study_degree = $this->groups[0]->study_degree->abbreviation;
-        $study_form = $this->groups[0]->study_form->abbreviation;
-        $faculty = $this->groups[0]->faculty->abbreviation;
+        $study_degree = __('dictionary.'.$this->groups[0]->study_degree->abbreviation);
+        $study_form = __('dictionary.'.$this->groups[0]->study_form->abbreviation);
+        $faculty = __('dictionary.'.$this->groups[0]->faculty->abbreviation);
         $cours = $this->groups[0]->course->number;
 
         $groups_name = "{$study_degree}.{$study_form}.{$faculty}-{$cours}-";
@@ -77,59 +77,17 @@ class Lesson extends Model
         if (count($this->groups) > 1) {
             $variative_part_arr = [];
             foreach ($this->groups as $group) {
-                $study_program = $group->study_program->abbreviation;
+                $study_program = __('dictionary.'.$group->study_program->abbreviation);
                 $variative_part_arr[] = $study_program;
             }
             return $groups_name.'['.implode('; ', $variative_part_arr).']';
         }
 
-        $study_program = $this->groups[0]->study_program->abbreviation;
-        $study_orientation = mb_strtolower($this->groups[0]->study_orientation->abbreviation);
-        $additional_id = isset($this->groups[0]->additional_id) ? "/$this->additional_id" : "";
+        $study_program = __('dictionary.'.$this->groups[0]->study_program->abbreviation);
+        $study_orientation = mb_strtolower(__('dictionary.'.$this->groups[0]->study_orientation->abbreviation));
+        $additional_id = isset($this->groups[0]->additional_id) ? "/".__('dictionary.'.$this->additional_id) : "";
 
         return "{$groups_name}{$study_program}({$study_orientation}){$additional_id}";
     }
 
-    public static function getProperties() {
-
-        $groups = Group::orderBy('study_form_id')
-                        ->orderBy('study_degree_id')
-                        ->orderBy('faculty_id')
-                        ->orderBy('course_id')
-                        ->get();
-
-        $teachers = Teacher::orderBy('last_name')->get();
-        foreach ($teachers as &$teacher) {
-            $teacher->name = $teacher->profession_level_name;
-        }
-
-        return [
-            'lesson_types' => LessonType::select('id', 'name')->get(),
-            'week_days' => WeekDay::select('id', 'name')->get(),
-            'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),
-            'class_periods' => ClassPeriod::select('id', 'name')->get(),
-            'lesson_rooms' => LessonRoom::select('id', 'number AS name')->get(),
-            'groups' => $groups,
-            'teachers' => $teachers
-        ];
-    }
-
-    public static function getReplacementProperties() {
-
-        $class_periods = ClassPeriod::get();
-        
-        return [
-            'lesson_types' => LessonType::select('id', 'name')->get(),
-            'week_days' => WeekDay::select('id', 'name')->get(),
-            'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),
-            'class_periods' => $class_periods,
-            'normalize_class_periods' => array_combine(range(1, count($class_periods)), array_values($class_periods->toArray())),
-            'faculties' => Faculty::select('id', 'name')->get(),
-            'departments' => Department::select('id', 'name')->get(),
-            'professional_levels' => ProfessionalLevel::select('id', 'name')->get(),
-            'positions' => Position::select('id', 'name')->get(),
-            'lesson_rooms' => LessonRoom::select('id', 'number AS name')->get(),
-            'schedule_positions' => collect(config('enum.schedule_positions'))
-        ];
-    }
 }

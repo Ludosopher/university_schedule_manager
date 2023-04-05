@@ -4,22 +4,22 @@ return [
    'teachers' => [
       [
          'field' => 'full_name',
-         'header' => 'Ф.И.О.',
+         'header' => 'full_name',
          'sorting' => true
       ],
       [
          'field' => 'age',
-         'header' => 'Возраст',
+         'header' => 'age',
          'sorting' => true
       ],
       [
          'field' => 'phone',
-         'header' => 'Телефон',
+         'header' => 'phone',
          'sorting' => false
       ],
       [
          'field' => 'email',
-         'header' => 'Электронная почта',
+         'header' => 'email',
          'sorting' => false
       ],
       [
@@ -27,7 +27,7 @@ return [
             'faculty',
             'name'
          ],
-         'header' => 'Факультет',
+         'header' => 'faculty',
          'sorting' => true
       ],
       [
@@ -35,7 +35,7 @@ return [
             'department',
             'name'
          ],
-         'header' => 'Кафедра',
+         'header' => 'department',
          'sorting' => true
       ],
       [
@@ -43,7 +43,7 @@ return [
             'professional_level',
             'name'
          ],
-         'header' => 'Профессиональный уровень',
+         'header' => 'professional_level',
          'sorting' => true
       ],
       [
@@ -51,7 +51,7 @@ return [
             'position',
             'name'
          ],
-         'header' => 'Должность',
+         'header' => 'position',
          'sorting' => true
       ],
       [
@@ -59,14 +59,14 @@ return [
             'academic_degree',
             'name'
          ],
-         'header' => 'Учёная степень',
+         'header' => 'academic_degree',
          'sorting' => true
       ],
    ],
    'groups' => [
       [
          'field' => 'name',
-         'header' => 'Название',
+         'header' => 'name',
          'sorting' => false
       ],
       [
@@ -74,7 +74,7 @@ return [
             'faculty',
             'name'
          ],
-         'header' => 'Факультет',
+         'header' => 'faculty',
          'sorting' => true
       ],
       [
@@ -82,7 +82,7 @@ return [
             'study_program',
             'name'
          ],
-         'header' => 'Учебная программа',
+         'header' => 'study_program',
          'sorting' => true
       ],
       [
@@ -90,7 +90,7 @@ return [
             'study_orientation',
             'name'
          ],
-         'header' => 'Специальность',
+         'header' => 'study_orientation',
          'sorting' => true
       ],
       [
@@ -98,7 +98,7 @@ return [
             'study_degree',
             'name'
          ],
-         'header' => 'Уровень образования',
+         'header' => 'study_degree',
          'sorting' => true
       ],
       [
@@ -106,7 +106,7 @@ return [
             'study_form',
             'name'
          ],
-         'header' => 'Форма образования',
+         'header' => 'study_form',
          'sorting' => true
       ],
       [
@@ -114,12 +114,12 @@ return [
             'course',
             'number'
          ],
-         'header' => 'Курс',
+         'header' => 'course',
          'sorting' => true
       ],
       [
          'field' => 'size',
-         'header' => 'Численность',
+         'header' => 'size',
          'sorting' => true
       ],
    ],
@@ -129,12 +129,12 @@ return [
             'class_period',
             'id'
          ],
-         'header' => 'Пара',
+         'header' => 'class_period',
          'sorting' => true
       ],
       [
          'field' => 'name',
-         'header' => 'Предмет',
+         'header' => 'subject',
          'sorting' => true
       ],
       [
@@ -142,7 +142,7 @@ return [
             'lesson_type',
             'name'
          ],
-         'header' => 'Вид',
+         'header' => 'lesson_type',
          'sorting' => true
       ],
       [
@@ -150,7 +150,7 @@ return [
            'lesson_room',
            'number'
         ],
-        'header' => 'Аудитория',
+        'header' => 'lesson_room',
         'sorting' => true
       ],
       [
@@ -158,7 +158,7 @@ return [
             'week_day',
             'name'
          ],
-         'header' => 'День недели (дата)',
+         'header' => 'week_day',
          'sorting' => true
       ],
       [
@@ -166,12 +166,12 @@ return [
             'weekly_period',
             'name'
          ],
-         'header' => 'Недельная периодичность',
+         'header' => 'weekly_period',
          'sorting' => true
       ],
       [
          'field' => 'groups_name',
-         'header' => 'Группа(ы)',
+         'header' => 'group',
          'sorting' => false
       ],
       [
@@ -180,81 +180,81 @@ return [
             'profession_level_name'
          ],
          'sort_name' => 'profession_level_name',
-         'header' => 'Преподаватель',
+         'header' => 'teacher',
          'sorting' => true
       ],
    ],
    'replacement_variants' => [
       [
          'field' => 'subject',
-         'header' => 'Предмет',
+         'header' => 'subject',
          'sorting' => null
       ],
       [
          'field' => 'week_day_id',
-         'header' => 'День недели',
+         'header' => 'week_day',
          'sorting' => null
       ],
       [
          'field' => 'weekly_period_id',
-         'header' => 'Недельная периодичность',
+         'header' => 'weekly_period',
          'sorting' => null
       ],
       [
          'field' => 'class_period_id',
-         'header' => 'Пара',
+         'header' => 'class_period',
          'sorting' => null
       ],
       [
          'field' => 'lesson_room_id',
-         'header' => 'Аудитория',
+         'header' => 'lesson_room',
          'sorting' => null
       ],
       [
          'field' => 'profession_level_name',
-         'header' => 'Заменяющий преподаватель',
+         'header' => 'replacing_teacher',
          'sorting' => null
       ],
       [
          'field' => 'phone',
-         'header' => 'Телефон',
+         'header' => 'phone',
          'sorting' => null
       ],
       [
          'field' => 'age',
-         'header' => 'Возраст',
+         'header' => 'age',
          'sorting' => null
       ],
       [
          'field' => 'department_id',
-         'header' => 'Кафедра',
+         'header' => 'department',
          'sorting' => null
       ],
       [
          'field' => 'position_id',
-         'header' => 'Должность',
+         'header' => 'position',
          'sorting' => null
       ],
       [
          'field' => 'schedule_position_id',
-         'header' => 'Встроенность в расписание заменяющего преподавателя',
+         'header' => 'schedule_position',
          'sorting' => null
       ],
    ],
    'users' => [
       [
          'field' => 'name',
-         'header' => 'Имя',
+         'header' => 'nickname',
          'sorting' => true
       ],
       [
          'field' => 'phone',
-         'header' => 'Телефон',
+         'header' => 'phone',
          'sorting' => false
       ],
       [
          'field' => 'email',
-         'header' => 'Электронная почта',
+         'header' => 'email',
          'sorting' => false
       ],
       [
@@ -262,7 +262,7 @@ return [
             'moderator',
          ],
          'sort_name' => 'is_moderator',
-         'header' => 'Модератор',
+         'header' => 'moderator',
          'sorting' => true
       ],
       [
@@ -270,17 +270,17 @@ return [
             'admin',
          ],
          'sort_name' => 'is_admin',
-         'header' => 'Администратор',
+         'header' => 'admin',
          'sorting' => true
       ],
       [
          'field' => 'teacher_names',
-         'header' => 'Допуск к управлению расписанием преподавателей',
+         'header' => 'teacher_names',
          'sorting' => false
       ],
       [
          'field' => 'group_names',
-         'header' => 'Допуск к управлению расписанием групп',
+         'header' => 'group_names',
          'sorting' => false
       ],
    ],
@@ -290,7 +290,7 @@ return [
             'replaceable_lesson',
             'groups_name'
          ],
-         'header' => 'Группа(ы)',
+         'header' => 'group',
          'sorting' => false
       ],
       [
@@ -298,12 +298,12 @@ return [
             'regular',
          ],
          'sort_name' => 'is_regular',
-         'header' => 'Постоянная замена',
+         'header' => 'is_regular',
          'sorting' => false
       ],
       [
          'field' => 'replaceable_date',
-         'header' => 'Дата',
+         'header' => 'date',
          'sorting' => false
       ],
       [
@@ -312,7 +312,7 @@ return [
             'week_day',
             'name'
          ],
-         'header' => 'День недели',
+         'header' => 'week_day',
          'sorting' => false
       ],
       [
@@ -321,7 +321,7 @@ return [
             'class_period',
             'id'
          ],
-         'header' => 'Пара',
+         'header' => 'class_period',
          'sorting' => false
       ],
       [
@@ -330,7 +330,7 @@ return [
             'lesson_room',
             'number'
          ],
-         'header' => 'Аудитория',
+         'header' => 'lesson_room',
          'sorting' => false
       ],
       [
@@ -339,12 +339,12 @@ return [
             'teacher',
             'profession_level_name'
          ],
-         'header' => 'Преподаватель',
+         'header' => 'teacher',
          'sorting' => false
       ],
       [
          'field' => 'replacing_date',
-         'header' => 'Дата',
+         'header' => 'date',
          'sorting' => false
       ],
       [
@@ -353,7 +353,7 @@ return [
             'week_day',
             'name'
          ],
-         'header' => 'День недели',
+         'header' => 'week_day',
          'sorting' => false
       ],
       [
@@ -362,7 +362,7 @@ return [
             'class_period',
             'id'
          ],
-         'header' => 'Пара',
+         'header' => 'class_period',
          'sorting' => false
       ],
       [
@@ -371,7 +371,7 @@ return [
             'lesson_room',
             'number'
          ],
-         'header' => 'Аудитория',
+         'header' => 'lesson_room',
          'sorting' => false
       ],
       [
@@ -380,7 +380,7 @@ return [
             'teacher',
             'profession_level_name'
          ],
-         'header' => 'Преподаватель',
+         'header' => 'teacher',
          'sorting' => false
       ],
       [
@@ -388,7 +388,7 @@ return [
             'status',
             'name'
          ],
-         'header' => 'Статус',
+         'header' => 'status',
          'sorting' => false
       ],
       [
@@ -396,7 +396,7 @@ return [
             'initiator',
             'name'
          ],
-         'header' => 'Инициатор',
+         'header' => 'initiator',
          'sorting' => false
       ],
    ],
