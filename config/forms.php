@@ -344,11 +344,11 @@ return [
       ],
    ],
    'lesson_filter' => [
-      [
-         'type' => 'input',
-         'input_type' => 'text',
-         'name' => 'name',
-      ],
+      // [
+      //    'type' => 'input',
+      //    'input_type' => 'text',
+      //    'name' => 'name',
+      // ],
       [
          'type' => 'objects-select',
          'multiple_options' => [

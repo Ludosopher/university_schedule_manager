@@ -38,7 +38,7 @@ class SettingController extends Controller
 
         return redirect()->back()->with('response', [
             'success' => true,
-            'message' => __('settings.settings_update'),
+            'message' => __('setting.settings_update'),
         ]);
     }
 

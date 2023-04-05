@@ -2,11 +2,9 @@
 
 namespace App\Helpers;
 
-use App\Lesson;
-use App\Mail\MailReplacementRequest;
 use App\ReplacementRequest;
 use Log;
-use Illuminate\Support\Facades\Mail;
+
 
 class CronHelpers
 {

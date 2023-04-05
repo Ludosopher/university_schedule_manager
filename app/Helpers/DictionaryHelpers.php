@@ -8,13 +8,10 @@ use App\Course;
 use App\Department;
 use App\Faculty;
 use App\Group;
-use App\Lesson;
 use App\LessonRoom;
 use App\LessonType;
-use App\Mail\MailReplacementRequest;
 use App\Position;
 use App\ProfessionalLevel;
-use App\ReplacementRequest;
 use App\ReplacementRequestStatus;
 use App\StudyDegree;
 use App\StudyForm;
@@ -24,7 +21,7 @@ use App\Teacher;
 use App\User;
 use App\WeekDay;
 use App\WeeklyPeriod;
-use Illuminate\Support\Facades\Mail;
+
 
 class DictionaryHelpers
 {

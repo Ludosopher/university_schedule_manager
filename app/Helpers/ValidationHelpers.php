@@ -2,13 +2,7 @@
 
 namespace App\Helpers;
 
-use App\ClassPeriod;
-use App\Lesson;
 use App\ReplacementRequest;
-use App\Teacher;
-use DateTime;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
 class ValidationHelpers
@@ -69,11 +63,6 @@ class ValidationHelpers
             'lesson_room_id' => __('attribute_names.lesson_room_id'),
             'schedule_position' => __('attribute_names.schedule_position'),
             'week_data' => __('attribute_names.week_data'),
-      
-            // 'replace_rules.*.week_day_id' => __('attribute_names.replace_rules_week_day_id'),
-            // 'replace_rules.*.weekly_period_id' => __('attribute_names.replace_rules_weekly_period_id'),
-            // 'replace_rules.*.class_period_id' => __('attribute_names.replace_rules_class_period_id'),
-            // 'replace_rules.*.teacher_id' => __('attribute_names.replace_rules_teacher_id'),
         ];
 
         return self::validation($data, $rules, $messages, $attributes);
@@ -142,6 +131,7 @@ class ValidationHelpers
             'week_data' => 'nullable|string',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
+            'date_or_weekly_period' => 'nullable|string',
         ];
         
         return self::validation($data, $rules);

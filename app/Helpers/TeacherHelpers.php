@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use App\Http\Controllers\TeacherController;
 use App\Lesson;
-use Illuminate\Support\Facades\Auth;
+
 
 class TeacherHelpers
 {
@@ -73,7 +73,7 @@ class TeacherHelpers
         }
 
         $result = [
-            'mails_to' => $mails_to,//[Auth::user()->email], // $mails_to
+            'mails_to' => $mails_to,
             'addressee_name' => $replacing_lesson->teacher->first_name_patronymic,
             'requester_name' => $replaceable_lesson->teacher->profession_level_name,
             'replaceable_lesson_description' => $replaceable_lesson_description,
@@ -116,6 +116,5 @@ class TeacherHelpers
 
         return false;
     }
-
 
 }

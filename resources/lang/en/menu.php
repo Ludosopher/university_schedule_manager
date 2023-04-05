@@ -2,7 +2,7 @@
 
     return [
         'home' => 'Home',
-        'about_app' => 'About the app',
+        'about_app' => 'About',
         'teachers' => 'Teachers',
         'groups' => 'Groups',
         'lessons' => 'Lessons',

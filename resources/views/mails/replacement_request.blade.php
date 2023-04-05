@@ -103,6 +103,9 @@
 
 </head>
   <body>
+    @php
+        $week_days = config('enum.week_days');
+    @endphp
     <p>{{ __('mail.greeting', ['addressee' => $data['addressee_name']]) }}</p>
     <p>{{ __('mail.requester_is_addressing_you', ['requester' => $data['requester_name']]) }}</p>
     <p>{{ __('mail.ask_to_exchange_classes', ['group' => $data['group']]) }}</p>
@@ -131,24 +134,24 @@
         @else
             <h4 class="top-header">{{ __('header.teacher_regular_schedule_of', ['teacher' => ($data['instance_name'] ?? '')]) }}</h4>
         @endif
-        <table class="table-mail">
+        <table style="border-collapse: collapse; border: 1px solid grey; width: 80%;">
             <thead>
                 <tr>
-                    <th class="th-mail">{{ __('header.period') }}</th>
+                    <th style="border: 1px solid grey; text-align: center; width: 14%;">{{ __('header.period') }}</th>
                     @if(isset($data['week_dates']))
                         @foreach($data['week_dates'] as $week_day_id => $date)
                             @if($week_day_id <= $data['week_days_limit'])
                                 @if(is_array($date) && isset($date['is_holiday']))
-                                    <th class="text-uppercase holiday-header" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
+                                    <th class="text-uppercase" style="color: red; border: 1px solid grey; text-align: center; width: 14%;" title="{{ __('title.holiday') }}">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date['date'])) }})</th>
                                 @else
-                                    <th class="text-uppercase">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date)) }})</th>
+                                    <th class="text-uppercase" style="border: 1px solid grey; text-align: center; width: 14%;">{{ __('week_day.'.$week_days[$week_day_id]) }} ({{ date('d.m.y', strtotime($date)) }})</th>
                                 @endif
                             @endif
                         @endforeach
                     @else
                         @foreach($week_days as $week_day_id => $week_day_name)
                             @if($week_day_id <= $data['week_days_limit'])
-                                <th class="text-uppercase">{{ __('week_day.'.$week_day_name) }}</th>
+                                <th class="text-uppercase" style="border: 1px solid grey; text-align: center; width: 14%;">{{ __('week_day.'.$week_day_name) }}</th>
                             @endif
                         @endforeach
                     @endif
@@ -171,7 +174,7 @@
                                 $class_period_start_time = date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['start']));
                                 $class_period_end_time = date('H:i', strtotime($class_periods[$class_period_ids[$lesson_name]]['end'])); 
                             @endphp
-                            <td class="schedule-period th-mail">
+                            <td class="schedule-period" style="border: 1px solid grey; text-align: center; width: 14%;">
                                 <div class="schedule-period-name">{{ $class_period_id }}</div>
                                 <div class="schedule-period-time">
                                     {{ $class_period_start_time }} - {{ $class_period_end_time }}
@@ -202,9 +205,9 @@
                                             $title = '';
                                         }
                                     @endphp
-                                    <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}; border: 1px solid grey;" title="{{ $title }}">
+                                    <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}; border: 1px solid grey; width: 14%;" title="{{ $title }}">
                                         <div class="schedule-actions-div">
-                                            <div class="schedule-subject">{{ $lesson['name'] }} ({{ $lesson['type'] }})</div>
+                                            <div class="schedule-subject">{{ __('content.'.$lesson['name']) }} ({{ __('dictionary.'.$lesson['type']) }})</div>
                                             <div class="schedule-room">{{ __('content.room') }} {{ $lesson['room'] }}</div>
                                             <div class="schedule-group">{{ $lesson[$other_lesson_participant_name] }}</div>
                                         </div>
@@ -216,11 +219,11 @@
                                         $other_lesson_red_participant_name = 'group';
                                         if (isset($lesson_red['is_replaceable'])) {
                                             $cell_red_bg_color = '#FFFF00';
-                                            $title_red = {{ __('title.replaceable_lesson_of_other_teacher') }};
+                                            $title_red = __('title.replaceable_lesson_of_other_teacher');
                                             $other_lesson_red_participant_name = 'teacher_name';
                                         } elseif (isset($lesson_red['is_replacing'])) {
                                             $cell_red_bg_color = '#98FB98';
-                                            $title_red = {{ __('title.your_replacement_lesson') }};
+                                            $title_red = __('title.your_replacement_lesson');
                                         } else {
                                             $cell_red_bg_color = $weekly_period_color[$weekly_period_id['red_week']];
                                             $title_red = '';
@@ -228,34 +231,34 @@
                                         $other_lesson_blue_participant_name = 'group';
                                         if (isset($lesson_blue['is_replaceable'])) {
                                             $cell_blue_bg_color = '#FFFF00';
-                                            $title_blue = {{ __('title.replaceable_lesson_of_other_teacher') }};
+                                            $title_blue = __('title.replaceable_lesson_of_other_teacher');
                                             $other_lesson_blue_participant_name = 'teacher_name';
                                         } elseif (isset($lesson_blue['is_replacing'])) {
                                             $cell_blue_bg_color = '#98FB98';
-                                            $title_blue = {{ __('title.your_replacement_lesson') }};
+                                            $title_blue = __('title.your_replacement_lesson');
                                         } else {
                                             $cell_blue_bg_color = $weekly_period_color[$weekly_period_id['blue_week']];
                                             $title_blue = '';
                                         }
                                     @endphp
-                                    <td class="schedule-cell th-mail">
+                                    <td class="schedule-cell" style="border: 1px solid grey; width: 14%;">
                                         @if($lesson_red)
                                             <div class="schedule-cell-top" style="background-color: {{ $cell_red_bg_color }}" title="{{ $title_red }}">
-                                                <div class="schedule-subject-half">{{ $lesson_red['name'] }} ({{ $lesson_red['type'] }})</div>
+                                                <div class="schedule-subject-half">{{ __('content.'.$lesson_red['name']) }} ({{ __('dictionary.'.$lesson_red['type']) }})</div>
                                                 <div class="schedule-room-half">{{ __('content.room') }} {{ $lesson_red['room'] }}</div>
                                                 <div class="schedule-group-half">{{ $lesson_red[$other_lesson_red_participant_name] }}</div>
                                             </div>
                                         @endif
                                         @if($lesson_blue)
                                             <div class="schedule-cell-bottom" style="background-color: {{ $cell_blue_bg_color }}" title="{{ $title_blue }}">
-                                                <div class="schedule-subject-half">{{ $lesson_blue['name'] }} ({{ $lesson_blue['type'] }})</div>
+                                                <div class="schedule-subject-half">{{ __('content.'.$lesson_blue['name']) }} ({{ __('dictionary.'.$lesson_blue['type']) }})</div>
                                                 <div class="schedule-room-half">{{ __('content.room') }} {{ $lesson_blue['room'] }}</div>
                                                 <div class="schedule-group-half">{{ $lesson_blue[$other_lesson_blue_participant_name] }}</div>
                                             </div>
                                         @endif
                                     </td>
                                 @else
-                                    <td class="schedule-cell th-mail"></td>
+                                    <td class="schedule-cell" style="border: 1px solid grey; width: 14%;"></td>
                                 @endif
                             @endforeach
                         </tr>

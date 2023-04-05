@@ -2,14 +2,12 @@
 
 namespace App\Helpers;
 
-use App\Lesson;
-use App\Teacher;
 use Illuminate\Database\Eloquent\Builder;
 
 class FilterHelpers
 {
-    public static function getFilteredQuery($query, $data, $instance_name) {
-       
+    public static function getFilteredQuery($query, $data, $instance_name) 
+    {
         $filter_conditions = config("filters.{$instance_name}");
         foreach ($filter_conditions as $field => $conditions) {
             if ($conditions['method'] == 'where' && is_array($conditions['operator'])) {

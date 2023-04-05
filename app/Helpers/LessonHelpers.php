@@ -9,10 +9,9 @@ use App\Lesson;
 use App\Setting;
 use App\Teacher;
 use App\WeekDay;
-use App\WeeklyPeriod;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
+
 
 class LessonHelpers
 {
@@ -50,40 +49,10 @@ class LessonHelpers
         foreach ($groups_lessons as $g_lesson) {
             if (!in_array($g_lesson->teacher->id, $looked_teachers)) {
                 foreach ($g_lesson->teacher->lessons as $key => $dt_lesson) {
-                    //----------
-                    // if ($g_lesson->teacher->id == 7 && $dt_lesson->class_period_id == 1 && $dt_lesson->week_day_id == 4) {
-                    //     echo '<pre>';
-                    //     print_r($dt_lesson->class_period_id);
-                    //     print_r($dt_lesson->week_day_id);
-                    //     print_r($dt_lesson->weekly_period_id);
-                    //     echo '</pre>';
-                        
-                    //     echo '<pre>';
-                    //     print_r('__'.$data['class_period_id']);
-                    //     print_r('__'.$data['week_day_id']);
-                    //     print_r('__'.$data['weekly_period_id']);
-                    //     print_r('__'.$weekly_period_ids['every_week']);
-                    //     echo '</pre>';
-
-                    //     echo '<pre>';
-                    //     print_r($dt_lesson->class_period_id == $data['class_period_id']);
-                    //     print_r($dt_lesson->week_day_id == $data['week_day_id']);
-                    //     print_r($dt_lesson->weekly_period_id == $weekly_period_ids['every_week']);
-                    //     echo '</pre>';
-                    // }
-                    //----------
                     if ($dt_lesson->week_day_id == $data['week_day_id']
                         && ($dt_lesson->weekly_period_id == $data['weekly_period_id'] || $dt_lesson->weekly_period_id == $weekly_period_ids['every_week'] || $data['weekly_period_id'] == $weekly_period_ids['every_week'])
                         && $dt_lesson->class_period_id == $data['class_period_id'])
                     {
-                        
-                        //----------
-                        // if ($g_lesson->teacher->id == 7) {
-                        //     echo '<pre>';
-                        //     print_r('is_not_suitable_teacher');
-                        //     echo '</pre>';
-                        // }
-                        //----------
                         $is_suitable_teacher = false;
                         break;
                     }
@@ -262,7 +231,7 @@ class LessonHelpers
                 'teacher' => $replacemented_lesson->teacher->profession_level_name,
                 'group' => $replacemented_lesson->groups_name,
             ];
-            $date_or_weekly_period = mb_strtolower($replacemented_lesson->weekly_period->name);
+            $date_or_weekly_period = __('dictionary.'.$replacemented_lesson->weekly_period->name);
         }
 
         $replaceable_date_time = null;

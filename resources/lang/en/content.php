@@ -33,5 +33,15 @@
         'strategic_management' => 'Strategic management',
         'quality_management' => 'Quality Management',
         'economic_analysis' => 'Economic analisis',
+        //genders
+        'male' => 'male',
+        'female' => 'female',
+        'not_specified' => 'not specified',
+        //cover
+        'study_schedule_manager' => 'Study schedule manager',
+        'lists' => 'Lists of teachers, study groups and lessons',
+        'schedules' => 'Lesson schedules',
+        'replacement_reschedule_variants' => 'Selection of options for replacing or rescheduling lessons',
+        'discussion_and_coordination' => 'Discussion and approval of changes in the schedule',
 
     ];

@@ -80,4 +80,5 @@
         'december' => 'december',
         // ----
         'requesting_letter' => 'A letter requesting the replacement of classes',
+        'replacement_chat' => 'Replacement chat',
     ];

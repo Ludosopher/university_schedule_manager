@@ -2,12 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Jobs\SendReplacementRequestMail;
-use App\Lesson;
-use App\Mail\MailReplacementRequest;
-use App\Notifications\ReplacementRequestStatusChanged;
 use App\Notifications\ReplacementRequestStatusChangedNotifi;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Log;
 

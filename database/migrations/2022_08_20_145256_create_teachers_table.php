@@ -76,7 +76,7 @@ class CreateTeachersTable extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('patronymic');
-            $table->enum('gender', ['мужчина', 'женщина', 'не указано']);
+            $table->enum('gender', ['male', 'female', 'not_specified']);
             $table->unsignedInteger('birth_year');
             $table->string('phone');
             $table->string('email');

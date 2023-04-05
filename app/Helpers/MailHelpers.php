@@ -2,11 +2,8 @@
 
 namespace App\Helpers;
 
-use App\Jobs\SendReplacementRequestMail;
 use App\Jobs\SendReplacementRequestMailJob;
-use App\Lesson;
-use App\Mail\MailReplacementRequest;
-use Illuminate\Support\Facades\Mail;
+
 
 class MailHelpers
 {

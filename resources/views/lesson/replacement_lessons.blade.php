@@ -134,7 +134,7 @@
                 @else
                     <h1 class="top-header">{{ __('header.regular_replacement_variants') }}</h1>
                 @endif
-                <h5>{{ __('header.replaceable_lesson') }}: {{ __('dictionary.'.$data['header_data']['class_period']) }} {{ __('header.class_period') }}, {{ __('dictionary.'.$data['header_data']['week_day']) }}, ({{ __('dictionary.'.$data['date_or_weekly_period']) }})</h5>
+                <h5>{{ __('header.replaceable_lesson') }}: {{ __('dictionary.'.$data['header_data']['class_period']) }} {{ __('header.class_period') }}, {{ __('dictionary.'.$data['header_data']['week_day']) }}, ({{ $data['date_or_weekly_period'] }})</h5>
                 <h5>{{ __('header.teacher') }}: {{ $data['header_data']['teacher'] }}</h5>
                 <div class="replacement-schedule-header-div">
                     <h5>{{ __('header.group') }}: {{ $data['header_data']['group'] }}</h5>
@@ -147,6 +147,7 @@
                             <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
                             <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                             <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                            <input type="hidden" name="date_or_weekly_period" value="{{ $data['date_or_weekly_period'] }}">
                             <button type="submit" class="btn btn-primary top-right-button">{{ __('form.ms_word') }}</button>
                         </form>
                     </div>

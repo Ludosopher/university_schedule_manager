@@ -133,18 +133,18 @@
                                 @if($property['sorting'])
                                     @if(is_array($property['field']) && isset($property['sort_name']))
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], __('table_header.'.$property['header']), [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div>@sortablelink($property['sort_name'], __('table_header.'.$property['header']), [], ['title' => __('title.sort'), 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @elseif(is_array($property['field']))
                                         @php
                                             $full_field = implode('.', $property['field']);
                                         @endphp
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, __('table_header.'.$property['header']), [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($full_field, __('table_header.'.$property['header']), [], ['title' => __('title.sort'), 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @else
                                         <th class="th-sm text-center align-top">
-                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], __('table_header.'.$property['header']), [], ['title' => 'Сортировать', 'class' => 'sort-button'])</div></div>
+                                            <div class="sorting-header"><div class="header-name"></div><div> @sortablelink($property['field'], __('table_header.'.$property['header']), [], ['title' => __('title.sort'), 'class' => 'sort-button'])</div></div>
                                         </th>
                                     @endif
                                 @else

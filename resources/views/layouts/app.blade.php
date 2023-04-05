@@ -22,6 +22,9 @@
     <!-- Styles -->
     <link href="{{ asset('css/main.css') }}" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,400;0,600;0,800;1,200&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -42,7 +45,7 @@
                             <a class="nav-link main-nav-link" href="{{ route('home') }}">{{ __('menu.home') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link main-nav-link" href="{{ route('about') }}">{{ __('menu.about_app') }}</a>
+                            <a class="nav-link main-nav-link" href="https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.p" target="_blank">{{ __('menu.about_app') }}</a>
                         </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -82,7 +85,7 @@
                                 <a class="nav-link main-nav-link" href="{{ route('users') }}">{{ __('menu.users') }}</a>
                             </li>
                         @endif
-                        @if (Auth::check() && (Auth::user()->is_admin || Auth::user()->is_moderator))
+                        @if (Auth::check() && (Auth::user()->is_admin))
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle main-nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     {{ __('menu.requests') }}

@@ -6,7 +6,6 @@ use App\ClassPeriod;
 use App\Group;
 use App\Lesson;
 use App\Setting;
-use App\Teacher;
 use App\WeekDay;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;

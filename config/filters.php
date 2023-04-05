@@ -85,10 +85,10 @@ return [
      ],
    ],
    'lesson' => [
-      'name' => [
-         'method' => 'where',
-         'operator' => 'like'
-      ],
+      // 'name' => [
+      //    'method' => 'where',
+      //    'operator' => 'like'
+      // ],
       'lesson_type_id' => [
          'method' => 'whereIn'
       ],

@@ -13,7 +13,6 @@ use App\Http\Requests\teacher\FilterTeacherRequest;
 use App\Http\Requests\teacher\MonthScheduleTeacherRequest;
 use App\Http\Requests\teacher\ScheduleTeacherRequest;
 use App\Http\Requests\teacher\StoreTeacherRequest;
-use App\Setting;
 use Illuminate\Http\Request;
 
 

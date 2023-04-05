@@ -329,21 +329,6 @@ h3 {
     margin-top: 1.5rem;
 }
 
-.table-mail {
-    border-collapse: collapse; 
-    border: 1px solid grey; 
-    width: 80%
-}
-
-.th-mail {
-    border: 1px solid grey !important;
-    text-align: center !important; 
-}
-
-.td-mail {
-    border: 1px solid grey !important; 
-}
-
 .replacement-schedule-header-div {
     display: flex;
     justify-content: space-between;
@@ -357,16 +342,79 @@ h3 {
 }
 
 /* home page */
-/* #home-main {
-    width: 100%;
-    height: 650px;
-    background-image: url('../storage/home-page/schedule.png');
-    background-repeat: no-repeat;
-    background-position: 87% 100%;
-    background-size: 37%;
-} */
-
 #home-main {
+    width: 100%;
+    height: 845px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('../storage/home-page/schedule_foto.jpg');
+    background-repeat: no-repeat;
+    background-position: 100% 100%;
+    background-size: cover;
+}
+
+#home-content {
+    padding: 10% 0px 0px 18%; 
+    color: white;
+}
+
+#home-header-div {
+    width: 60%;
+}
+
+#home-header-p {
+    font-size: 60pt;
+    font-weight: 600; 
+    font-family: 'Montserrat', sans-serif; 
+    line-height: 1; 
+    padding-left: 3%; 
+    color: rgb(80, 255, 80);
+}
+
+#home-list-div {
+    padding-top: 3%;
+}
+
+#home-list-ul {
+    font-size: 25pt; 
+    font-family: 'Montserrat', sans-serif;  
+    list-style-type: none;
+}
+
+#home-main-li-list {
+    /* list-style-image: url('../storage/icons/list.png');
+    margin-bottom: 25px;
+    line-height: 1.2; */
+    background: url("../storage/icons/list.png") no-repeat left center;
+    padding-left: 4%;
+    line-height: 2;
+}
+
+#home-main-li-schedule {
+    /* list-style-image: url('../storage/icons/schedule.png');
+    margin-bottom: 25px;
+    line-height: 1.2; */
+    background: url('../storage/icons/schedule.png') no-repeat left center;
+    padding-left: 4%;
+    line-height: 2;
+}
+
+#home-main-li-schedule-change {
+    /* list-style-image: url('../storage/icons/shedule_change.png');
+    margin-bottom: 25px;
+    line-height: 1.2; */
+    background: url('../storage/icons/shedule_change.png') no-repeat left center;
+    padding-left: 4%;
+    line-height: 2;
+}
+
+#home-main-li-agree {
+    /* list-style-image: url('../storage/icons/agreement.png');
+    line-height: 1.2; */
+    background: url('../storage/icons/agreement.png') no-repeat left center;
+    padding-left: 4%;
+    line-height: 2;
+}
+
+/* #home-main {
     position: relative;
     padding: 0px !important;
     width: 100%;
@@ -374,8 +422,8 @@ h3 {
     background-image: url('../storage/home-page/MenegerR2.png');
     background-repeat: no-repeat;
     /* background-position: 87% 100%; */
-    background-size: cover;
-}
+    /* background-size: cover; */
+/* } */
 
 .fail-on-hp {
     position: absolute;
@@ -579,20 +627,9 @@ h3 {
     border-top: 4px solid #ffa900 !important;
 }
 
-#chat-place {
-    position: relative; 
-    height: 400px; 
-    padding: 0px 10px 0px 10px; 
-    overflow-y: scroll;
-}
-
 #chat-button-group {
     display: flex; 
     width: 100%
-}
-
-#chat-form {
-    width: 100%;
 }
 
 .chat-button {

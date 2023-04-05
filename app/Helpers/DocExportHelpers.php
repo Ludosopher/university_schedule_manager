@@ -3,9 +3,8 @@
 namespace App\Helpers;
 
 use App\ClassPeriod;
-use App\Lesson;
 use App\Setting;
-use App\Teacher;
+
 
 class DocExportHelpers
 {
@@ -38,13 +37,14 @@ class DocExportHelpers
             $week_data = json_decode($data['week_data'], true);
             $week_color = $data['is_red_week'] ? __('header.red_week_color') : __('header.blue_week_color');
             $week_period_string = str_replace(['?-1', '?-2', '?-3' ], [$week_data['start_date'], $week_data['end_date'], $week_color], __('header.week_period_string')); 
+            $week_days_limit = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
         }
         
         $section->addTextBreak(1);
         if (isset($data['header_data'])) {
             $header_data = json_decode($data['header_data'], true);
             $section->addText(__('header.replacement_variants_export_to_docx').$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
-            $section->addText(str_replace(['?-1', '?-2', '?-3' ], [$header_data['class_period'], $header_data['week_day'], $data['date_or_weekly_period']], __('header.replaceable_lesson_export_to_docx')), null, array('spaceBefore' => 0, 'spaceAfter' => 0));
+            $section->addText(str_replace(['?-1', '?-2', '?-3' ], [__('dictionary.'.$header_data['class_period']), __('dictionary.'.$header_data['week_day']), $data['date_or_weekly_period']], __('header.replaceable_lesson_export_to_docx')), null, array('spaceBefore' => 0, 'spaceAfter' => 0));
             $section->addText(__('header.of_teacher_export_to_docx').$header_data['teacher'], null, array('spaceBefore' => 0, 'spaceAfter' => 0));
             $section->addText(__('header.of_group_export_to_docx').$header_data['group'], null, array('spaceBefore' => 0, 'spaceAfter' => 100));
         } else {
@@ -111,7 +111,7 @@ class DocExportHelpers
                         $date = date('d.m.y', strtotime($date));
                         $is_holiday_header = '';
                     }
-                    $table->addCell(2000, $headerCellStyle)->addText("{__('week_day.'.$week_days[$week_day_id])} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
+                    $table->addCell(2000, $headerCellStyle)->addText(__('week_day.'.$week_days[$week_day_id]).' ('.$date.') '.$is_holiday_header, $headerFontStyle, $headerParagraphStyle);
                 }
             }
         } else {
@@ -132,9 +132,9 @@ class DocExportHelpers
                     if ($week_day_id <= $week_days_limit) {
                         if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
                             $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                            $lesson_n = $lesson['name'];
-                            $lesson_type = "({$lesson['type']})";
-                            $lesson_room = " ауд. {$lesson['room']}";
+                            $lesson_n = __('content.'.$lesson['name']); 
+                            $lesson_type = '('.__('dictionary.'.$lesson['type']).')';
+                            $lesson_room = __('content.room').' '.$lesson['room'];
                             $lesson_other_participant = $lesson[$other_partic];
                             $everyWeekFontStyle = array('size' => 8);
                             $reschedule_massage = false;
@@ -142,7 +142,15 @@ class DocExportHelpers
                             if (isset($lesson['for_replacement']) && $lesson['for_replacement']) {
                                 $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['shading' => array('fill' => '#DCDCDC')]);
                                 $lesson_other_participant = $lesson['teacher'];
-                            } elseif (isset($lesson['id']) && isset($data['replaceable_lesson_id']) && $lesson['id'] == $data['replaceable_lesson_id']) {
+                            } elseif ((! isset($data['week_dates']) && isset($lesson['id']) && isset($data['replaceable_lesson_id']) && $lesson['id'] == $data['replaceable_lesson_id'])
+                                      ||
+                                      (isset($data['week_dates'])
+                                       && isset($data['date_or_weekly_period'])
+                                       && $data['date_or_weekly_period'] === date('d.m.y', strtotime($week_dates[$week_day_id]))
+                                       && isset($lesson['id']) 
+                                       && isset($data['replaceable_lesson_id']) 
+                                       && $lesson['id'] == $data['replaceable_lesson_id']))
+                            {
                                 $everyWeekFontStyle = array_merge($everyWeekFontStyle, ['bold' => true]);
                                 $replacement_massage = true;
                             }
@@ -177,41 +185,41 @@ class DocExportHelpers
                             if (!$lesson_red) {
                                 $redFontStyle = array('size' => 6, 'color' => '#ffffff');
                                 $blueFontStyle = array('size' => 6);
-                                $red_name = $lesson_blue['name'];
+                                $red_name = __('content.'.$lesson_blue['name']);
                                 $red_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                                $red_type = "({$lesson_blue['type']})";
-                                $red_room = "ауд. {$lesson_blue['room']}";
+                                $red_type = '('.__('dictionary.'.$lesson_blue['type']).')';
+                                $red_room = __('content.room').' '.$lesson_blue['room'];
                                 $red_group = $lesson_blue[$other_partic];
-                                $blue_name = $lesson_blue['name'];
-                                $blue_type = "({$lesson_blue['type']})";
+                                $blue_name = __('content.'.$lesson_blue['name']);
+                                $blue_type = '('.__('dictionary.'.$lesson_blue['type']).')';
                                 $blue_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                                $blue_room = "ауд. {$lesson_blue['room']}";
+                                $blue_room = __('content.room').' '.$lesson_blue['room'];
                                 $blue_group = $lesson_blue[$other_partic];
                             } elseif (!$lesson_blue) {
                                 $blueFontStyle = array('size' => 6, 'color' => '#ffffff');
                                 $redFontStyle = array('size' => 6);
-                                $red_name = $lesson_red['name'];
-                                $red_type = "({$lesson_red['type']})";
+                                $red_name = __('content.'.$lesson_red['name']);
+                                $red_type = '('.__('dictionary.'.$lesson_red['type']).')';
                                 $red_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                                $red_room = "ауд. {$lesson_red['room']}";
+                                $red_room = __('content.room').' '.$lesson_red['room'];
                                 $red_group = $lesson_red[$other_partic];
-                                $blue_name = $lesson_red['name'];
-                                $blue_type = $lesson_red['type'];
+                                $blue_name = __('content.'.$lesson_red['name']);
+                                $blue_type = '('.__('dictionary.'.$lesson_red['type']).')';
                                 $blue_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                                $blue_room = $lesson_red['room'];
+                                $blue_room = __('content.room').' '.$lesson_red['room'];
                                 $blue_group = $lesson_red[$other_partic];
                             } else {
                                 $redFontStyle = array('size' => 6);
                                 $blueFontStyle = array('size' => 6);
-                                $red_name = $lesson_red['name'];
-                                $red_type = "({$lesson_red['type']})";
+                                $red_name = __('content.'.$lesson_red['name']);
+                                $red_type = '('.__('dictionary.'.$lesson_red['type']).')';
                                 $red_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                                $red_room = "ауд. {$lesson_red['room']}";
+                                $red_room = __('content.room').' '.$lesson_red['room'];
                                 $red_group = $lesson_red[$other_partic];
-                                $blue_name = $lesson_blue['name'];
-                                $blue_type = "({$lesson_blue['type']})";
+                                $blue_name = __('content.'.$lesson_blue['name']);
+                                $blue_type = '('.__('dictionary.'.$lesson_blue['type']).')';
                                 $blue_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                                $blue_room = "ауд. {$lesson_blue['room']}";
+                                $blue_room = __('content.room').' '.$lesson_blue['room'];
                                 $blue_group = $lesson_blue[$other_partic];
                             }
                             if (isset($lesson_red['for_replacement']) && $lesson_red['for_replacement']) {
@@ -286,7 +294,7 @@ class DocExportHelpers
         $week_days = config('enum.week_days');
         $settings = Setting::pluck('value', 'name');
         $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
-        $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
+        $week_days_limit = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
         //------------------------------------------------------
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
        
@@ -339,7 +347,7 @@ class DocExportHelpers
                         $date = date('d.m.y', strtotime($date));
                         $is_holiday_header = '';
                     }
-                    $table->addCell(2000, $headerCellStyle)->addText("{__('week_day.'.$week_days[$week_day_id])} ({$date}){$is_holiday_header}", $headerFontStyle, $headerParagraphStyle);
+                    $table->addCell(2000, $headerCellStyle)->addText(__('week_day.'.$week_days[$week_day_id]).' ('.$date.') '.$is_holiday_header, $headerFontStyle, $headerParagraphStyle);
                 }
             }
             
@@ -356,9 +364,9 @@ class DocExportHelpers
                         if ($week_day_id <= $week_days_limit) {
                             if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
                                 $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                                $lesson_n = $lesson['name'];
-                                $lesson_type = "({$lesson['type']})";
-                                $lesson_room = " ауд. {$lesson['room']}";
+                                $lesson_n = __('content.'.$lesson['name']);
+                                $lesson_type = '('.__('dictionary.'.$lesson['type']).')';
+                                $lesson_room = __('content.room').' '.$lesson['room'];
                                 $lesson_other_participant = $lesson[$other_partic];
                                 $everyWeekFontStyle = array('size' => 8);
                                 
@@ -407,7 +415,7 @@ class DocExportHelpers
         }
         
         $section->addText(__('header.replacement_variants_export_to_docx').$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
-        $section->addText(str_replace(['?-1', '?-2', '?-3' ], [$header_data['class_period'], $header_data['week_day'], $data['date_or_weekly_period']], __('header.replaceable_lesson_export_to_docx')), null, array('spaceBefore' => 0, 'spaceAfter' => 0));
+        $section->addText(str_replace(['?-1', '?-2', '?-3' ], [__('dictionary.'.$header_data['class_period']), __('dictionary.'.$header_data['week_day']), $data['date_or_weekly_period']], __('header.replaceable_lesson_export_to_docx')), null, array('spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText(__('header.of_teacher_export_to_docx').$header_data['teacher'], null, array('spaceBefore' => 0, 'spaceAfter' => 0));
         $section->addText(__('header.of_group_export_to_docx').$header_data['group'], null, array('spaceBefore' => 0, 'spaceAfter' => 100));
         
@@ -426,10 +434,10 @@ class DocExportHelpers
         $table = $section->addTable('Replacement');
         $table->addRow(null, array('tblHeader' => true));
         foreach ($table_properties as $property) {
-            if (isset($data['is_red_week']) && $property['header'] == __('header.weekly_periods')) {
+            if (isset($data['is_red_week']) && __('table_header.'.$property['header']) == __('table_header.weekly_period')) {
                 continue;
             }
-            $table->addCell(2000, $headerCellStyle)->addText($property['header'], $headerFontStyle, $headerParagraphStyle); 
+            $table->addCell(2000, $headerCellStyle)->addText(__('table_header.'.$property['header']), $headerFontStyle, $headerParagraphStyle); 
         }
         foreach($replacement_lessons as $lesson) {
             $table->addRow(null);
@@ -439,11 +447,11 @@ class DocExportHelpers
                 if (isset($data['is_red_week']) && $field == 'weekly_period_id') {
                     continue;
                 } elseif ($field == 'week_day_id' && isset($lesson['date'])) {
-                    $content = "{$lesson[$field]['name']} ({$lesson['date']})";
+                    $content = __('dictionary.'.$lesson['name']).' ('.__('dictionary.'.$lesson['type']).')';
                 } elseif (is_array($lesson[$field])) {
-                    $content = $lesson[$field]['name'];
+                    $content = \Lang::has('dictionary.'.$lesson[$field]['name']) ? __('dictionary.'.$lesson[$field]['name']) : $lesson[$field]['name'];
                 } else {
-                    $content = $lesson[$field]; 
+                    $content = \Lang::has('dictionary.'.$lesson[$field]) ? __('dictionary.'.$lesson[$field]) : $lesson[$field]; 
                 }
                 $table->addCell(2000, $ordinaryCellStyle)->addText($content, $ordinaryFontStyle, $ordinaryParagraphStyle);
             }

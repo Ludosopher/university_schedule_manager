@@ -153,6 +153,7 @@
                                                                     <input type="hidden" name="teacher_id" value="{{ $lesson['teacher_id'] }}">
                                                                     <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
+                                                                    <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] }}">
                                                                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
                                                                     <button type="submit" class="btn btn-light schedule-dropdown">{{ __('form.reschedule_variants') }}</button>
                                                                 </form>

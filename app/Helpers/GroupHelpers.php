@@ -2,14 +2,8 @@
 
 namespace App\Helpers;
 
-use App\ClassPeriod;
 use App\Group;
-use App\Lesson;
-use App\Teacher;
-use App\WeekDay;
-use App\WeeklyPeriod;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Schema;
+
 
 class GroupHelpers
 {

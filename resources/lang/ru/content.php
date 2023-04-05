@@ -33,5 +33,16 @@
         'strategic_management' => 'Стратегический менеджмент',
         'quality_management' => 'Управление качеством',
         'economic_analysis' => 'Экономический анализ',
+        //genders
+        'male' => 'мужчина',
+        'female' => 'женщина',
+        'not_specified' => 'не указано',
+        //cover
+        'study_schedule_manager' => 'Менеджер учебного расписания',
+        'lists' => 'Списки преподавателей, учебных групп и занятий',
+        'schedules' => 'Расписания занятий',
+        'replacement_reschedule_variants' => 'Подбор вариантов замены или переноса занятий',
+        'discussion_and_coordination' => 'Обсуждение и согласование изменений в расписании',
+
         
     ];
