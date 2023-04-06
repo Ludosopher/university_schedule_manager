@@ -11,30 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \DB::table('users')->insert([
-        //     [
-        //         'id' => 1,
-        //         'name' => 'Admin',
-        //         'email' => 'admin@admin.com',
-        //         'email_verified_at' => null,
-        //         'password' => '1234567890',
-        //         'remember_token' => null,
-        //         'is_admin' => true,
-        //         'created_at' => '2022-05-17 00:00:00',
-        //         'updated_at' => '2022-05-17 00:00:00',
-        //     ],
-        //     [
-        //         'id' => 2,
-        //         'name' => 'Alikin Viktor',
-        //         'email' => 'ludosopher@yandex.ru',
-        //         'email_verified_at' => null,
-        //         'password' => '1234567890',
-        //         'remember_token' => null,
-        //         'is_admin' => false,
-        //         'created_at' => '2022-05-17 00:00:00',
-        //         'updated_at' => '2022-05-17 00:00:00',
-        //     ],
-        // ]);
+        $this->call(UsersTableSeeder::class);
 
         \DB::table('academic_degrees')->insert([
             [
