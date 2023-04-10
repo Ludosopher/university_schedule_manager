@@ -9,8 +9,12 @@
 
 Приложение предназначено для того, чтобы программными средствами автоматизировать, оптимизировать и ускорить получение расписания в разных форматах, подбор и выбор вариантов замены и переноса занятий, согласование возникающих при этом изменений в планах разных сторон.
 
-Приложение содержит тестовые данные учебных занятий только для факультета "Бизнеса и социальных технологий".
+!!! Приложение содержит тестовые данные учебных занятий только для факультета "Бизнеса и социальных технологий". !!!
 
+
+Ссылки:
+
+Сайт: https://studyschedule.ru/
 Презентация: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.g1d7221fd002_0_60
 
 -------------------------------------------------------------------------------------------------------------------------------
@@ -26,6 +30,10 @@ Solved problems:
 
 The application is designed to programmatically automate, optimize and speed up the receipt of schedules in different formats, the selection and selection of options for replacing and rescheduling classes, coordination of changes in the plans of different parties that arise.
 
-The application contains test data of training sessions only for the Faculty of "Business and Social Technologies".
+!!! The application contains test data of training sessions only for the Faculty of "Business and Social Technologies". !!!
 
+
+Links:
+
+Website: https://studyschedule.ru/
 Presentation: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.g1d7221fd002_0_60
