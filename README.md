@@ -15,6 +15,7 @@
 Ссылки:
 
 Сайт: https://studyschedule.ru/
+
 Презентация: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.g1d7221fd002_0_60
 
 -------------------------------------------------------------------------------------------------------------------------------
@@ -36,4 +37,5 @@ The application is designed to programmatically automate, optimize and speed up 
 Links:
 
 Website: https://studyschedule.ru/
+
 Presentation: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.g1d7221fd002_0_60
