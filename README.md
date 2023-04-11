@@ -17,13 +17,12 @@
 Сайт: https://studyschedule.ru/
 
 
-!!! 
 Приложение содержит вымышленные данные преподавателей, студенческих групп и учебных занятий, но только для факультета "Бизнеса и социальных технологий".
 
 Для входа в статусе администратора:
     логин: schedule_manager@mail.ru
-    пароль: admin50Vq, 
-!!!
+    пароль: admin50Vq,
+     
 -------------------------------------------------------------------------------------------------------------------------------
 
 Web application "Training Schedule Manager"
@@ -45,10 +44,8 @@ Presentation: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxreP
 Website: https://studyschedule.ru/
 
 
-!!! 
 The application contains fictitious data of teachers, student groups and training sessions, but only for the Faculty of "Business and Social Technologies".
 
 To log in as an administrator:
     login: schedule_manager@mail.ru
-    password: admin50Vq, 
-!!!
+    password: admin50Vq,
