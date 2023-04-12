@@ -10,22 +10,17 @@
 Приложение предназначено для того, чтобы программными средствами автоматизировать, оптимизировать и ускорить получение расписания в разных форматах, подбор и выбор вариантов замены и переноса занятий, согласование возникающих при этом изменений в планах разных сторон.
 
 
-Ссылки:
-
 Презентация: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.g1d7221fd002_0_60
-
-Сайт: https://studyschedule.ru/
-
 
 Приложение содержит вымышленные данные преподавателей, студенческих групп и учебных занятий, но только для факультета "Бизнеса и социальных технологий".
 
 Для входа в статусе администратора:
     логин: schedule_manager@mail.ru
-    пароль: admin50Vq,
+    пароль: schedule-admin
      
 -------------------------------------------------------------------------------------------------------------------------------
 
-Web application "Training Schedule Manager"
+Web application "Study Schedule Manager"
 
 The target audience is students, teachers and administrative staff of universities and institutions of secondary vocational education.
 
@@ -37,15 +32,10 @@ Solved problems:
 The application is designed to programmatically automate, optimize and speed up the receipt of schedules in different formats, the selection and selection of options for replacing and rescheduling classes, coordination of changes in the plans of different parties that arise.
 
 
-Links:
-
 Presentation: https://docs.google.com/presentation/d/1maPxwBLoTUOyWbs5pewZkGxrePXk1EvHxAX8YykAL-k/edit#slide=id.g1d7221fd002_0_60
-
-Website: https://studyschedule.ru/
-
 
 The application contains fictitious data of teachers, student groups and training sessions, but only for the Faculty of "Business and Social Technologies".
 
 To log in as an administrator:
     login: schedule_manager@mail.ru
-    password: admin50Vq,
+    password: schedule-admin
