@@ -6,9 +6,8 @@
                 <div class="alertFail">
                     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
                     {{ $error }}
-                </div>    
+                </div>   
             @endforeach
-            </div>
         @endif
         @if (\Session::has('response'))
             @if(\Session::get('response')['success'])
