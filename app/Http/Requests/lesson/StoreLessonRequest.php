@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\lesson;
 
-use App\Helpers\LessonHelpers;
+use App\Instances\LessonInstance;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreLessonRequest extends FormRequest
@@ -31,15 +31,15 @@ class StoreLessonRequest extends FormRequest
             'weekly_period_id' => 'required|integer|exists:App\WeeklyPeriod,id',
             'class_period_id' => 'required|integer|exists:App\ClassPeriod,id',
             'group_id' => function ($attribute, $value, $fail) {
-                if (LessonHelpers::searchSameLesson(request()->all(), $attribute)) $fail(__('user_validation.group_is_occupied'));
+                if ((new LessonInstance())->searchSameLesson(request()->all(), $attribute)) $fail(__('user_validation.group_is_occupied'));
             },
             'group_id' => 'required|array',
             'teacher_id' => function ($attribute, $value, $fail) {
-                if (LessonHelpers::searchSameLesson(request()->all(), $attribute)) $fail(__('user_validation.teacher_is_occupied'));
+                if ((new LessonInstance())->searchSameLesson(request()->all(), $attribute)) $fail(__('user_validation.teacher_is_occupied'));
             },
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_room_id' => function ($attribute, $value, $fail) {
-                if (LessonHelpers::searchSameLesson(request()->all(), $attribute)) $fail(__('user_validation.room_is_occupied'));
+                if ((new LessonInstance())->searchSameLesson(request()->all(), $attribute)) $fail(__('user_validation.room_is_occupied'));
             },
             'lesson_room_id' => 'required|integer|exists:App\LessonRoom,id',
             'updating_id' => 'nullable|integer|exists:App\Lesson,id',

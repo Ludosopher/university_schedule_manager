@@ -2,49 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\ModelHelpers;
 use App\Helpers\ResponseHelpers;
-use App\Helpers\UserHelpers;
 use App\Http\Requests\user\DeleteUserRequest;
 use App\Http\Requests\user\AdminStoreUserRequest;
 use App\Http\Requests\user\FilterUserRequest;
 use App\Http\Requests\user\SelfStoreUserRequest;
+use App\Instances\UserInstance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
-    public $config = [
-        'model_name' => 'App\User',
-        'instance_name' => 'user',
-        'instance_plural_name' => 'users',
-        'instance_name_field' => 'name',
-        'profession_level_name_field' => null,
-        'eager_loading_fields' => ['teachers', 'groups'],
-        'other_lesson_participant' => null,
-        'other_lesson_participant_name' => null,
-        'boolean_attributes' => ['is_moderator', 'is_admin'],
-        'many_to_many_attributes' => [
-            'teacher_id' => 'teachers', 
-            'group_id' => 'groups'
-        ],
-    ];
-
     public function getUsers (FilterUserRequest $request)
     {
         $request->validated();
-        $data = ModelHelpers::getInstances(request()->all(), $this->config);
+        $data = (new UserInstance())->getInstances(request()->all());
 
         return view("user.users")->with('data', $data);
     }
 
     public function addUserForm (Request $request)
     {
-        $data = ModelHelpers::getInstanceFormData($request->all(), $this->config);
+        $data = (new UserInstance())->getInstanceFormData($request->all());
         
         if (isset($data['updating_instance'])) {
-            $data = ModelHelpers::getManyToManyData($data, $this->config['many_to_many_attributes']);
+            $data = (new UserInstance())->getManyToManyData($data);
         }
 
         return view("user.add_user_form")->with('data', $data);
@@ -53,12 +36,12 @@ class UserController extends Controller
     public function adminUpdateUser (AdminStoreUserRequest $request)
     {
         $validated = $request->validated();
-        $validated = ModelHelpers::preparingBooleans($validated, $this->config['boolean_attributes']);
+        $validated = (new UserInstance())->preparingBooleans($validated);
         
-        $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
-        ModelHelpers::addOrUpdateManyToManyAttributes($validated, $user['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);
+        $user = (new UserInstance())->addOrUpdateInstance($validated);
+        (new UserInstance())->addOrUpdateManyToManyAttributes($validated, $user['id']);
 
-        $response_content = ResponseHelpers::getContent($user, $this->config['instance_name']);
+        $response_content = ResponseHelpers::getContent($user, 'user');
         
         return redirect()->back()->with('response', [
             'success' => $response_content['success'],
@@ -70,9 +53,9 @@ class UserController extends Controller
     {
         $validated = $request->validated();
         
-        $user = ModelHelpers::addOrUpdateInstance($validated, $this->config);
+        $user = (new UserInstance())->addOrUpdateInstance($validated);
         
-        $response_content = ResponseHelpers::getContent($user, $this->config['instance_name']);
+        $response_content = ResponseHelpers::getContent($user, 'user');
         
         return redirect()->back()->with('response', [
             'success' => $response_content['success'],
@@ -82,11 +65,10 @@ class UserController extends Controller
 
     public function deleteUser (DeleteUserRequest $request)
     {
-        $attributes = array_values($this->config['many_to_many_attributes']);
-        ModelHelpers::deleteManyToManyAttributes($request->validated()['deleting_id'], $this->config['model_name'], $attributes);
+        (new UserInstance())->deleteManyToManyAttributes($request->validated()['deleting_id']);
         
-        $deleted_instance = ModelHelpers::deleteInstance($request->validated()['deleting_id'], $this->config);
-        $response_content = ResponseHelpers::getContent($deleted_instance, $this->config['instance_name']);
+        $deleted_instance = (new UserInstance())->deleteInstance($request->validated()['deleting_id']);
+        $response_content = ResponseHelpers::getContent($deleted_instance, 'user');
         return redirect()->back()->with('response', [
             'success' => $response_content['success'],
             'message' => $response_content['message']
@@ -95,7 +77,7 @@ class UserController extends Controller
 
     public function getAccountMain (Request $request)
     {
-        $data = UserHelpers::getAccountMain(Auth::user());
+        $data = (new UserInstance())->getAccountMain(Auth::user());
 
         return view("user.account_main")->with('data', $data);
     }

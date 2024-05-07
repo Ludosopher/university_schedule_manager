@@ -1,18 +1,22 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Instances;
 
 use App\ClassPeriod;
 use App\Group;
+use App\Helpers\DateHelpers;
+use App\Helpers\DictionaryHelpers;
 use App\Lesson;
 use App\Setting;
 use App\WeekDay;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
 
-class ModelHelpers
+abstract class Instance
 {
-    public static function addOrUpdate($data, $model) {
+    protected $config;
+    
+    protected function addOrUpdate($data, $model) {
 
         if (isset($data['updating_id'])) {
             $instance = $model::where('id', $data['updating_id'])->first();
@@ -33,17 +37,17 @@ class ModelHelpers
         return $instance;
     }
 
-    public static function deleteInstance($id, $config) 
+    public function deleteInstance($id) 
     {
-        $model_name = $config['model_name'];
+        $model_name = $this->config['model_name'];
         $deleting_instance = $model_name::where('id', $id)->first();
         
-        $instance_name_field = $config['instance_name_field'];
+        $instance_name_field = $this->config['instance_name_field'];
         $model_name::where('id', $id)->delete();
         return ['deleted_instance_name' => $deleting_instance->$instance_name_field];
     }
 
-    public static function getAppends($data) {
+    protected function getAppends($data) {
         $appends = [];
         foreach ($data as $key => $value) {
             if ($key != '_token'
@@ -59,7 +63,7 @@ class ModelHelpers
         return $appends;
     }
 
-    public static function getSchedule($incoming_data, $config) {
+    public function getSchedule($incoming_data) {
 
         $settings = Setting::pluck('value', 'name');
         $data['week_day_ids'] = config('enum.week_day_ids');
@@ -67,14 +71,14 @@ class ModelHelpers
         $data['weekly_period_ids'] = config('enum.weekly_period_ids');
         $data['weekly_period_colors'] = config('enum.weekly_period_colors');
         $data['class_period_ids'] = config('enum.class_period_ids');
-        $model_name = $config['model_name'];
-        $instance_name = $config['instance_name'];
-        $schedule_instance_id = $incoming_data["schedule_{$config['instance_name']}_id"];
+        $model_name = $this->config['model_name'];
+        $instance_name = $this->config['instance_name'];
+        $schedule_instance_id = $incoming_data["schedule_{$this->config['instance_name']}_id"];
         $data['schedule_instance_id'] = $schedule_instance_id;
-        $instance_name_field = $config['instance_name_field'];
-        $profession_level_name_field = $config['profession_level_name_field'];
-        $other_lesson_participant = $config['other_lesson_participant'];
-        $other_lesson_participant_name = $config['other_lesson_participant_name'];
+        $instance_name_field = $this->config['instance_name_field'];
+        $profession_level_name_field = $this->config['profession_level_name_field'];
+        $other_lesson_participant = $this->config['other_lesson_participant'];
+        $other_lesson_participant_name = $this->config['other_lesson_participant_name'];
         
         $week_number = null;
         if (isset($incoming_data['week_number'])) {
@@ -180,16 +184,16 @@ class ModelHelpers
         return $data;
     }
 
-    public static function getMonthSchedule($incoming_data, $config) {
+    public function getMonthSchedule($incoming_data) {
 
-        $model_name = $config['model_name'];
-        $instance_name = $config['instance_name'];
-        $schedule_instance_id = $incoming_data["schedule_{$config['instance_name']}_id"];
+        $model_name = $this->config['model_name'];
+        $instance_name = $this->config['instance_name'];
+        $schedule_instance_id = $incoming_data["schedule_{$this->config['instance_name']}_id"];
         $data['schedule_instance_id'] = $schedule_instance_id;
-        $instance_name_field = $config['instance_name_field'];
-        $profession_level_name_field = $config['profession_level_name_field'];
-        $other_lesson_participant = $config['other_lesson_participant'];
-        $other_lesson_participant_name = $config['other_lesson_participant_name'];
+        $instance_name_field = $this->config['instance_name_field'];
+        $profession_level_name_field = $this->config['profession_level_name_field'];
+        $other_lesson_participant = $this->config['other_lesson_participant'];
+        $other_lesson_participant_name = $this->config['other_lesson_participant_name'];
         $settings = Setting::pluck('value', 'name');
         $data['class_periods_limit'] = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
         $data['week_days_limit'] = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
@@ -299,12 +303,12 @@ class ModelHelpers
         return $data;
     }
 
-    public static function getInstanceFormData ($incoming_data, $config)
+    public function getInstanceFormData ($incoming_data)
     {
-        $model_name = $config['model_name'];
-        $dictionary_function = 'get'.ucfirst($config['instance_name']).'Properties';
+        $model_name = $this->config['model_name'];
+        $dictionary_function = 'get'.ucfirst($this->config['instance_name']).'Properties';
         $data = DictionaryHelpers::$dictionary_function();
-        $data['add_form_fields'] = config("forms.{$config['instance_name']}");
+        $data['add_form_fields'] = config("forms.{$this->config['instance_name']}");
         if (isset($incoming_data['updating_id'])) {
             $updating_instance = $model_name::where('id', $incoming_data['updating_id'])->first();
             if ($updating_instance) {
@@ -318,12 +322,12 @@ class ModelHelpers
         return $data;
     }
 
-    public static function addOrUpdateInstance ($data, $config)
+    public function addOrUpdateInstance($data)
     {
-        $instance_name_field = $config['instance_name_field'];
-        $model_name = $config['model_name'];
+        $instance_name_field = $this->config['instance_name_field'];
+        $model_name = $this->config['model_name'];
 
-        $instance = self::addOrUpdate($data, $model_name);
+        $instance = $this->addOrUpdate($data, $model_name);
         
         if (isset($data['updating_id'])) {
             return ['id' => $instance->id, 'updated_instance_name' => $instance->$instance_name_field];
@@ -332,13 +336,13 @@ class ModelHelpers
         }
     }
 
-    public static function getInstances ($incoming_data, $config)
+    public function getInstances($incoming_data)
     {
         $rows_per_page_setting = Setting::where('name', 'default_rows_per_page')->first();
         $rows_per_page = $rows_per_page_setting ? $rows_per_page_setting->value : config('site.rows_per_page');
-        $model_name = $config['model_name'];
+        $model_name = $this->config['model_name'];
 
-        $instance_name_arr = explode('_', $config['instance_name']);
+        $instance_name_arr = explode('_', $this->config['instance_name']);
         foreach ($instance_name_arr as &$name_part) {
             $name_part = ucfirst($name_part);
         }
@@ -349,26 +353,26 @@ class ModelHelpers
             request()->flash();
         }
 
-        $data['table_properties'] = config("tables.{$config['instance_plural_name']}");
-        $data['filter_form_fields'] = config()->has("forms.{$config['instance_name']}_filter") ? config("forms.{$config['instance_name']}_filter") : [];
+        $data['table_properties'] = config("tables.{$this->config['instance_plural_name']}");
+        $data['filter_form_fields'] = config()->has("forms.{$this->config['instance_name']}_filter") ? config("forms.{$this->config['instance_name']}_filter") : [];
         $properties = DictionaryHelpers::$dictionary_function();
 
-        $instances = FilterHelpers::getFilteredQuery($model_name::with($config['eager_loading_fields']), $incoming_data, $config['instance_name']);
-        $appends = self::getAppends($incoming_data);
+        $instances = $this->getFilteredQuery($model_name::with($this->config['eager_loading_fields']), $incoming_data);
+        $appends = $this->getAppends($incoming_data);
         
         $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
 
         return array_merge($data, $properties);
     }
 
-    public static function getModelRechedulingData($incoming_data, $reschedule_data, $config) {
+    public function getModelRechedulingData($incoming_data, $reschedule_data) {
 
         $class_periods = ClassPeriod::get();
         $week_days = WeekDay::get();
         $rescheduling_lesson = Lesson::where('id', $incoming_data['lesson_id'])->first();
-        $incoming_data["schedule_{$config['instance_name']}_id"] = $incoming_data["{$config['instance_name']}_id"];
+        $incoming_data["schedule_{$this->config['instance_name']}_id"] = $incoming_data["{$this->config['instance_name']}_id"];
 
-        $schedule_data = ModelHelpers::getSchedule($incoming_data, $config);
+        $schedule_data = $this->getSchedule($incoming_data, $this->config);
         if (isset($schedule_data['duplicated_lesson'])) {
             return $schedule_data;
         }
@@ -377,7 +381,7 @@ class ModelHelpers
         $data = [
             'rescheduling_lesson_id' => $rescheduling_lesson->id,
             'class_periods' => $class_periods,
-            'other_lesson_participant_name' => $config['other_lesson_participant'],
+            'other_lesson_participant_name' => $this->config['other_lesson_participant'],
             'teacher_name' => $rescheduling_lesson->teacher->profession_level_name,
             'teacher_id' => $rescheduling_lesson->teacher->id,
             'group_id' => $incoming_data['group_id'] ?? null,
@@ -418,11 +422,12 @@ class ModelHelpers
         return $data;
     }
 
-    public static function addOrUpdateManyToManyAttributes($data, $model_id, $model_name, $attributes) {
+    public function addOrUpdateManyToManyAttributes($data, $model_id) {
 
+        $model_name = $this->config['model_name'];
         $model = $model_name::find($model_id);
         
-        foreach ($attributes as $field => $attribute) {
+        foreach ($this->config['many_to_many_attributes'] as $field => $attribute) {
             if (isset($data[$field])) {
                 $model->$attribute()->sync($data[$field]);
             } else {
@@ -432,18 +437,19 @@ class ModelHelpers
         return true;
     }
 
-    public static function deleteManyToManyAttributes($model_id, $model_name, $attributes) 
+    public function deleteManyToManyAttributes($model_id) 
     {
-        $model = $model_name::with($attributes)->find($model_id);
-        foreach ($attributes as $attribute) {
+        $model_name = $this->config['model_name'];
+        $model = $model_name::with($this->config['many_to_many_attributes'])->find($model_id);
+        foreach ($this->config['many_to_many_attributes'] as $attribute) {
             $model->$attribute()->detach();
         }
     }
 
-    public static function getManyToManyData($data, $attributes) {
+    public function getManyToManyData($data) {
 
         $instance = $data['updating_instance'];
-        foreach ($attributes as $field => $attribute) {
+        foreach ($this->config['many_to_many_attributes'] as $field => $attribute) {
             $attribute_ids = [];
             foreach ($instance->$attribute as $elem) {
                 $attribute_ids[] = $elem->id;
@@ -453,13 +459,161 @@ class ModelHelpers
         return $data;
     }
 
-    public static function preparingBooleans($data, $boolean_attributes) {
-        foreach ($boolean_attributes as $attribute) {
+    public function preparingBooleans($data) {
+        foreach ($this->config['boolean_attributes'] as $attribute) {
             if (! isset($data[$attribute])) {
                 $data[$attribute] = 0;
             }
         }
         return $data;
+    }
+
+    protected function getFilteredQuery($query, $data) 
+    {
+        $filter_conditions = config("filters.{$this->config['instance_name']}");
+        foreach ($filter_conditions as $field => $conditions) {
+            if ($conditions['method'] == 'where' && is_array($conditions['operator'])) {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    $query = $query->$method(function($q) use ($data, $conditions, $field) {
+                        foreach ($conditions['operator'] as $sub_field => $sub_conditions) {
+                            $sub_method = $sub_conditions['method'];
+                            if ($sub_method === 'whereHas' || $sub_method === 'orWhereHas') {
+                                $q = $q->$sub_method($sub_field, function(Builder $que) use ($sub_conditions, $sub_method, $sub_field, $data, $field) {
+                                    $que = $que->where($sub_conditions['final_field'], $sub_conditions['operator'], $data[$field]);
+                                });    
+                            } else {
+                                $is_like = $sub_conditions['operator'] == 'like';
+                                if (isset($sub_conditions['db_field'])) {
+                                    $db_field = $sub_conditions['db_field'];
+                                    $q = $q->$sub_method($db_field, $sub_conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));
+                                } else {
+                                    $q = $q->$sub_method($sub_field, $sub_conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));
+                                }
+                            }
+                        }
+                        $q;
+                    });
+                }
+            } elseif (isset($conditions['calculated_value']) && $conditions['method'] == 'where') {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    if (isset($conditions['db_field'])) {
+                        $db_field = $conditions['db_field'];
+                        $query = $query->$method($db_field, $conditions['operator'], $conditions['calculated_value']($data[$field]));    
+                    } else {
+                        $query = $query->$method($field, $conditions['operator'], $conditions['calculated_value']($data[$field]));
+                    }
+                }
+            } elseif ($conditions['method'] == 'whereHas' && is_array($conditions['operator'])) {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    $query = $query->$method($conditions['eager_field'], function(Builder $q) use ($conditions, $data, $field) {
+                        foreach ($conditions['operator'] as $sub_field => $sub_conditions) {
+                            $sub_method = $sub_conditions['method'];
+                            $q = $q->$sub_method($sub_field, $sub_conditions['operator'], $data[$field]);
+                        }
+                    });
+                }    
+            } elseif ($conditions['method'] == 'whereIn') {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    if (isset($conditions['db_field'])) {
+                        $db_field = $conditions['db_field'];
+                        $query = $query->$method($db_field, $data[$field]);    
+                    } else {
+                        $query = $query->$method($field, $data[$field]);
+                    }
+                }    
+            } elseif ($conditions['method'] == 'whereRaw') {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    if (isset($conditions['db_field'])) {
+                        $db_field = $conditions['db_field'];
+                        $query = $query->$method($db_field, [$conditions['calculated_value']($data[$field])]);    
+                    } else {
+                        $query = $query->$method($field, [$conditions['calculated_value']($data[$field])]);
+                    }
+                }    
+            } else  {
+                if (isset($data[$field])) {
+                    $method = $conditions['method'];
+                    $is_like = $conditions['operator'] == 'like';
+                    if (isset($conditions['db_field'])) {
+                        $db_field = $conditions['db_field'];
+                        $query = $query->$method($db_field, $conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));    
+                    } else {
+                        $query = $query->$method($field, $conditions['operator'], ($is_like ? '%'.$data[$field].'%' : $data[$field]));
+                    }
+                }
+            }
+        }
+
+        return $query;
+    }
+
+    public function getFilteredArrayOfArrays($array_arrays, $data) {
+
+        $filterReplacementConditions = config('filters.lesson_replacement');
+        $filtered_array_arrays = [];
+        $is_suitable_element = true;
+
+        foreach ($array_arrays as $array) {
+            foreach ($filterReplacementConditions as $key => $condition) {
+                if (isset($data[$key]) && isset($array[$key])) {
+                    if ($condition['operator'] == 'not_equal') {
+                        if (is_array($array[$key])) {
+                            if ($array[$key]['id'] != $data[$key]) {
+                                $is_suitable_element = false;
+                                break;    
+                            }
+                        } else {
+                            if ($array[$key] != $data[$key]) {
+                                $is_suitable_element = false;
+                                break;    
+                            }
+                        }
+                    }
+                    if ($condition['operator'] == 'multi_not_equal') {
+                        if (is_array($array[$key])) {
+                            if (!in_array($array[$key]['id'], $data[$key])) {
+                                $is_suitable_element = false;
+                                break;    
+                            }
+                        } else {
+                            if (!in_array($array[$key], $data[$key])) {
+                                $is_suitable_element = false;
+                                break;    
+                            }
+                        }
+                    }
+                    if ($condition['operator'] == 'not_like') {
+                        if (strpos($array[$key], $data[$key]) === false) {
+                            $is_suitable_element = false;
+                            break;    
+                        }
+                    }
+                    if ($condition['operator'] == 'less_then') {
+                        if ($array[$key] < $data[$key]) {
+                            $is_suitable_element = false;
+                            break;    
+                        }
+                    }
+                    if ($condition['operator'] == 'more_then') {
+                        if ($array[$key] > $data[$key]) {
+                            $is_suitable_element = false;
+                            break;    
+                        }
+                    }
+                }
+            }
+            if ($is_suitable_element) {
+                $filtered_array_arrays[] = $array;
+            }
+            $is_suitable_element = true;
+        }
+        
+        return $filtered_array_arrays;
     }
 
 }

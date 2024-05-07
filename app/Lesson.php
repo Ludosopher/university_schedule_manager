@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\Helpers\LessonHelpers;
 use Illuminate\Database\Eloquent\Model;
 use Kyslik\ColumnSortable\Sortable;
 

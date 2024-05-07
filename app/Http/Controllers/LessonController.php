@@ -2,47 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\DocExportHelpers;
-use App\Helpers\LessonHelpers;
-use App\Helpers\ModelHelpers;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\lesson\DeleteLessonRequest;
 use App\Http\Requests\lesson\FilterLessonRequest;
 use App\Http\Requests\lesson\RescheduleLessonRequest;
 use App\Http\Requests\lesson\StoreLessonRequest;
+use App\Instances\LessonInstance;
+use App\Instances\ScheduleElements\ScheduleElement;
+use App\Instances\ScheduleElements\TeacherScheduleElement;
 use Illuminate\Http\Request;
 
 
 class LessonController extends Controller
 {
-    protected $config = [
-        'model_name' => 'App\Lesson',
-        'instance_name' => 'lesson',
-        'instance_plural_name' => 'lessons',
-        'instance_name_field' => 'name',
-        'profession_level_name_field' => null,
-        'eager_loading_fields' => ['lesson_type', 'week_day', 'weekly_period', 'class_period', 'teacher', 'groups'],
-        'other_lesson_participant' => null,
-        'other_lesson_participant_name' => null,
-        'boolean_attributes' => [],
-        'many_to_many_attributes' => ['group_id' => 'groups'],
-    ];
-
     public function getLessons (FilterLessonRequest $request)
     {
         $request->validated();
-        $data = ModelHelpers::getInstances(request()->all(), $this->config);
+        $data = (new LessonInstance())->getInstances(request()->all());
 
         return view("lesson.lessons")->with('data', $data);
     }
 
     public function addLessonForm (Request $request)
     {
-        $data = ModelHelpers::getInstanceFormData($request->all(), $this->config);
+        $data = (new LessonInstance())->getInstanceFormData($request->all());
 
         if (isset($data['updating_instance'])) {
-            $data = ModelHelpers::getManyToManyData($data, $this->config['many_to_many_attributes']);
+            $data = (new LessonInstance())->getManyToManyData($data);
         }
         return view("lesson.add_lesson_form")->with('data', $data);
     }
@@ -50,10 +37,10 @@ class LessonController extends Controller
     public function addOrUpdateLesson (StoreLessonRequest $request)
     {
         $validated = $request->validated();
-        $lesson = ModelHelpers::addOrUpdateInstance($validated, $this->config);
-        ModelHelpers::addOrUpdateManyToManyAttributes($validated, $lesson['id'], $this->config['model_name'], $this->config['many_to_many_attributes']);
+        $lesson = (new LessonInstance())->addOrUpdateInstance($validated);
+        (new LessonInstance())->addOrUpdateManyToManyAttributes($validated, $lesson['id']);
 
-        $response_content = ResponseHelpers::getContent($lesson, $this->config['instance_name']);
+        $response_content = ResponseHelpers::getContent($lesson, 'lesson');
         
         return redirect()->back()->with('response', [
             'success' => $response_content['success'],
@@ -63,11 +50,10 @@ class LessonController extends Controller
 
     public function deleteLesson (DeleteLessonRequest $request)
     {
-        $attributes = array_values($this->config['many_to_many_attributes']);
-        ModelHelpers::deleteManyToManyAttributes($request->validated()['deleting_id'], $this->config['model_name'], $attributes);
+        (new LessonInstance())->deleteManyToManyAttributes($request->validated()['deleting_id']);
         
-        $deleted_instance = ModelHelpers::deleteInstance($request->validated()['deleting_id'], $this->config);
-        $response_content = ResponseHelpers::getContent($deleted_instance, $this->config['instance_name']);
+        $deleted_instance = (new LessonInstance())->deleteInstance($request->validated()['deleting_id']);
+        $response_content = ResponseHelpers::getContent($deleted_instance, 'lesson');
         return redirect()->back()->with('response', [
             'success' => $response_content['success'],
             'message' => $response_content['message']
@@ -92,8 +78,8 @@ class LessonController extends Controller
             $teacher_id = $request->replace_rules['teacher_id'];
         }
 
-        $data = LessonHelpers::getReplacementData($request->all());
-        $data['in_schedule'] = LessonHelpers::getReplacementSchedule($teacher_id, $data, $request->all());
+        $data = (new TeacherScheduleElement)->getReplacementData($request->all());
+        $data['in_schedule'] = (new TeacherScheduleElement)->getReplacementSchedule($teacher_id, $data, $request->all());
         
         return view("lesson.replacement_lessons")->with('data', $data);
     }
@@ -101,7 +87,7 @@ class LessonController extends Controller
     public function getReschedulingVariants (RescheduleLessonRequest $request)
     {
         $request->flash();
-        $data = LessonHelpers::getReschedulingData($request->validated());
+        $data = (new LessonInstance)->getReschedulingData($request->validated());
 
         return view("lesson.lesson_reschedule")->with('data', $data);
     }
@@ -118,7 +104,7 @@ class LessonController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = DocExportHelpers::replacementExport($validation['validated']);
+        $objWriter = (new ScheduleElement)->replacementExport($validation['validated']);
         $objWriter->save("php://output");
     }
 
@@ -137,7 +123,7 @@ class LessonController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = DocExportHelpers::scheduleExport($data);
+        $objWriter = (new ScheduleElement)->scheduleExport($data);
         $objWriter->save("php://output");
     }
 }

@@ -6,6 +6,7 @@ class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *  php artisan migrate:fresh --seed  // deletes all the tables (and its contents) and starts a fresh migration with seeding
      *
      * @return void
      */

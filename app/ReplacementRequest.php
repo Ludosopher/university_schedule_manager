@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Helpers\ReplacementRequestHelpers;
+use App\Instances\ReplacementRequestInstance;
 use Illuminate\Database\Eloquent\Model;
 use Kyslik\ColumnSortable\Sortable;
 
@@ -97,11 +97,11 @@ class ReplacementRequest extends Model
         });
 
         static::updating(function ($replacement_request) {
-            ReplacementRequestHelpers::updatingStatus($replacement_request);
+            (new ReplacementRequestInstance())->updatingStatus($replacement_request);
         });
 
         static::updated(function ($replacement_request) {
-            ReplacementRequestHelpers::updatadStatus($replacement_request);
+            (new ReplacementRequestInstance())->updatadStatus($replacement_request);
         });
     }
 }

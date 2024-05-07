@@ -1,16 +1,30 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Instances;
 
+use App\Helpers\NotificationHelpers;
+use App\Instances\Instance;
 use App\ReplacementRequest;
 use App\ReplacementRequestMessage;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 
-
-class ReplacementRequestHelpers
+class ReplacementRequestInstance extends Instance
 {
-    public static function getMyReplacementRequests ($initiator_id, $config)
+    protected $config = [
+        'model_name' => 'App\ReplacementRequest',
+        'instance_name' => 'replacement_request',
+        'instance_plural_name' => 'replacement_requests',
+        'instance_name_field' => 'name',
+        'profession_level_name_field' => null,
+        'eager_loading_fields' => ['status', 'replaceable_lesson', 'replacing_lesson', 'initiator', 'messages'],
+        'other_lesson_participant' => null,
+        'other_lesson_participant_name' => null,
+        'boolean_attributes' => [],
+        'many_to_many_attributes' => ['is_regular'],
+    ];
+
+    public function getMyReplacementRequests ($initiator_id)
     {
         $replacement_request_status_ids = config('enum.replacement_request_status_ids');
 
@@ -42,12 +56,12 @@ class ReplacementRequestHelpers
             }
         }
 
-        $result['table_properties'] = config("tables.{$config['instance_plural_name']}");
+        $result['table_properties'] = config("tables.{$this->config['instance_plural_name']}");
 
         return $result;
     }
 
-    public static function updatingStatus($request) {
+    public function updatingStatus($request) {
 
         $replacement_request_status_ids = config('enum.replacement_request_status_ids');
 
@@ -89,7 +103,7 @@ class ReplacementRequestHelpers
         }
     }
 
-    public static function updatadStatus($request) {
+    public function updatadStatus($request) {
         
         $replacement_request_status_ids = config('enum.replacement_request_status_ids');
         
@@ -100,10 +114,10 @@ class ReplacementRequestHelpers
         }
     }
 
-    public static function deleteReplacementRequest ($deleting_id, $config) {
+    public function deleteReplacementRequest ($deleting_id) {
         
         ReplacementRequestMessage::where('replacement_request_id', $deleting_id)->delete();
         
-        return ModelHelpers::deleteInstance($deleting_id, $config);
+        return $this->deleteInstance($deleting_id, $this->config);
     }
 }
