@@ -12,11 +12,11 @@ use App\WeekDay;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema;
 
-abstract class Instance
+class Instance
 {
     protected $config;
     
-    protected function addOrUpdate($data, $model) {
+    public function addOrUpdate($data, $model) {
 
         if (isset($data['updating_id'])) {
             $instance = $model::where('id', $data['updating_id'])->first();

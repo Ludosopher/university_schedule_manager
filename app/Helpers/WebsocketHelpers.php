@@ -2,9 +2,11 @@
 
 namespace App\Helpers;
 
+use App\Instances\Instance;
 use App\ReplacementRequestMessage;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
+use Log;
 
 class WebsocketHelpers implements MessageComponentInterface {
     protected $clients;
@@ -60,7 +62,8 @@ class WebsocketHelpers implements MessageComponentInterface {
             $from->send(json_encode($this->existing_messages));
         } else {
             $replacement_request_id = $msg['replacement_request_id'];
-            ModelHelpers::addOrUpdate($msg, 'App\ReplacementRequestMessage');
+            (new Instance)->addOrUpdate($msg, 'App\ReplacementRequestMessage');
+            //ModelHelpers::addOrUpdate($msg, 'App\ReplacementRequestMessage');
         }
 
         foreach ($this->rooms[$replacement_request_id] as $client) {

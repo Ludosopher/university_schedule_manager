@@ -41,6 +41,8 @@ class ReplacementRequestWS extends Command
      */
     public function handle()
     {
+        $this->info('Start server');
+        
         $server = IoServer::factory(
             new HttpServer (
                 new WsServer(

@@ -54,7 +54,7 @@
             </section>
 
             <script>
-                let socket = new WebSocket("ws://192.168.56.1:8080");
+                let socket = new WebSocket("ws://localhost:8080"); // ws://192.168.56.1:8080
                                 
                 var blade_data = @json($data);
                         
