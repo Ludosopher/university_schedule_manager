@@ -13,6 +13,7 @@ use App\Instances\ReplacementRequestInstance;
 use App\Instances\ScheduleElements\TeacherScheduleElement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Log;
 
 
 class ReplacementRequestController extends Controller

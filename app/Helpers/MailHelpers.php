@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Jobs\SendReplacementRequestMailJob;
+use Log;
 
 
 class MailHelpers
