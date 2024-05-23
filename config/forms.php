@@ -285,6 +285,13 @@ return [
       ],
       [
          'type' => 'objects-select',
+         'plural_name' => 'study_periods',
+         'name' => 'study_period',
+         'is_required' => true,
+         'is_localized' => false,
+      ],
+      [
+         'type' => 'objects-select',
          'plural_name' => 'lesson_types',
          'name' => 'lesson_type',
          'is_required' => true,
@@ -349,6 +356,16 @@ return [
       //    'input_type' => 'text',
       //    'name' => 'name',
       // ],
+      [
+         'type' => 'objects-select',
+         'multiple_options' => [
+             'is_multiple' => true,
+             'size' => 2
+         ],
+         'plural_name' => 'study_periods',
+         'name' => 'study_period',
+         'is_localized' => false,
+      ],
       [
          'type' => 'objects-select',
          'multiple_options' => [

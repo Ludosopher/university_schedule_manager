@@ -111,6 +111,9 @@
         'third' => 'третий',
         'fourth' => 'четвёртый',
         'fifth' => 'пятый',
+        // study_periods
+        // 'autumn 2023' => 'Осенний 2023',
+        // 'spring 2024' => 'Весенний 2024',
         //lesson_types
         'lecture' => 'лекция',
         'practical' => 'практика',

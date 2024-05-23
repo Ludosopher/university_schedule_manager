@@ -31,6 +31,9 @@ class TeacherScheduleElement extends ScheduleElement
     protected function getLessonsForReplacement($data, $week_number, $week_dates)
     {
         $weekly_period_ids = config('enum.weekly_period_ids');
+        $study_seasons = config('enum.study_seasons');
+        $study_periods_data = DateHelpers::getStudyPeriodsData();
+        $required_study_period_id = (int)($incoming_data['study_period_id'] ?? $study_periods_data['current_period_id']);
         $replacement_lessons = [];
         $groups_lessons = [];
         $class_periods = ClassPeriod::get();
@@ -73,6 +76,12 @@ class TeacherScheduleElement extends ScheduleElement
                 $looked_teachers[] = $g_lesson->teacher->id;
                 if ($is_suitable_teacher) {
                     foreach ($g_lesson->teacher->lessons as $dt_lesson) {
+                        if (! isset($week_number) && $dt_lesson->study_period_id !== $required_study_period_id) {
+                            continue;
+                        }
+                        if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($dt_lesson, $week_number) !== $study_seasons['studies']) {
+                            continue;
+                        }
                         if (! DateHelpers::testLessonDate($week_number, $dt_lesson)) {
                             continue;
                         };
@@ -98,6 +107,12 @@ class TeacherScheduleElement extends ScheduleElement
                         sort($dt_lesson_groups_ids);
                         if (count($dt_lesson_groups_ids) == count($groups_ids) && $dt_lesson_groups_ids === $groups_ids) {
                             foreach ($seeking_teacher->lessons as $st_lesson) {
+                                if (! isset($week_number) && $st_lesson->study_period_id !== $required_study_period_id) {
+                                    continue;
+                                }
+                                if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($st_lesson, $week_number) !== $study_seasons['studies']) {
+                                    continue;
+                                }
                                 if (! DateHelpers::testLessonDate($week_number, $st_lesson)) {
                                     continue;
                                 };
@@ -285,13 +300,12 @@ class TeacherScheduleElement extends ScheduleElement
 
         $class_periods = ClassPeriod::get();
         $week_days = WeekDay::get();
-
         $data_for_schedule["schedule_teacher_id"] = $teacher_id;
-        $data_for_schedule["week_number"] = isset($incom_data['week_data']) ? json_decode($incom_data['week_data'], true)['week_number'] 
-                                                                            : (isset($incom_data['week_number']) ? $incom_data['week_number']
-                                                                                                                 : null);
+        $data_for_schedule["week_number"] = isset($incom_data['week_number']) ? $incom_data['week_number'] 
+                                                                              : (isset(json_decode($incom_data['week_data'], true)['week_number']) ? json_decode($incom_data['week_data'], true)['week_number']
+                                                                                                                                                   : null);
         $schedule_data = $this->getSchedule($data_for_schedule);
-
+        
         foreach ($incom_replacement_data['replacement_lessons'] as $lesson) {
             $replacement_lessons[$lesson['class_period_id']['id']][$lesson['week_day_id']['id']][$lesson['weekly_period_id']['id']] = [
                 'id' => $lesson['lesson_id'],
@@ -331,6 +345,7 @@ class TeacherScheduleElement extends ScheduleElement
 
         $data['week_dates'] = (array)$incom_replacement_data['week_dates'];
         $data['is_red_week'] = $incom_replacement_data['is_red_week'];
+        $data['current_study_period_border_weeks'] = DateHelpers::getCurrentStudyPeriodBorderWeeks();
 
         return $data;
     }

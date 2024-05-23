@@ -89,6 +89,9 @@ return [
       //    'method' => 'where',
       //    'operator' => 'like'
       // ],
+      'study_period_id' => [
+         'method' => 'whereIn'
+      ],
       'lesson_type_id' => [
          'method' => 'whereIn'
       ],

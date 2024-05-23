@@ -37,7 +37,7 @@
                     @php
                         $week_number = isset($data['week_data']['week_number']) ? $data['week_data']['week_number'] : (isset($data['week_number']) ? $data['week_number'] : '');
                     @endphp
-                    <input type="week" name="week_number" value="{{ $week_number }}">
+                    <input type="week" name="week_number" value="{{ $week_number }}" min="{{ $data['current_study_period_border_weeks']['start'] }}" max="{{ $data['current_study_period_border_weeks']['end'] }}">
                     <button type="submit" class="btn btn-primary">{{ __('form.this_week') }}</button>
                 </form>
             </div>

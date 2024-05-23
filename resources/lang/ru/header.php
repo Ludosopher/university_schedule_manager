@@ -54,6 +54,7 @@
         'of_group' => 'группы',
         'reschedule_variants_export_to_docx' => 'Варианты переноса занятия в расписании ',
         'schedule_export_to_docx' => 'Расписание занятий',
+        'regular_schedule_export_to_docx' => 'Регулярное расписание занятий',
         'schedule_on_month_export_to_docx' => 'Расписание занятий на ',
         'weekly_periods' => 'Недельная периодичность',
         'class_period' => 'пара',
@@ -64,6 +65,10 @@
         'level' => 'Уровень',
         'access_to_teacher_schedule_management' => 'Допуск к управлению расписанием преподавателей',
         'access_to_group_schedule_management' => 'Допуск к управлению расписанием групп',
+        'spring' => 'в весеннем семестре',
+        'autumn' => 'в осеннем семестре',
+        'session' => 'Сессия',
+        'vacation' => 'Каникулы',
         //moths
         'january' => 'январь',
         'february' => 'февраль',

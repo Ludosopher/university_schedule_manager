@@ -319,6 +319,33 @@ class PropertyTablesSeeder extends Seeder
             ],
         ]);
 
+        \DB::table('study_periods')->insert([
+            [
+                'id' => 1,
+                'year' => '2023',
+                'season' => 'autumn',
+                'start' => '2023-09-01 00:00:00',
+                'micro_end' => '2023-11-03 00:00:00',
+                'end' => '2023-12-29 00:00:00',
+                'session_start' => '2024-01-11 00:00:00',
+                'session_end' => '2024-01-26 00:00:00',
+                'created_at' => '2022-08-22 00:00:00',
+                'updated_at' => '2022-08-22 00:00:00',
+            ],
+            [
+                'id' => 2,
+                'year' => '2024',
+                'season' => 'spring',
+                'start' => '2024-01-29 00:00:00',
+                'micro_end' => '2024-03-29 00:00:00',
+                'end' => '2024-05-31 00:00:00',
+                'session_start' => '2024-06-03 00:00:00',
+                'session_end' => '2024-06-14 00:00:00',
+                'created_at' => '2022-08-22 00:00:00',
+                'updated_at' => '2022-08-22 00:00:00',
+            ],
+        ]);
+
         \DB::table('study_degrees')->insert([
             [
                 'id' => 1,

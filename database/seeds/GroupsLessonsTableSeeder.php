@@ -884,6 +884,23 @@ class GroupsLessonsTableSeeder extends Seeder
                 'lesson_id' => 219,
                 'group_id' => 28,
             ],
+            // test study periods
+            [
+                'lesson_id' => 220,
+                'group_id' => 31,
+            ],
+            [
+                'lesson_id' => 221,
+                'group_id' => 47,
+            ],
+            [
+                'lesson_id' => 222,
+                'group_id' => 33,
+            ],
+            [
+                'lesson_id' => 223,
+                'group_id' => 33,
+            ],
         ]);
     }
 }

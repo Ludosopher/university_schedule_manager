@@ -55,6 +55,7 @@
         'of_group' => 'of group',
         'reschedule_variants_export_to_docx' => 'Options for rescheduling classes in the schedule ',
         'schedule_export_to_docx' => 'Schedule of classes',
+        'regular_schedule_export_to_docx' => 'Regular schedule of classes',
         'schedule_on_month_export_to_docx' => 'Schedule of classes on ',
         'weekly_periods' => 'Weekly periods',
         'class_period' => 'class period',
@@ -65,6 +66,10 @@
         'level' => 'Level',
         'access_to_teacher_schedule_management' => "Access to teacher schedule management",
         'access_to_group_schedule_management' => "Access to group schedule management",
+        'spring' => 'in the spring semester',
+        'autumn' => 'in the autumn semester',
+        'session' => 'Session',
+        'vacation' => 'Vacation',
         //moths
         'january' => 'january',
         'february' => 'february',

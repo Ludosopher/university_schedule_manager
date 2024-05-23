@@ -14,4 +14,5 @@ return [
     'not_time_for_replacement_request_process' => 'Недостаточно времени для обработки запроса на замену.',
     'request_already_exists' => 'Такой запрос уже создан.',
     'lesson_is_in_replacement_already' => 'Одно из привлекаемых к замене занятий уже задействовано в другой замене',
+    'failed_week_number' => 'Выбранная неделя не соответствует текущему учебному семестру',
 ];

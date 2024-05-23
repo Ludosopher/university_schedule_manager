@@ -22,6 +22,11 @@ class Lesson extends Model
         return $this->belongsTo(ClassPeriod::class);
     }
 
+    public function study_period()
+    {
+        return $this->belongsTo(StudyPeriod::class);
+    }
+
     public function lesson_room()
     {
         return $this->belongsTo(LessonRoom::class);

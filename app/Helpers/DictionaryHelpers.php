@@ -16,12 +16,13 @@ use App\ReplacementRequestStatus;
 use App\StudyDegree;
 use App\StudyForm;
 use App\StudyOrientation;
+use App\StudyPeriod;
 use App\StudyProgram;
 use App\Teacher;
 use App\User;
 use App\WeekDay;
 use App\WeeklyPeriod;
-
+use Illuminate\Support\Facades\DB;
 
 class DictionaryHelpers
 {
@@ -62,6 +63,7 @@ class DictionaryHelpers
         }
 
         return [
+            'study_periods' => StudyPeriod::select('id', DB::raw("CONCAT(study_periods.season,' ',study_periods.year) as name"))->get(),
             'lesson_types' => LessonType::select('id', 'name')->get(),
             'week_days' => WeekDay::select('id', 'name')->get(),
             'weekly_periods' => WeeklyPeriod::select('id', 'name')->get(),

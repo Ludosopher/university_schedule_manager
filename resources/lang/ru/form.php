@@ -37,6 +37,7 @@
         'course' => 'Курс',
         'size' => 'Численность',
         // add_lesson_form
+        'study_period' => 'Семестр',
         'lesson_type' => 'Вид занятия',
         'week_day' => 'День недели',
         'weekly_period' => 'Недельная периодичность',
@@ -63,6 +64,9 @@
         //add_users_form
         'name' => 'Имя',
         'is_admin' => 'Администратор',
-        'is_moderator' => 'Модератор'
+        'is_moderator' => 'Модератор',
+        'spring' => 'Весенний',
+        'autumn' => 'Осенний',
+        'this_study_period' => 'Для этого семестра',
         
     ];

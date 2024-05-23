@@ -109,7 +109,7 @@
                             @endif    
                         @endforeach    
                     @endif
-                    <input class="input_week_number" type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}">
+                    <input class="input_week_number" type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}" min="{{ $data['in_schedule']['current_study_period_border_weeks']['start'] }}" max="{{ $data['in_schedule']['current_study_period_border_weeks']['end'] }}">
                     <input type="hidden" name="prev_replace_rules" value="{{ json_encode($data['prev_replace_rules']) }}">
                     <input type="hidden" name="week_data" value="{{ json_encode($data['week_data']) }}">
                     <input type="hidden" name="is_red_week" value="{{ isset($data['is_red_week']) ? ($data['is_red_week'] ? 1 : 0) : '' }}">

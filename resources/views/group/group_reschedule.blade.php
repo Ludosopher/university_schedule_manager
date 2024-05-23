@@ -30,7 +30,8 @@
                     <input type="hidden" name="teacher_id" value="{{ $data['teacher_id'] }}">
                     <input type="hidden" name="group_id" value="{{ $data['group_id'] }}">
                     <input type="hidden" name="lesson_id" value="{{ $data['rescheduling_lesson_id'] }}">
-                    <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}">
+                    <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
+                    <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}" min="{{ $data['current_study_period_border_weeks']['start'] }}" max="{{ $data['current_study_period_border_weeks']['end'] }}">
                     <button type="submit" class="btn btn-primary">{{ __('form.this_week') }}</button>
                 </form>
                 <form method="POST" action="{{ route('group-reschedule-doc-export') }}">

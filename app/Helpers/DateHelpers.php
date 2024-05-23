@@ -3,7 +3,9 @@
 namespace App\Helpers;
 
 use App\ExternalDataset;
+use App\Lesson;
 use App\Setting;
+use App\StudyPeriod;
 use DateTime;
 
 
@@ -209,6 +211,87 @@ class DateHelpers
 
             return json_decode($xmlcalendar_data->body, true);
         }
+    }
+
+    public static function getStudyPeriodsData() {
+        $current_study_period_id = null;
+        $current_date = date('Y-m-d');
+        $study_periods = StudyPeriod::orderBy('start')
+                                    ->get();
+        foreach ($study_periods as $key => &$study_period) {
+            if (! isset($study_periods[$key-1]) && $current_date < $study_period->start) {
+                $study_period->is_current = true;
+                $current_study_period_id = $study_period->id;
+                break;
+            }
+            if ($current_date >= $study_period->start && $current_date <= $study_period->end) {
+                $study_period->is_current = true;
+                $current_study_period_id = $study_period->id;
+                break;
+            }
+            if (isset($study_periods[$key+1]) && $current_date > $study_period->end && $current_date < $study_periods[$key+1]->start) {
+                $study_periods[$key+1]->is_current = true;
+                $current_study_period_id = $study_periods[$key+1]->id;
+                break;
+            }
+            if (! isset($study_periods[$key+1]) && $current_date > $study_period->end) {
+                $study_period->is_current = true;
+                $current_study_period_id = $study_period->id;
+                break;
+            }
+        }
+
+        return [
+            'all_periods' => $study_periods,
+            'current_period_id' => $current_study_period_id
+        ];
+    }
+
+    public static function getRequiredStudyPeriod($study_periods, $required_study_period_id) 
+    {
+        foreach ($study_periods as $study_period) {
+            if ($study_period->id === $required_study_period_id) {
+                return $study_period;
+            }
+        }
+        return false;
+    }
+
+    public static function checkWeekCorrespondToStudyPeriod(StudyPeriod $study_period, $week_number)
+    {
+        $study_seasons = config('enum.study_seasons');
+        $study_season_name_parts = config('enum.study_season_name_parts');
+
+        foreach ($study_season_name_parts as $study_season => $study_season_name_part) {
+            $start = $study_season_name_part.'start';
+            $end = $study_season_name_part.'end';
+            if (date('Y-W', strtotime($week_number)) >= date('Y-W', strtotime($study_period->$start))
+                &&
+                date('Y-W', strtotime($week_number)) <= date('Y-W', strtotime($study_period->$end))) 
+            {
+                return $study_seasons[$study_season];
+            }
+        }
+        
+        return false;
+    }
+
+    public static function checkLessonCorrespondToWeek($lesson, $week_number) {
+        if (! isset($lesson->date)) {
+            $lesson_study_period = StudyPeriod::find($lesson->study_period_id);
+            return self::checkWeekCorrespondToStudyPeriod($lesson_study_period, $week_number);
+        }
+        return false;
+    }
+
+    public static function getCurrentStudyPeriodBorderWeeks()
+    {
+        $study_periods_data = self::getStudyPeriodsData();
+        $current_study_period = StudyPeriod::find($study_periods_data['current_period_id']);
+        return [
+            'start' => self::getWeekNumberFromDate($current_study_period->start),
+            'end' => self::getWeekNumberFromDate($current_study_period->end)
+        ];
     }
 
 }

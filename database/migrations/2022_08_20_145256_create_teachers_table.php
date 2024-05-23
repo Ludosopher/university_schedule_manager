@@ -71,6 +71,18 @@ class CreateTeachersTable extends Migration
             $table->timestamps();
         });
 
+        Schema::create('study_periods', function (Blueprint $table) {
+            $table->id();
+            $table->string('year');
+            $table->string('season');
+            $table->date('start');
+            $table->date('micro_end');
+            $table->date('end');
+            $table->date('session_start');
+            $table->date('session_end');
+            $table->timestamps();
+        });
+
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->string('first_name');
@@ -110,6 +122,8 @@ class CreateTeachersTable extends Migration
             $table->unsignedBigInteger('class_period_id');
             $table->unsignedBigInteger('teacher_id');
             $table->unsignedBigInteger('lesson_room_id');
+            $table->unsignedBigInteger('study_period_id')->nullable();
+            $table->boolean('in_micro_pereiod')->nullable();
             $table->date('date')->nullable();
             $table->foreign('lesson_type_id')->references('id')->on('lesson_types')->onDelete('cascade');
             $table->foreign('week_day_id')->references('id')->on('week_days')->onDelete('cascade');
@@ -117,6 +131,7 @@ class CreateTeachersTable extends Migration
             $table->foreign('class_period_id')->references('id')->on('class_periods')->onDelete('cascade');
             $table->foreign('teacher_id')->references('id')->on('teachers')->onDelete('cascade');
             $table->foreign('lesson_room_id')->references('id')->on('lesson_rooms')->onDelete('cascade');
+            $table->foreign('study_period_id')->references('id')->on('study_periods')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -157,6 +172,7 @@ class CreateTeachersTable extends Migration
         Schema::dropIfExists('professional_levels');
         Schema::dropIfExists('positions');
         Schema::dropIfExists('class_periods');
+        Schema::dropIfExists('study_periods');
         Schema::dropIfExists('teachers');
         Schema::dropIfExists('lesson_rooms');
         Schema::dropIfExists('lessons');

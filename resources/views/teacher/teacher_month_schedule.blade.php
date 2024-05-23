@@ -42,6 +42,13 @@
                 $bg_color = 'rgb(255,243,243)';
             }
         @endphp
+        @if($week_content['week_data']['current_study_season'] === $data['study_seasons']['studies'])
+            <h5></h5>
+        @elseif($week_content['week_data']['current_study_season'] === $data['study_seasons']['session'])
+            <h5>Сессия</h5>
+        @else
+            <h5>Каникулы</h5>
+        @endif
         <div class="timetable-img text-center">
             <div class="table-responsive">
                 <table class="table table-bordered text-center" style="background-color: {{ $bg_color }}">

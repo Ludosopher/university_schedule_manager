@@ -23,9 +23,11 @@ class ScheduleTeacherRequest extends FormRequest
      */
     public function rules()
     {
+    //dd($this->all());
         return [
             "schedule_teacher_id" => "required|integer|exists:App\Teacher,id", 
-            'week_number' => 'nullable|string',
+            "study_period_id" => "nullable|integer|exists:App\StudyPeriod,id",
+            "week_number" => "nullable|string",
         ];
     }
     

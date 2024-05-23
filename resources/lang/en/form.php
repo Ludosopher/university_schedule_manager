@@ -45,6 +45,7 @@
         'teacher' => 'Teacher',
         'lesson_room' => 'Lesson room',
         'date' => 'Date',
+        'study_period' => 'Study period',
         // add_setting_form
         'red_week_is_odd' => '"Red"(First) week is odd',
         'full_time_week_days_limit' => 'The number of days of the week in the regular schedule',
@@ -64,5 +65,8 @@
         'name' => 'Name',
         'is_admin' => 'Administrator',
         'is_moderator' => 'Moderator',
+        'spring' => 'Spring',
+        'autumn' => 'Autumn',
+        'this_study_period' => 'For this semestr',
         
     ];

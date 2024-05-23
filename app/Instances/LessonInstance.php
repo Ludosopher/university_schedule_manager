@@ -73,11 +73,14 @@ class LessonInstance extends Instance
     public function getReschedulingData($incoming_data) 
     {
         $settings = Setting::pluck('value', 'name');
+        $study_periods_data = DateHelpers::getStudyPeriodsData();
+        $required_study_period_id = (int)($incoming_data['study_period_id'] ?? $study_periods_data['current_period_id']);
         $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
         $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
         $teacher = Teacher::with(['lessons'])->where('id', $incoming_data['teacher_id'])->first();
         $lesson = Lesson::with(['groups.lessons'])->where('id', $incoming_data['lesson_id'])->first();
         $weekly_period_ids = config('enum.weekly_period_ids');
+        $study_seasons = config('enum.study_seasons');
         $week_days = WeekDay::select('id', 'name')->get();
         $class_periods = ClassPeriod::get();
         
@@ -123,6 +126,12 @@ class LessonInstance extends Instance
                     if ($class_period->id <= $class_periods_limit) {
                         foreach ($schedule_subjects as $key => $subject_lessons) {
                             foreach ($subject_lessons as $sub_lesson) {
+                                if (! isset($week_number) && $sub_lesson->study_period_id !== $required_study_period_id) {
+                                    continue;
+                                }
+                                if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($sub_lesson, $week_number) !== $study_seasons['studies']) {
+                                    continue;
+                                }
                                 if (! DateHelpers::testLessonDate($week_number, $sub_lesson)) {
                                     continue;
                                 };
@@ -195,6 +204,7 @@ class LessonInstance extends Instance
             'week_days_limit' => $week_days_limit,
             'class_periods_limit' => $class_periods_limit,
             'free_weekly_period_colors' => config('enum.free_weekly_period_colors'),
+            'current_study_period_border_weeks' => DateHelpers::getCurrentStudyPeriodBorderWeeks(),
         ];
 
         return $data;

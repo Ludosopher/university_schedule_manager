@@ -182,15 +182,15 @@ h3 {
 .schedule-button-group {
     width: 70%;
     display: flex;
-    justify-content: right;
+    justify-content: end;
 }
 
 .month-schedule-button {
     /* background-color: rgb(87, 130, 185) !important; */
 }
 
-.month-schedule-form {
-    margin-right: 20px;
+.schedule-form {
+    margin-right: 15px;
 }
 
 .top-right-button {

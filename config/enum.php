@@ -165,4 +165,21 @@ return [
       'english' => 'en',
       'russian' => 'ru',
    ],
+
+   'study_seasons' => [
+      'studies' => 1,
+      'session' => 2,
+      'vacation' => 3,
+   ],
+
+   'study_seasons_ids' => [
+      1 => 'studies',
+      2 => 'session',
+      3 => 'vacation',
+   ],
+
+   'study_season_name_parts' => [
+      'studies' => '',
+      'session' => 'session_',
+   ],
 ];

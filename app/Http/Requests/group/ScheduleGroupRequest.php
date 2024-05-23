@@ -23,8 +23,10 @@ class ScheduleGroupRequest extends FormRequest
      */
     public function rules()
     {
+    //dd($this->all());
         return [
             "schedule_group_id" => "required|integer|exists:App\Group,id",
+            "study_period_id" => "nullable|integer|exists:App\StudyPeriod,id",
             'week_number' => 'nullable|string'
         ];
     }

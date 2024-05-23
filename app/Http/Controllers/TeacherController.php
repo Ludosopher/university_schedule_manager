@@ -67,7 +67,7 @@ class TeacherController extends Controller
                 'message' => $response_content['message']
             ]);
         }
-
+    
         return view("teacher.teacher_schedule")->with('data', $data);
     }
 

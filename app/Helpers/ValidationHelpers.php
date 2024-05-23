@@ -34,10 +34,18 @@ class ValidationHelpers
             'position_id' => 'nullable|array',
             'lesson_room_id' => 'nullable|array',
             'schedule_position' => 'nullable|array',
-            'week_number' => 'nullable|string',
             'week_data' => 'nullable|string',
             'week_dates' => 'nullable|string', 
             'is_red_week' => 'nullable|boolean',
+            'week_number' => 'nullable|string',
+            'week_number' => function ($attribute, $value, $fail) {
+                $currentStudyPeriodBorderWeeks = DateHelpers::getCurrentStudyPeriodBorderWeeks();
+                if (isset($value) 
+                    && 
+                    (date('Y-W', strtotime($value)) < date('Y-W', strtotime($currentStudyPeriodBorderWeeks['start'])) 
+                     || date('Y-W', strtotime($value)) > date('Y-W', strtotime($currentStudyPeriodBorderWeeks['end'])))
+                   )  $fail(__('user_validation.failed_week_number'));
+            },
       
             'replace_rules' => 'nullable|array',
             'replace_rules.*.week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
@@ -73,9 +81,15 @@ class ValidationHelpers
         $rules = [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
-            'week_number' => 'nullable|string',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
+            'week_number' => 'nullable|string',
+            'week_number' => function ($attribute, $value, $fail) {
+                $study_seasons = config('enum.study_seasons');
+                $study_periods_data = DateHelpers::getStudyPeriodsData();
+                $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
+                if (isset($value) && DateHelpers::checkWeekCorrespondToStudyPeriod($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
+            },
         ];
         
         return self::validation($data, $rules);
@@ -87,9 +101,15 @@ class ValidationHelpers
             'group_id' => 'required|integer|exists:App\Group,id',
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
-            'week_number' => 'nullable|string',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
+            'week_number' => 'nullable|string',
+            'week_number' => function ($attribute, $value, $fail) {
+                $study_seasons = config('enum.study_seasons');
+                $study_periods_data = DateHelpers::getStudyPeriodsData();
+                $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
+                if (isset($value) && DateHelpers::checkWeekCorrespondToStudyPeriod($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
+            },
         ];
         
         return self::validation($data, $rules);

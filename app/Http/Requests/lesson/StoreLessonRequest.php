@@ -26,6 +26,7 @@ class StoreLessonRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
+            'study_period_id' => 'required|integer|exists:App\StudyPeriod,id',
             'lesson_type_id' => 'required|integer|exists:App\LessonType,id',
             'week_day_id' => 'required|integer|exists:App\WeekDay,id',
             'weekly_period_id' => 'required|integer|exists:App\WeeklyPeriod,id',

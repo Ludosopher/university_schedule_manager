@@ -21,10 +21,20 @@ class ResponseHelpers
             $message = __('group.group_is_only_one_in_lesson');
             $success = false;
         } elseif (isset($data['duplicated_lesson']) && isset($data['duplicated_lesson']['teacher'])) {
-            $message = str_replace(['?-1', '?-2', '?-3', '?-4'], [$data['duplicated_lesson']['week_day'], mb_strtolower($data['duplicated_lesson']['class_period']), mb_strtolower($data['duplicated_lesson']['weekly_period']), $data['duplicated_lesson']['teacher']], __('lesson.is_group_lesson_dublicate'));
+            $message = str_replace(['?-1', '?-2', '?-3', '?-4'], [
+                __('dictionary.'.$data['duplicated_lesson']['week_day']), 
+                __('dictionary.'.mb_strtolower($data['duplicated_lesson']['class_period'])), 
+                __('dictionary.'.mb_strtolower($data['duplicated_lesson']['weekly_period'])), 
+                $data['duplicated_lesson']['teacher']
+            ], __('lesson.is_teacher_lesson_dublicate'));
             $success = false;
         } elseif (isset($data['duplicated_lesson']) && isset($data['duplicated_lesson']['group'])) {
-            $message = str_replace(['?-1', '?-2', '?-3', '?-4'], [$data['duplicated_lesson']['week_day'], mb_strtolower($data['duplicated_lesson']['class_period']), mb_strtolower($data['duplicated_lesson']['weekly_period']), $data['duplicated_lesson']['group']], __('lesson.is_group_lesson_dublicate'));
+            $message = str_replace(['?-1', '?-2', '?-3', '?-4'], [
+                __('dictionary.'.$data['duplicated_lesson']['week_day']), 
+                __('dictionary.'.mb_strtolower($data['duplicated_lesson']['class_period'])), 
+                __('dictionary.'.mb_strtolower($data['duplicated_lesson']['weekly_period'])), 
+                $data['duplicated_lesson']['group']
+            ], __('lesson.is_group_lesson_dublicate'));
             $success = false;
         }
 

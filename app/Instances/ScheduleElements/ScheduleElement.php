@@ -18,11 +18,16 @@ class ScheduleElement extends Instance
     public function getSchedule($incoming_data) {
 
         $settings = Setting::pluck('value', 'name');
+        $study_periods_data = DateHelpers::getStudyPeriodsData();
+        $study_seasons = $data['study_seasons'] = config('enum.study_seasons');
         $data['week_day_ids'] = config('enum.week_day_ids');
         $data['weekly_periods'] = config('enum.weekly_periods');
         $data['weekly_period_ids'] = config('enum.weekly_period_ids');
         $data['weekly_period_colors'] = config('enum.weekly_period_colors');
         $data['class_period_ids'] = config('enum.class_period_ids');
+        $data['study_periods'] = $study_periods_data['all_periods'];
+        $required_study_period_id = (int)($incoming_data['study_period_id'] ?? $study_periods_data['current_period_id']);
+        $data['required_study_period'] = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $required_study_period_id);
         $model_name = $this->config['model_name'];
         $instance_name = $this->config['instance_name'];
         $schedule_instance_id = $incoming_data["schedule_{$this->config['instance_name']}_id"];
@@ -31,7 +36,7 @@ class ScheduleElement extends Instance
         $profession_level_name_field = $this->config['profession_level_name_field'];
         $other_lesson_participant = $this->config['other_lesson_participant'];
         $other_lesson_participant_name = $this->config['other_lesson_participant_name'];
-        
+       
         $week_number = null;
         if (isset($incoming_data['week_number'])) {
             $week_number = $incoming_data['week_number'];
@@ -42,6 +47,7 @@ class ScheduleElement extends Instance
         $week_border_dates = DateHelpers::weekStartEndDates($week_number);
         if ($week_border_dates) {
             $data['week_data'] = [
+                'current_study_season' => DateHelpers::checkWeekCorrespondToStudyPeriod($data['required_study_period'], $week_number),
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
@@ -79,11 +85,15 @@ class ScheduleElement extends Instance
 
         $data['lessons'] = [];
         foreach ($lessons as $lesson) {
-
+            if (! isset($week_number) && $lesson->study_period_id !== $required_study_period_id) {
+                continue;
+            }
+            if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($lesson, $week_number) !== $study_seasons['studies']) {
+                continue;
+            }
             if (! DateHelpers::testLessonDate($week_number, $lesson)) {
                 continue;
             };
-            
             $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $lesson);
             if (isset($week_schedule_lesson)) {
                 if ($week_schedule_lesson) {
@@ -92,9 +102,10 @@ class ScheduleElement extends Instance
                     continue;
                 }
             }
-
-            if (isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id])
-                || isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$weekly_period_ids['every_week']]))
+            if ((isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id]) ||
+                 isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$weekly_period_ids['every_week']]))
+                 && $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id]['study_period_id'] === $lesson->study_period_id
+                 && $lesson->study_period_id === $required_study_period_id)
             {
                 $data['duplicated_lesson'] = [
                     $instance_name => $instance->$instance_name_field,
@@ -104,7 +115,6 @@ class ScheduleElement extends Instance
                 ];
                 return $data;
             } else {
-
                 if (is_array($other_lesson_participant_name)) {
                     $value = $lesson;
                     foreach ($other_lesson_participant_name as $part) {
@@ -119,6 +129,7 @@ class ScheduleElement extends Instance
 
                 $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id] = [
                     'id' => $lesson->id,
+                    'study_period_id' => $lesson->study_period_id,
                     'week_day_id' => $lesson->week_day_id,
                     'weekly_period_id' => $lesson->weekly_period_id,
                     'real_weekly_period_id' => $lesson->real_weekly_period_id ?? null,
@@ -154,7 +165,11 @@ class ScheduleElement extends Instance
         $data['weekly_period_ids'] = config('enum.weekly_period_ids');
         $data['weekly_period_colors'] = config('enum.weekly_period_colors');
         $data['class_period_ids'] = config('enum.class_period_ids');
+        $study_seasons = $data['study_seasons'] = config('enum.study_seasons');
         $data['month_number'] = $incoming_data['month_number'];
+        $study_periods_data = DateHelpers::getStudyPeriodsData();
+        $required_study_period_id = (int)($incoming_data['study_period_id'] ?? $study_periods_data['current_period_id']);
+        $data['required_study_period'] = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $required_study_period_id);
         
         $weekly_period_ids = config('enum.weekly_period_ids');
         $class_periods = ClassPeriod::get();
@@ -189,6 +204,7 @@ class ScheduleElement extends Instance
                                     
             $week_border_dates = DateHelpers::weekStartEndDates($week_number);
             $data['weeks'][$week_number]['week_data'] = [
+                'current_study_season' => DateHelpers::checkWeekCorrespondToStudyPeriod($data['required_study_period'], $week_number),
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
@@ -198,7 +214,9 @@ class ScheduleElement extends Instance
             $iterated_lessons = $lessons->toArray();
            
             foreach ($iterated_lessons as $key => $lesson) {
-
+                if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($lessons[$key], $week_number) !== $study_seasons['studies']) {
+                    continue;
+                }
                 if (! DateHelpers::testLessonDate($week_number, $lessons[$key])) {
                     continue;
                 };
@@ -287,6 +305,7 @@ class ScheduleElement extends Instance
         $data['week_dates'] = $reschedule_data['week_dates'];
         $data['is_red_week'] = $reschedule_data['is_red_week'];
         $data['week_data'] = $reschedule_data['week_data'];
+        $data['current_study_period_border_weeks'] = DateHelpers::getCurrentStudyPeriodBorderWeeks();
 
         if (isset($incoming_data['group_id'])) {
             $data['group_name'] = Group::find($incoming_data['group_id'])->name;
@@ -314,6 +333,7 @@ class ScheduleElement extends Instance
 
     public function scheduleExport($data) {
         
+        //dd($data);
         $lessons = json_decode($data['lessons'], true);
         $week_day_ids = config('enum.week_day_ids');
         $weekly_period_id = config('enum.weekly_period_ids');
@@ -325,6 +345,10 @@ class ScheduleElement extends Instance
         $settings = Setting::pluck('value', 'name');
         $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
         $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
+        $study_periods_data = DateHelpers::getStudyPeriodsData();
+        $study_seasons = config('enum.study_seasons');
+        $required_study_period_id = (int)($data['study_period_id'] ?? $study_periods_data['current_period_id']);
+        $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $required_study_period_id);
         //------------------------------------------------------
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
        
@@ -340,8 +364,17 @@ class ScheduleElement extends Instance
         if (isset($data['week_data']) && isset($data['is_red_week'])) {
             $week_data = json_decode($data['week_data'], true);
             $week_color = $data['is_red_week'] ? __('header.red_week_color') : __('header.blue_week_color');
-            $week_period_string = str_replace(['?-1', '?-2', '?-3' ], [$week_data['start_date'], $week_data['end_date'], $week_color], __('header.week_period_string')); 
             $week_days_limit = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
+            if ($week_data['current_study_season'] === $study_seasons['studies']) {
+                $week_period_string = str_replace(['?-1', '?-2', '?-3' ], [$week_data['start_date'], $week_data['end_date'], $week_color], __('header.week_period_string')); 
+                $schedule_header = __('header.schedule_export_to_docx').$week_period_string;
+            } elseif ($week_data['current_study_season'] === $study_seasons['session']) {
+                $schedule_header = __('header.session').' '.__('header.'.$required_study_period->season).' '.$required_study_period->year.' '.__('header.of_year'); 
+            } else {
+                $schedule_header = __('header.vacation');
+            }
+        } else {
+            $schedule_header = __('header.regular_schedule_export_to_docx').' '.__('header.'.$required_study_period->season).' '.$required_study_period->year.' '. __('header.of_year');
         }
         
         $section->addTextBreak(1);
@@ -378,7 +411,7 @@ class ScheduleElement extends Instance
                     $participant_header = '';
                     $participant = '';
                 }
-                $section->addText(__('header.schedule_export_to_docx').$week_period_string, ['bold' => true], array('align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0));
+                $section->addText($schedule_header, ['bold' => true], array('align' => 'left', 'spaceBefore' => 0, 'spaceAfter' => 0));
                 $section->addText("{$participant_header}: {$participant}");
             }
         }

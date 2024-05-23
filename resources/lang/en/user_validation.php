@@ -14,4 +14,5 @@ return [
     'not_time_for_replacement_request_process' => 'Not enough time to process a replacement request.',
     'request_already_exists' => 'Such a request has already been created.',
     'lesson_is_in_replacement_already' => 'One of the lessons involved in the replacement is already involved in another replacement',
+    'failed_week_number' => 'The selected week does not correspond to the current study period',
 ];
