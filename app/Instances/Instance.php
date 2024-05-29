@@ -68,6 +68,7 @@ class Instance
         $dictionary_function = 'get'.ucfirst($this->config['instance_name']).'Properties';
         $data = DictionaryHelpers::$dictionary_function();
         $data['add_form_fields'] = config("forms.{$this->config['instance_name']}");
+        $data['appelation'] = $this->config['instance_name'];
         if (isset($incoming_data['updating_id'])) {
             $updating_instance = $model_name::where('id', $incoming_data['updating_id'])->first();
             if ($updating_instance) {
@@ -120,6 +121,8 @@ class Instance
         $appends = $this->getAppends($incoming_data);
         
         $data['instances'] = $instances->sortable()->paginate($rows_per_page)->appends($appends);
+        $data['appelation'] = $this->config['instance_name'];
+        $data['appelation_plural_name'] = $this->config['instance_plural_name'];
 
         return array_merge($data, $properties);
     }

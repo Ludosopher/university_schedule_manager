@@ -1,20 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if (\Session::has('response'))
-            @if(\Session::get('response')['success'])
-                <div class="alertAccess">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ \Session::get('response')['message'] }}
-                </div>
-            @else
-                <div class="alertFail">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ \Session::get('response')['message'] }}
-                </div>
-            @endif
-        @endif
-        
+        @includeIf('parts.notices.response')
         <div class="external-form-container">
             <div class="internal-form-container settings-container">
                 <h2 class="settings-h2">{{ __('header.settings_update') }}</h2>

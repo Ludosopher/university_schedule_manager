@@ -1,27 +1,8 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-        @if ($errors->any() && $errors->has('updating_id'))
-            @foreach($errors->get('updating_id') as $error)
-                <div class="alertFail">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ $error }}
-                </div>
-            @endforeach
-        @endif
-        @if (\Session::has('response'))
-            @if(\Session::get('response')['success'])
-                <div class="alertAccess">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ \Session::get('response')['message'] }}
-                </div>
-            @else
-                <div class="alertFail">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    {{ \Session::get('response')['message'] }}
-                </div>
-            @endif
-        @endif
+        @includeIf('parts.notices.errors_instance_update')
+        @includeIf('parts.notices.response')
         <div class="external-form-container">
             <div class="internal-form-container">
                 <h2 class="ad_up_form_h2">{{ __('form.update') }}</h2>

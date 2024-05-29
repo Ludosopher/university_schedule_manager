@@ -29,12 +29,12 @@ class ScheduleElement extends Instance
         $required_study_period_id = (int)($incoming_data['study_period_id'] ?? $study_periods_data['current_period_id']);
         $data['required_study_period'] = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $required_study_period_id);
         $model_name = $this->config['model_name'];
-        $instance_name = $this->config['instance_name'];
+        $instance_name = $data['appelation'] = $this->config['instance_name'];
         $schedule_instance_id = $incoming_data["schedule_{$this->config['instance_name']}_id"];
         $data['schedule_instance_id'] = $schedule_instance_id;
         $instance_name_field = $this->config['instance_name_field'];
         $profession_level_name_field = $this->config['profession_level_name_field'];
-        $other_lesson_participant = $this->config['other_lesson_participant'];
+        $other_lesson_participant = $data['other_appelation'] = $this->config['other_lesson_participant'];
         $other_lesson_participant_name = $this->config['other_lesson_participant_name'];
        
         $week_number = null;
@@ -150,12 +150,12 @@ class ScheduleElement extends Instance
     public function getMonthSchedule($incoming_data) {
 
         $model_name = $this->config['model_name'];
-        $instance_name = $this->config['instance_name'];
+        $instance_name = $data['appelation'] = $this->config['instance_name'];
         $schedule_instance_id = $incoming_data["schedule_{$this->config['instance_name']}_id"];
         $data['schedule_instance_id'] = $schedule_instance_id;
         $instance_name_field = $this->config['instance_name_field'];
         $profession_level_name_field = $this->config['profession_level_name_field'];
-        $other_lesson_participant = $this->config['other_lesson_participant'];
+        $other_lesson_participant = $data['other_appelation'] = $this->config['other_lesson_participant'];
         $other_lesson_participant_name = $this->config['other_lesson_participant_name'];
         $settings = Setting::pluck('value', 'name');
         $data['class_periods_limit'] = $settings['distance_class_periods_limit'] ?? config('site.class_periods_limits')['distance'];
@@ -170,7 +170,7 @@ class ScheduleElement extends Instance
         $study_periods_data = DateHelpers::getStudyPeriodsData();
         $required_study_period_id = (int)($incoming_data['study_period_id'] ?? $study_periods_data['current_period_id']);
         $data['required_study_period'] = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $required_study_period_id);
-        
+                
         $weekly_period_ids = config('enum.weekly_period_ids');
         $class_periods = ClassPeriod::get();
         $data['class_periods'] = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
@@ -300,6 +300,7 @@ class ScheduleElement extends Instance
             'class_period_ids' => $schedule_data['class_period_ids'],
             'week_days_limit' => $schedule_data['week_days_limit'],
             'class_periods_limit' => $schedule_data['class_periods_limit'],
+            'appelation' => $this->config['instance_name']
         ];
 
         $data['week_dates'] = $reschedule_data['week_dates'];

@@ -1,32 +1,14 @@
 @extends('layouts.app')
 @section('content')
     <div class="container">
-    @if($errors->any())
-        <div class="alertFail">
-            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-            {{ __('user_validation.invalid_input_data') }}
-        </div>
-    @endif
-    <h1 class="top-header">{{ str_replace('?', $data['month_name'], __('header.group_schedule_on')) }}</h1>
-    <div class="replacement-schedule-header-div">
-        <h3>{{ __('header.group') }}: {{ $data['instance_name'] ?? ''}}</h3>
-        <div class="schedule-button-group">
-            <form method="POST" action="{{ route('group-month-schedule-doc-export') }}">
-            @csrf
-                <input type="hidden" name="month_name" value="{{ $data['month_name'] }}">
-                <input type="hidden" name="group_name" value="{{ $data['instance_name'] }}">
-                <input type="hidden" name="weeks" value="{{ json_encode($data['weeks']) }}">
-                <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
-                <button type="submit" class="btn btn-primary top-right-button">{{ __('form.ms_word') }}</button>
-            </form>
-        </div>
-    </div>
-    @php
-        $week_day_ids = config('enum.week_day_ids');
-        $weekly_period = config('enum.weekly_periods');
-        $weekly_period_id = config('enum.weekly_period_ids');
-        $weekly_period_color = config('enum.weekly_period_colors');
-        $class_period_ids = config('enum.class_period_ids');
+    @includeIf('parts.notices.errors_various')
+    @includeIf('parts.headers.month_schedule')
+    {{-- @php
+        $week_day_ids = $data['week_day_ids'];
+        $weekly_period = $data['weekly_periods'];
+        $weekly_period_id = $data['weekly_period_ids'];
+        $weekly_period_color = $data['weekly_period_colors'];
+        $class_period_ids = $data['class_period_ids'];
         $class_periods = $data['class_periods'];
         $week_days_limit = $data['week_days_limit'];
         $class_periods_limit = $data['class_periods_limit'];
@@ -40,13 +22,7 @@
                 $bg_color = 'rgb(255,243,243)';
             }
         @endphp
-        @if($week_content['week_data']['current_study_season'] === $data['study_seasons']['studies'])
-            <h5></h5>
-        @elseif($week_content['week_data']['current_study_season'] === $data['study_seasons']['session'])
-            <h5>Сессия</h5>
-        @else
-            <h5>Каникулы</h5>
-        @endif
+        @includeIf('parts.headers.month_week_schedule')
         <div class="timetable-img text-center">
             <div class="table-responsive">
                 <table class="table table-bordered text-center" style="background-color: {{ $bg_color }}">
@@ -149,6 +125,6 @@
                 </table>
             </div>
         </div>
-    @endforeach
-    
+    @endforeach --}}
+    @includeIf('parts.matrices.month_schedule')
 @endsection
