@@ -129,10 +129,10 @@ class LessonInstance extends Instance
                                 if (! isset($week_number) && $sub_lesson->study_period_id !== $required_study_period_id) {
                                     continue;
                                 }
-                                if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($sub_lesson, $week_number) !== $study_seasons['studies']) {
+                                if (isset($week_number) && isset($sub_lesson->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($sub_lesson, $week_number)) {
                                     continue;
                                 }
-                                if (! DateHelpers::testLessonDate($week_number, $sub_lesson)) {
+                                if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $sub_lesson)) {
                                     continue;
                                 };
                                 $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $sub_lesson);

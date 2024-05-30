@@ -81,7 +81,7 @@ class DateHelpers
         return false; 
     }
 
-    public static function testLessonDate($week_number, $lesson) {
+    public static function checkOneTimeLessonToWeek($week_number, $lesson) {
         if (!isset($week_number) && isset($lesson->date)) {
             return false;
         }
@@ -257,7 +257,7 @@ class DateHelpers
         return false;
     }
 
-    public static function checkWeekCorrespondToStudyPeriod(StudyPeriod $study_period, $week_number)
+    public static function checkWeekToStudyPeriodSeason(StudyPeriod $study_period, $week_number)
     {
         $study_seasons = config('enum.study_seasons');
         $study_season_name_parts = config('enum.study_season_name_parts');
@@ -273,15 +273,24 @@ class DateHelpers
             }
         }
         
+        return $study_seasons['vacation'];
+    }
+
+    public static function checkWeekToStudyPeriod(StudyPeriod $study_period, $week_number)
+    {
+        if (date('Y-W', strtotime($week_number)) >= date('Y-W', strtotime($study_period->start))
+            &&
+            date('Y-W', strtotime($week_number)) <= date('Y-W', strtotime($study_period->end))) 
+        {
+            return true;
+        }
         return false;
     }
 
-    public static function checkLessonCorrespondToWeek($lesson, $week_number) {
-        if (! isset($lesson->date)) {
-            $lesson_study_period = StudyPeriod::find($lesson->study_period_id);
-            return self::checkWeekCorrespondToStudyPeriod($lesson_study_period, $week_number);
-        }
-        return false;
+    public static function checkRegularLessonToWeek($lesson, $week_number)
+    {
+        $lesson_study_period = StudyPeriod::find($lesson->study_period_id);
+        return self::checkWeekToStudyPeriod($lesson_study_period, $week_number);
     }
 
     public static function getCurrentStudyPeriodBorderWeeks()

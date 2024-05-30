@@ -79,10 +79,10 @@ class TeacherScheduleElement extends ScheduleElement
                         if (! isset($week_number) && $dt_lesson->study_period_id !== $required_study_period_id) {
                             continue;
                         }
-                        if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($dt_lesson, $week_number) !== $study_seasons['studies']) {
+                        if (isset($week_number) && isset($dt_lesson->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($dt_lesson, $week_number)) {
                             continue;
                         }
-                        if (! DateHelpers::testLessonDate($week_number, $dt_lesson)) {
+                        if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $dt_lesson)) {
                             continue;
                         };
                         $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $dt_lesson);
@@ -110,10 +110,10 @@ class TeacherScheduleElement extends ScheduleElement
                                 if (! isset($week_number) && $st_lesson->study_period_id !== $required_study_period_id) {
                                     continue;
                                 }
-                                if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($st_lesson, $week_number) !== $study_seasons['studies']) {
+                                if (isset($week_number) && isset($st_lesson->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($st_lesson, $week_number)) {
                                     continue;
                                 }
-                                if (! DateHelpers::testLessonDate($week_number, $st_lesson)) {
+                                if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $st_lesson)) {
                                     continue;
                                 };
                                 $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $st_lesson);

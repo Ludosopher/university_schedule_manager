@@ -47,7 +47,7 @@ class ScheduleElement extends Instance
         $week_border_dates = DateHelpers::weekStartEndDates($week_number);
         if ($week_border_dates) {
             $data['week_data'] = [
-                'current_study_season' => DateHelpers::checkWeekCorrespondToStudyPeriod($data['required_study_period'], $week_number),
+                'current_study_season' => DateHelpers::checkWeekToStudyPeriodSeason($data['required_study_period'], $week_number),
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
@@ -85,16 +85,16 @@ class ScheduleElement extends Instance
 
         $data['lessons'] = [];
         foreach ($lessons as $lesson) {
-            if (! isset($week_number) && $lesson->study_period_id !== $required_study_period_id) {
+            if (! isset($week_number) && $lesson->study_period_id !== $required_study_period_id) { // Checking whether a lesson matches the specified study period
                 continue;
             }
-            if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($lesson, $week_number) !== $study_seasons['studies']) {
+            if (isset($week_number) && isset($lesson->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($lesson, $week_number)) { // Checking the compliance of a regular lesson with a week, taking into account the study period
                 continue;
             }
-            if (! DateHelpers::testLessonDate($week_number, $lesson)) {
+            if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $lesson)) { // Checking the compliance of a one-time lesson with the specified week
                 continue;
             };
-            $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $lesson);
+            $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $lesson); // Converting biweekly lessons to weekly lessons if you require a schedule for a specific week
             if (isset($week_schedule_lesson)) {
                 if ($week_schedule_lesson) {
                     $lesson = $week_schedule_lesson;
@@ -204,7 +204,7 @@ class ScheduleElement extends Instance
                                     
             $week_border_dates = DateHelpers::weekStartEndDates($week_number);
             $data['weeks'][$week_number]['week_data'] = [
-                'current_study_season' => DateHelpers::checkWeekCorrespondToStudyPeriod($data['required_study_period'], $week_number),
+                'current_study_season' => DateHelpers::checkWeekToStudyPeriodSeason($data['required_study_period'], $week_number),
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
@@ -214,10 +214,10 @@ class ScheduleElement extends Instance
             $iterated_lessons = $lessons->toArray();
            
             foreach ($iterated_lessons as $key => $lesson) {
-                if (isset($week_number) && DateHelpers::checkLessonCorrespondToWeek($lessons[$key], $week_number) !== $study_seasons['studies']) {
+                if (isset($week_number) && isset($lessons[$key]->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($lessons[$key], $week_number)) {
                     continue;
                 }
-                if (! DateHelpers::testLessonDate($week_number, $lessons[$key])) {
+                if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $lessons[$key])) {
                     continue;
                 };
                 

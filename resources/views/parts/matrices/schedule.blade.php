@@ -68,9 +68,6 @@
                                             <td class="schedule-cell" style="background-color: {{ $cell_bg_color }}" title="{{ $title }}">
                                                 <div class="dropdown schedule-actions-div">
                                                     <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        @if($data['appelation'] === 'group' && isset($lesson['date']))
-                                                            <div class="margin-10px-top font-size14 schedule-date"><span class="schedule-date-text">{{ $lesson['date'] }}</span></div>
-                                                        @endif
                                                         <div class="margin-10px-top font-size14 schedule-subject">{{ __('content.'.$lesson['name']) }} ({{ __('dictionary.'.$lesson['type']) }})</div>
                                                         <div class="font-size13 text-light-gray schedule-room">{{ __('content.room') }} {{ $lesson['room'] }}</div>
                                                         <div class="font-size13 text-light-gray schedule-group">{{ $lesson[$data['other_appelation']] }}</div>
@@ -124,9 +121,6 @@
                                                 @if($lesson_red)
                                                     <div class="schedule-cell-top" style="background-color: {{ $weekly_period_color[$weekly_period_id['red_week']] }}">
                                                         <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            @if($data['appelation'] === 'group' && isset($lesson_red['date']))
-                                                                <div class="margin-10px-top font-size14 schedule-date"><span class="schedule-date-text">{{ $lesson_red['date'] }}</span></div>
-                                                            @endif
                                                             <div class="margin-10px-top font-size14 schedule-subject-half">{{ __('content.'.$lesson_red['name']) }} ({{ __('dictionary.'.$lesson_red['type']) }})</div>
                                                             <div class="font-size13 text-light-gray schedule-room-half">{{ __('content.room') }} {{ $lesson_red['room'] }}</div>
                                                             <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_red[$data['other_appelation']] }}</div>
@@ -163,9 +157,6 @@
                                                 @if($lesson_blue)
                                                     <div class="schedule-cell-bottom" style="background-color: {{ $weekly_period_color[$weekly_period_id['blue_week']] }}">
                                                         <a class="dropdown-toggle schedule-actions-button" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                                            @if($data['appelation'] === 'group' && isset($lesson_blue['date']))
-                                                                <div class="margin-10px-top font-size14 schedule-date"><span class="schedule-date-text">{{ $lesson_blue['date'] }}</span></div>
-                                                            @endif
                                                             <div class="margin-10px-top font-size14 schedule-subject-half">{{ __('content.'.$lesson_blue['name']) }} ({{ __('dictionary.'.$lesson_blue['type']) }})</div>
                                                             <div class="font-size13 text-light-gray schedule-room-half">{{ __('content.room') }} {{ $lesson_blue['room'] }}</div>
                                                             <div class="font-size13 text-light-gray schedule-group-half">{{ $lesson_blue[$data['other_appelation']] }}</div>

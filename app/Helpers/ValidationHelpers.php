@@ -88,7 +88,7 @@ class ValidationHelpers
                 $study_seasons = config('enum.study_seasons');
                 $study_periods_data = DateHelpers::getStudyPeriodsData();
                 $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
-                if (isset($value) && DateHelpers::checkWeekCorrespondToStudyPeriod($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
+                if (isset($value) && DateHelpers::checkWeekToStudyPeriodSeason($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
             },
         ];
         
@@ -108,7 +108,7 @@ class ValidationHelpers
                 $study_seasons = config('enum.study_seasons');
                 $study_periods_data = DateHelpers::getStudyPeriodsData();
                 $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
-                if (isset($value) && DateHelpers::checkWeekCorrespondToStudyPeriod($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
+                if (isset($value) && DateHelpers::checkWeekToStudyPeriodSeason($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
             },
         ];
         
