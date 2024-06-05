@@ -321,4 +321,46 @@ class Instance
         return $filtered_array_arrays;
     }
 
+    protected function checkLesson($checking_lesson, $week_number, $type='', $replaceble_lesson=null, $week_dates=null)
+    {
+        $weekly_period_ids = config('enum.weekly_period_ids');
+        $study_periods_data = DateHelpers::getStudyPeriodsData();
+        
+        if (! isset($week_number) && $checking_lesson->study_period_id !== $study_periods_data['current_period_id']) {
+            return false;
+        }
+        if (isset($week_number) && isset($checking_lesson->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($checking_lesson, $week_number)) {
+            return false;
+        }
+        if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $checking_lesson)) {
+            return false;
+        };
+       
+        $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $checking_lesson);
+        $w_p_field = 'weekly_period_id';
+        if (isset($week_schedule_lesson)) {
+            
+            if ($week_schedule_lesson) {
+                return $week_schedule_lesson;
+                $w_p_field = 'real_weekly_period_id';
+            } else {
+                return false;
+            }
+        }
+        if ($type === 'additionally') {
+            $is_periodic_replacing_lesson = $replaceble_lesson->weekly_period_id != $weekly_period_ids['every_week'];
+            if ($checking_lesson->$w_p_field == $weekly_period_ids['every_week'] && $is_periodic_replacing_lesson
+                || $checking_lesson->$w_p_field != $weekly_period_ids['every_week'] && ! $is_periodic_replacing_lesson)
+            {
+
+                return false;
+            }
+            if (isset($week_dates) && is_array($week_dates[$checking_lesson->weekly_period_id]) && isset($week_dates[$checking_lesson->weekly_period_id]['is_holiday'])) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
 }

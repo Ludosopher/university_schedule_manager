@@ -33,7 +33,7 @@ class TeacherScheduleElement extends ScheduleElement
         $weekly_period_ids = config('enum.weekly_period_ids');
         $study_seasons = config('enum.study_seasons');
         $study_periods_data = DateHelpers::getStudyPeriodsData();
-        $required_study_period_id = (int)($incoming_data['study_period_id'] ?? $study_periods_data['current_period_id']);
+        $required_study_period_id = (int)($data['study_period_id'] ?? $study_periods_data['current_period_id']);
         $replacement_lessons = [];
         $groups_lessons = [];
         $class_periods = ClassPeriod::get();
@@ -64,7 +64,7 @@ class TeacherScheduleElement extends ScheduleElement
         $looked_teachers = [$seeking_teacher->id];
         foreach ($groups_lessons as $g_lesson) {
             if (!in_array($g_lesson->teacher->id, $looked_teachers)) {
-                foreach ($g_lesson->teacher->lessons as $key => $dt_lesson) {
+                foreach ($g_lesson->teacher->lessons as $dt_lesson) {
                     if ($dt_lesson->week_day_id == $data['week_day_id']
                         && ($dt_lesson->weekly_period_id == $data['weekly_period_id'] || $dt_lesson->weekly_period_id == $weekly_period_ids['every_week'] || $data['weekly_period_id'] == $weekly_period_ids['every_week'])
                         && $dt_lesson->class_period_id == $data['class_period_id'])
@@ -145,7 +145,7 @@ class TeacherScheduleElement extends ScheduleElement
                                     $replacing_date_time = date('Y-m-d '.$class_period_start_time, strtotime(str_replace('"', '', $lesson_date)));
                                     $replacing_hours_diff = round((strtotime($replacing_date_time) - strtotime(now()))/3600);
                                 }
-                                                                
+
                                 $replacement_lessons[] = [
                                     'lesson_id' => $dt_lesson->id,
                                     'subject' => $dt_lesson->name,
@@ -241,10 +241,12 @@ class TeacherScheduleElement extends ScheduleElement
         if (!isset($incoming_data['replace_rules'])) {
             if (isset($incoming_data['prev_replace_rules'])) {
                 $prev_replace_rules = json_decode($incoming_data['prev_replace_rules'], true);
-                $replacement_lessons = $this->getLessonsForReplacement($prev_replace_rules, $week_number, $week_dates);
+                //$replacement_lessons = $this->getLessonsForReplacement($prev_replace_rules, $week_number, $week_dates);
+                $replacement_lessons = $this->getReplacementLessons($prev_replace_rules, $week_number, $week_dates);
             }
         } else {
-            $replacement_lessons = $this->getLessonsForReplacement($incoming_data['replace_rules'], $week_number, $week_dates);
+            //$replacement_lessons = $this->getLessonsForReplacement($incoming_data['replace_rules'], $week_number, $week_dates);
+            $replacement_lessons = $this->getReplacementLessons($incoming_data['replace_rules'], $week_number, $week_dates);
             $prev_replace_rules = $incoming_data['replace_rules'];
         }
 
@@ -459,5 +461,112 @@ class TeacherScheduleElement extends ScheduleElement
         }
 
         return false;
+    }
+
+    protected function getGroupsLessons($groups_ids, $replacing_lesson, $preliminary_lessons)
+    {
+        $groups_lessons = [];    
+        foreach ($preliminary_lessons as $lesson) {
+            $current_groups_ids = array_column($lesson->groups->toArray(), 'id');
+            sort($current_groups_ids);
+            if (count($current_groups_ids) == count($groups_ids)
+                && $current_groups_ids === $groups_ids
+                && $lesson->id != $replacing_lesson->id)
+            {
+                $groups_lessons[] = $lesson;
+            }
+        }
+        
+        return $groups_lessons;
+    }
+
+    protected function getReplacementLessons($data, $week_number, $week_dates)
+    {
+        $replacement_lessons = [];
+        $weekly_period_ids = config('enum.weekly_period_ids');
+        $class_periods = ClassPeriod::get();
+        $normalaze_class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
+        $replaceble_lesson = Lesson::find($data['lesson_id']);
+        $replacement_requester = Teacher::with(['lessons'])->find($data['teacher_id']);
+        $groups_ids = $replaceble_lesson->groups->pluck('id')->toArray();
+        sort($groups_ids);
+        $study_periods_data = DateHelpers::getStudyPeriodsData();
+                
+        $unsuitable_teachers = array_unique(Lesson::where('week_day_id', $replaceble_lesson->week_day_id)
+                                                    ->where('class_period_id', $replaceble_lesson->class_period_id)
+                                                    ->pluck('teacher_id')
+                                                    ->toArray());
+        
+        $preliminary_lessons = Lesson::with(['groups'])
+                                        ->whereNotIn('teacher_id', $unsuitable_teachers)
+                                        ->where('teacher_id', '!=', $replacement_requester->id)
+                                        ->where('study_period_id', $study_periods_data['current_period_id'])
+                                        ->whereHas('groups', function (Builder $query) use ($groups_ids) {
+                                            $query->whereIn('id', $groups_ids);
+                                        })->get();
+        
+        $replaceble_groups_lessons = $this->getGroupsLessons($groups_ids, $replaceble_lesson, $preliminary_lessons);
+        $is_suitable_less = true;
+        foreach($replaceble_groups_lessons as $verified_lesson) {
+            $check_lesson = $this->checkLesson($verified_lesson, $week_number, 'additionally', $replaceble_lesson, $week_dates);
+            if (is_object($check_lesson)) {
+                $verified_lesson = $check_lesson;
+            }
+            if ($check_lesson) {
+                foreach($replacement_requester->lessons as $verification_lesson) {
+                    $check_lesson = $this->checkLesson($verification_lesson, $week_number);
+                    if (is_object($check_lesson)) {
+                        $verification_lesson = $check_lesson;
+                    }
+                    if ($check_lesson) {
+                        if ($verification_lesson->week_day_id == $verified_lesson->week_day_id
+                            && ($verification_lesson->weekly_period_id == $verified_lesson->weekly_period_id
+                                || $verified_lesson->weekly_period_id == $weekly_period_ids['every_week']
+                                || $verification_lesson->weekly_period_id == $weekly_period_ids['every_week'])
+                            && $verification_lesson->class_period_id == $verified_lesson->class_period_id) 
+                        {
+                            $is_suitable_less = false;
+                            break;
+                        }
+                    }
+                }
+                if ($is_suitable_less) {
+                    $replacing_date_time = null;
+                    $replacing_hours_diff = null;
+                    if (isset($week_dates) && ! is_array($week_dates[$verification_lesson->week_day->id])) {
+                        $lesson_date = $week_dates[$verification_lesson->week_day->id];
+                        $replacing_date = date('Y-m-d', strtotime(str_replace('"', '', $lesson_date)));
+                        $class_period_start_time = date('H:i', strtotime($normalaze_class_periods[$verification_lesson->class_period->id]['start']));
+                        $replacing_date_time = date('Y-m-d '.$class_period_start_time, strtotime(str_replace('"', '', $lesson_date)));
+                        $replacing_hours_diff = round((strtotime($replacing_date_time) - strtotime(now()))/3600);
+                    }
+
+                    $replacement_lessons[] = [
+                        'lesson_id' => $verified_lesson->id,
+                        'subject' => $verified_lesson->name,
+                        'week_day_id' => ['id' => $verified_lesson->week_day->id, 'name' => $verified_lesson->week_day->name],
+                        'date' => $verified_lesson->date ?? null,
+                        'weekly_period_id' => ['id' => $verified_lesson->weekly_period->id, 'name' => $verified_lesson->weekly_period->name],
+                        'class_period_id' => ['id' => $verified_lesson->class_period->id, 'name' => $verified_lesson->class_period->name],
+                        'lesson_room_id' => ['id' => $verified_lesson->lesson_room->id, 'name' => $verified_lesson->lesson_room->number],
+                        'department_id' => ['id' => $verified_lesson->teacher->department->id, 'name' => $verified_lesson->teacher->department->name],
+                        'position_id' => ['id' => $verified_lesson->teacher->position->id, 'name' => $verified_lesson->teacher->position->name],
+                        'lesson_type' => $verified_lesson->lesson_type->short_notation,
+                        'lesson_room' => $verified_lesson->lesson_room->number,
+                        'groups_name' => $verified_lesson->groups_name,
+                        'teacher_id' => $verified_lesson->teacher->id,
+                        'profession_level_name' => $verified_lesson->teacher->profession_level_name,
+                        'phone' => $verified_lesson->teacher->phone,
+                        'age' => $verified_lesson->teacher->age,
+                        'schedule_position_id' => $this->getLessonSchedulePosition($replaceble_lesson, $verified_lesson->teacher),
+                        'replacing_date_time' => $replacing_date_time, 
+                        'replacing_hours_diff' => $replacing_hours_diff,
+                    ];
+                }
+                $is_suitable_less = true;
+            }
+        }
+       
+        return $replacement_lessons;
     }
 }

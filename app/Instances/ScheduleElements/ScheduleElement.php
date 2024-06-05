@@ -85,62 +85,51 @@ class ScheduleElement extends Instance
 
         $data['lessons'] = [];
         foreach ($lessons as $lesson) {
-            if (! isset($week_number) && $lesson->study_period_id !== $required_study_period_id) { // Checking whether a lesson matches the specified study period
-                continue;
+            $check_lesson = $this->checkLesson($lesson, $week_number);
+            if (is_object($check_lesson)) {
+                $lesson = $check_lesson;
             }
-            if (isset($week_number) && isset($lesson->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($lesson, $week_number)) { // Checking the compliance of a regular lesson with a week, taking into account the study period
-                continue;
-            }
-            if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $lesson)) { // Checking the compliance of a one-time lesson with the specified week
-                continue;
-            };
-            $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $lesson); // Converting biweekly lessons to weekly lessons if you require a schedule for a specific week
-            if (isset($week_schedule_lesson)) {
-                if ($week_schedule_lesson) {
-                    $lesson = $week_schedule_lesson;
-                } else {
-                    continue;
-                }
-            }
-            if ((isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id]) ||
+            if ($check_lesson) {
+                if ((isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id]) ||
                  isset($data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$weekly_period_ids['every_week']]))
                  && $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id]['study_period_id'] === $lesson->study_period_id
                  && $lesson->study_period_id === $required_study_period_id)
-            {
-                $data['duplicated_lesson'] = [
-                    $instance_name => $instance->$instance_name_field,
-                    'class_period' => $lesson->class_period->name,
-                    'week_day' => $lesson->week_day->name,
-                    'weekly_period' => $lesson->weekly_period->name
-                ];
-                return $data;
-            } else {
-                if (is_array($other_lesson_participant_name)) {
-                    $value = $lesson;
-                    foreach ($other_lesson_participant_name as $part) {
-                        $value = $value->$part;
-                        if (!is_object($value)) {
-                            break;
-                        }
-                    }
+                {
+                    $data['duplicated_lesson'] = [
+                        $instance_name => $instance->$instance_name_field,
+                        'class_period' => $lesson->class_period->name,
+                        'week_day' => $lesson->week_day->name,
+                        'weekly_period' => $lesson->weekly_period->name
+                    ];
+                    return $data;
                 } else {
-                    $value = $lesson->$other_lesson_participant_name;
-                }
+                    if (is_array($other_lesson_participant_name)) {
+                        $value = $lesson;
+                        foreach ($other_lesson_participant_name as $part) {
+                            $value = $value->$part;
+                            if (!is_object($value)) {
+                                break;
+                            }
+                        }
+                    } else {
+                        $value = $lesson->$other_lesson_participant_name;
+                    }
 
-                $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id] = [
-                    'id' => $lesson->id,
-                    'study_period_id' => $lesson->study_period_id,
-                    'week_day_id' => $lesson->week_day_id,
-                    'weekly_period_id' => $lesson->weekly_period_id,
-                    'real_weekly_period_id' => $lesson->real_weekly_period_id ?? null,
-                    'class_period_id' => $lesson->class_period_id,
-                    'teacher_id' => $lesson->teacher_id,
-                    'type' => $lesson->lesson_type->short_notation,
-                    'name' => $lesson->name,
-                    'room' => $lesson->lesson_room->number,
-                    'date' => isset($lesson->date) ? date('d.m.y', strtotime($lesson->date)) : null,
-                    $other_lesson_participant => $value
-                ];
+                    $data['lessons'][$lesson->class_period_id][$lesson->week_day_id][$lesson->weekly_period_id] = [
+                        'id' => $lesson->id,
+                        'study_period_id' => $lesson->study_period_id,
+                        'week_day_id' => $lesson->week_day_id,
+                        'weekly_period_id' => $lesson->weekly_period_id,
+                        'real_weekly_period_id' => $lesson->real_weekly_period_id ?? null,
+                        'class_period_id' => $lesson->class_period_id,
+                        'teacher_id' => $lesson->teacher_id,
+                        'type' => $lesson->lesson_type->short_notation,
+                        'name' => $lesson->name,
+                        'room' => $lesson->lesson_room->number,
+                        'date' => isset($lesson->date) ? date('d.m.y', strtotime($lesson->date)) : null,
+                        $other_lesson_participant => $value
+                    ];
+                }
             }
         }
 
@@ -214,58 +203,48 @@ class ScheduleElement extends Instance
             $iterated_lessons = $lessons->toArray();
            
             foreach ($iterated_lessons as $key => $lesson) {
-                if (isset($week_number) && isset($lessons[$key]->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($lessons[$key], $week_number)) {
-                    continue;
+                $check_lesson = $this->checkLesson($lesson, $week_number);
+                if (is_object($check_lesson)) {
+                    $lesson = $check_lesson;
                 }
-                if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $lessons[$key])) {
-                    continue;
-                };
-                
-                $week_schedule_lesson = DateHelpers::getMonthWeeklyScheduleLesson($week_number, $lesson);
-                if (isset($week_schedule_lesson)) {
-                    if ($week_schedule_lesson) {
-                        $lesson = $week_schedule_lesson;
-                    } else {
-                        continue;
-                    }
-                }
-    
-                if (isset($data['weeks'][$week_number]['lessons'][$lesson['class_period_id']][$lesson['week_day_id']][$lesson['weekly_period_id']])
+                if ($check_lesson) {
+                    if (isset($data['weeks'][$week_number]['lessons'][$lesson['class_period_id']][$lesson['week_day_id']][$lesson['weekly_period_id']])
                     || isset($data['weeks'][$week_number]['lessons'][$lesson['class_period_id']][$lesson['week_day_id']][$weekly_period_ids['every_week']]))
-                {
-                    $data['duplicated_lesson'] = [
-                        $instance_name => $instance->$instance_name_field,
-                        'class_period' => $lessons[$key]->class_period->name,
-                        'week_day' => $lessons[$key]->week_day->name,
-                        'weekly_period' => $lessons[$key]->weekly_period->name
-                    ];
-                    return $data;
-                } else {
-    
-                    if (is_array($other_lesson_participant_name)) {
-                        $value = $lessons[$key];
-                        foreach ($other_lesson_participant_name as $part) {
-                            $value = $value->$part;
-                            if (!is_object($value)) {
-                                break;
-                            }
-                        }
+                    {
+                        $data['duplicated_lesson'] = [
+                            $instance_name => $instance->$instance_name_field,
+                            'class_period' => $lessons[$key]->class_period->name,
+                            'week_day' => $lessons[$key]->week_day->name,
+                            'weekly_period' => $lessons[$key]->weekly_period->name
+                        ];
+                        return $data;
                     } else {
-                        $value = $lessons[$key]->$other_lesson_participant_name;
+        
+                        if (is_array($other_lesson_participant_name)) {
+                            $value = $lessons[$key];
+                            foreach ($other_lesson_participant_name as $part) {
+                                $value = $value->$part;
+                                if (!is_object($value)) {
+                                    break;
+                                }
+                            }
+                        } else {
+                            $value = $lessons[$key]->$other_lesson_participant_name;
+                        }
+        
+                        $data['weeks'][$week_number]['lessons'][$lesson['class_period_id']][$lesson['week_day_id']][$lesson['weekly_period_id']] = [
+                            'id' => $lesson['id'],
+                            'week_day_id' => $lesson['week_day_id'],
+                            'weekly_period_id' => $lesson['weekly_period_id'],
+                            'class_period_id' => $lesson['class_period_id'],
+                            'teacher_id' => $lesson['teacher_id'],
+                            'type' => $lessons[$key]->lesson_type->short_notation,
+                            'name' => $lesson['name'],
+                            'room' => $lessons[$key]->lesson_room->number,
+                            'date' => isset($lesson['date']) ? date('d.m.y', strtotime($lesson['date'])) : null,
+                            $other_lesson_participant => $value
+                        ];
                     }
-    
-                    $data['weeks'][$week_number]['lessons'][$lesson['class_period_id']][$lesson['week_day_id']][$lesson['weekly_period_id']] = [
-                        'id' => $lesson['id'],
-                        'week_day_id' => $lesson['week_day_id'],
-                        'weekly_period_id' => $lesson['weekly_period_id'],
-                        'class_period_id' => $lesson['class_period_id'],
-                        'teacher_id' => $lesson['teacher_id'],
-                        'type' => $lessons[$key]->lesson_type->short_notation,
-                        'name' => $lesson['name'],
-                        'room' => $lessons[$key]->lesson_room->number,
-                        'date' => isset($lesson['date']) ? date('d.m.y', strtotime($lesson['date'])) : null,
-                        $other_lesson_participant => $value
-                    ];
                 }
             }
         }
@@ -797,5 +776,4 @@ class ScheduleElement extends Instance
 
         return \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
     }
-
 }

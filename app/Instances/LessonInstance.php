@@ -143,16 +143,23 @@ class LessonInstance extends Instance
                                         continue;
                                     }
                                 }
-                                if ($sub_lesson->week_day_id == $week_day->id
-                                    && $sub_lesson->class_period_id == $class_period->id)
-                                {
-                                    if ($sub_lesson->weekly_period_id == $weekly_period_ids['every_week']) {
-                                        $is_free = 'no';
-                                        break;
-                                    } elseif ($sub_lesson->weekly_period_id == $weekly_period_ids['red_week']) {
-                                        $is_free = $weekly_period_ids['blue_week'];
-                                    } else {
-                                        $is_free = $weekly_period_ids['red_week'];
+
+                                $check_lesson = $this->checkLesson($subject_lessons, $week_number);
+                                if (is_object($check_lesson)) {
+                                    $subject_lessons = $check_lesson;
+                                }
+                                if ($check_lesson) {
+                                    if ($sub_lesson->week_day_id == $week_day->id
+                                        && $sub_lesson->class_period_id == $class_period->id)
+                                    {
+                                        if ($sub_lesson->weekly_period_id == $weekly_period_ids['every_week']) {
+                                            $is_free = 'no';
+                                            break;
+                                        } elseif ($sub_lesson->weekly_period_id == $weekly_period_ids['red_week']) {
+                                            $is_free = $weekly_period_ids['blue_week'];
+                                        } else {
+                                            $is_free = $weekly_period_ids['red_week'];
+                                        }
                                     }
                                 }
                             }
