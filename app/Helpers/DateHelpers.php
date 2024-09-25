@@ -81,12 +81,12 @@ class DateHelpers
         return false; 
     }
 
-    public static function checkOneTimeLessonToWeek($week_number, $lesson) {
-        if (!isset($week_number) && isset($lesson->date)) {
+    public static function checkOneTimeLessonToWeek($week_number, $date) {
+        if (!isset($week_number) && isset($date)) {
             return false;
         }
-        if (isset($week_number) && isset($lesson->date)) {
-            if (date('Y-W', strtotime($lesson->date)) != date('Y-W', strtotime($week_number))) {
+        if (isset($week_number) && isset($date)) {
+            if (date('Y-W', strtotime($date)) != date('Y-W', strtotime($week_number))) {
                 return false;
             }
         }
@@ -139,16 +139,26 @@ class DateHelpers
         if (! isset($week_number)) {
             return;
         }
-        
         $weekly_period_ids = config('enum.weekly_period_ids');
         $week_is_red = self::weekColorIsRed($week_number);
+        $weekly_period_id = null;
+        if (is_object($lesson)) {
+            $weekly_period_id = $lesson->weekly_period_id;
+        } elseif (is_array($lesson)) {
+            $weekly_period_id = $lesson['weekly_period_id'];
+        }
 
-        if (($week_is_red && $lesson->weekly_period_id != $weekly_period_ids['blue_week'])
+        if (($week_is_red && isset($weekly_period_id) && $weekly_period_id != $weekly_period_ids['blue_week'])
             || 
-            (! $week_is_red && $lesson->weekly_period_id != $weekly_period_ids['red_week'])) 
+            (! $week_is_red && isset($weekly_period_id) && $weekly_period_id != $weekly_period_ids['red_week'])) 
         {
-            $lesson->real_weekly_period_id = $lesson->weekly_period_id;
-            $lesson->weekly_period_id = $weekly_period_ids['every_week'];
+            if (is_object($lesson)) {
+                $lesson->real_weekly_period_id = $weekly_period_id;
+                $lesson->weekly_period_id = $weekly_period_ids['every_week'];
+            } elseif (is_array($lesson)) {
+                $lesson['real_weekly_period_id'] = $weekly_period_id;
+                $lesson['weekly_period_id'] = $weekly_period_ids['every_week'];
+            }
 
             return $lesson;
         }
@@ -287,10 +297,13 @@ class DateHelpers
         return false;
     }
 
-    public static function checkRegularLessonToWeek($lesson, $week_number)
+    public static function checkRegularLessonToWeek($study_period_id, $week_number)
     {
-        $lesson_study_period = StudyPeriod::find($lesson->study_period_id);
-        return self::checkWeekToStudyPeriod($lesson_study_period, $week_number);
+        if (isset($study_period_id)) {
+            $lesson_study_period = StudyPeriod::find($study_period_id);
+            return self::checkWeekToStudyPeriod($lesson_study_period, $week_number);
+        }
+        return false;
     }
 
     public static function getCurrentStudyPeriodBorderWeeks()

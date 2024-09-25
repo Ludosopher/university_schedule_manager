@@ -21,6 +21,7 @@
         @csrf
             <input type="hidden" name="{{ $data['appelation'].'_id' }}" value="{{ $data[$data['appelation'].'_id'] }}">
             <input type="hidden" name="lesson_id" value="{{ $data['rescheduling_lesson_id'] }}">
+            <input type="hidden" name="teacher_id" value="{{ $data['teacher_id'] }}">
             <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
             <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}" min="{{ $data['current_study_period_border_weeks']['start'] }}" max="{{ $data['current_study_period_border_weeks']['end'] }}">
             <button type="submit" class="btn btn-primary">{{ __('form.this_week') }}</button>

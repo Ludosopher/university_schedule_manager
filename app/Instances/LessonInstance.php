@@ -70,11 +70,12 @@ class LessonInstance extends Instance
         return $is_dublicate;
     }
 
-    public function getReschedulingData($incoming_data) 
+    public function getReschedulingData($incoming_data)
     {
         $settings = Setting::pluck('value', 'name');
         $study_periods_data = DateHelpers::getStudyPeriodsData();
         $required_study_period_id = (int)($incoming_data['study_period_id'] ?? $study_periods_data['current_period_id']);
+        $data['required_study_period'] = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $required_study_period_id);
         $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
         $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
         $teacher = Teacher::with(['lessons'])->where('id', $incoming_data['teacher_id'])->first();
@@ -95,6 +96,7 @@ class LessonInstance extends Instance
             $week_border_dates = DateHelpers::weekStartEndDates($week_number);
             $is_red_week = DateHelpers::weekColorIsRed($week_number);
             $week_data = [
+                'current_study_season' => DateHelpers::checkWeekToStudyPeriodSeason($data['required_study_period'], $week_number),
                 'week_number' => $week_number,
                 'start_date' => $week_border_dates['start_date'],
                 'end_date' => $week_border_dates['end_date'],
@@ -129,10 +131,10 @@ class LessonInstance extends Instance
                                 if (! isset($week_number) && $sub_lesson->study_period_id !== $required_study_period_id) {
                                     continue;
                                 }
-                                if (isset($week_number) && isset($sub_lesson->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($sub_lesson, $week_number)) {
+                                if (isset($week_number) && isset($sub_lesson->study_period_id) && ! DateHelpers::checkRegularLessonToWeek($sub_lesson->study_period_id, $week_number)) {
                                     continue;
                                 }
-                                if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $sub_lesson)) {
+                                if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $sub_lesson->date)) {
                                     continue;
                                 };
                                 $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $sub_lesson);
@@ -144,7 +146,7 @@ class LessonInstance extends Instance
                                     }
                                 }
 
-                                $check_lesson = $this->checkLesson($subject_lessons, $week_number);
+                                $check_lesson = $this->checkLesson($sub_lesson, $week_number);
                                 if (is_object($check_lesson)) {
                                     $subject_lessons = $check_lesson;
                                 }

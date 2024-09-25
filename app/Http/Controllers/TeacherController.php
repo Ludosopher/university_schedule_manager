@@ -2,6 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\DocExporters\DocExporterRegularSchedule;
+use App\DocExporters\DocExporterSchedule;
+use App\DocExporters\ManyTables\DocExporterMonthSchedule;
+use App\DocExporters\OneTable\WeekSchedule\DocExporterOrdinaryWeekSchedule;
+use App\DocExporters\WeekSchedule\DocExporterRegularWeekSchedule;
+use App\DocExporters\WeekSchedule\DocExporterWeeklyWeekSchedule;
+use App\DocExporters\OneTable\WeekSchedule\DocExporterWeekReschedule;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\teacher\DeleteTeacherRequest;
@@ -111,7 +118,8 @@ class TeacherController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = (new TeacherScheduleElement())->scheduleExport($data);
+        //$objWriter = (new TeacherScheduleElement())->scheduleExport($data);
+        $objWriter = (new DocExporterOrdinaryWeekSchedule($data))->createWriter();
         $objWriter->save("php://output");
     }
 
@@ -131,7 +139,8 @@ class TeacherController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = (new TeacherScheduleElement())->monthScheduleExport($data);
+        //$objWriter = (new TeacherScheduleElement())->monthScheduleExport($data);
+        $objWriter = (new DocExporterMonthSchedule($data))->createWriter();
         $objWriter->save("php://output");
     }
 
@@ -152,7 +161,8 @@ class TeacherController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = (new TeacherScheduleElement())->scheduleExport($data);
+        //$objWriter = (new TeacherScheduleElement())->scheduleExport($data);
+        $objWriter = (new DocExporterWeekReschedule($data))->createWriter();
         $objWriter->save("php://output");
     }
 

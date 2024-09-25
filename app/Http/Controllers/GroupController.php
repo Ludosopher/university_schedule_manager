@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\DocExporters\ManyTables\DocExporterMonthSchedule;
+use App\DocExporters\OneTable\WeekSchedule\DocExporterOrdinaryWeekSchedule;
+use App\DocExporters\OneTable\WeekSchedule\DocExporterWeekReschedule;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Instances\LessonInstance;
@@ -124,7 +127,8 @@ class GroupController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = (new GroupScheduleElement())->scheduleExport($data);
+        //$objWriter = (new GroupScheduleElement())->scheduleExport($data);
+        $objWriter = (new DocExporterOrdinaryWeekSchedule($data))->createWriter();
         $objWriter->save("php://output");
     }
 
@@ -144,7 +148,8 @@ class GroupController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = (new GroupScheduleElement())->monthScheduleExport($data);
+        //$objWriter = (new GroupScheduleElement())->monthScheduleExport($data);
+        $objWriter = (new DocExporterMonthSchedule($data))->createWriter();
         $objWriter->save("php://output");
     }
 
@@ -165,7 +170,8 @@ class GroupController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = (new GroupScheduleElement())->scheduleExport($data);
+        //$objWriter = (new GroupScheduleElement())->scheduleExport($data);
+        $objWriter = (new DocExporterWeekReschedule($data))->createWriter();
         $objWriter->save("php://output");
     }
 }

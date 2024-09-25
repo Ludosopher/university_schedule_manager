@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\DocExporter\DocExporterTable as DocExporterDocExporterTable;
+use App\DocExporters\OneTable\WeekSchedule\DocExporterReplacementWeekSchedule;
+use App\DocExporters\OneTable\DocExporterTable;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\lesson\DeleteLessonRequest;
@@ -104,7 +107,8 @@ class LessonController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = (new ScheduleElement)->replacementExport($validation['validated']);
+        // $objWriter = (new ScheduleElement)->replacementExport($validation['validated']);
+        $objWriter = (new DocExporterTable($validation['validated']))->createWriter();
         $objWriter->save("php://output");
     }
 
@@ -123,7 +127,8 @@ class LessonController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        $objWriter = (new ScheduleElement)->scheduleExport($data);
+        // $objWriter = (new ScheduleElement)->scheduleExport($data);
+        $objWriter = (new DocExporterReplacementWeekSchedule($data))->createWriter();
         $objWriter->save("php://output");
     }
 }
