@@ -321,10 +321,9 @@ class Instance
         return $filtered_array_arrays;
     }
 
-    protected function checkLesson($checking_lesson, $week_number, $type='', $replaceble_lesson=null, $week_dates=null)
+    protected function checkLesson($checking_lesson, $week_number, $type='', $replaceble_lesson=null, $week_dates=null, $selected_study_period_id=null)
     {
         $weekly_period_ids = config('enum.weekly_period_ids');
-        $study_periods_data = DateHelpers::getStudyPeriodsData();
         $study_period_id = null;
         $date = null;
         if (is_object($checking_lesson)) {
@@ -334,8 +333,14 @@ class Instance
             $study_period_id = $checking_lesson['study_period_id'] ?? null;
             $date = $checking_lesson['date'] ?? null;
         }
+
+        $current_period_id = $selected_study_period_id;
+        if (! isset($selected_study_period_id)) {
+            $study_periods_data = DateHelpers::getStudyPeriodsData();
+            $current_period_id = $study_periods_data['current_period_id'];
+        }
        
-        if (! isset($week_number) && isset($study_period_id) && $study_period_id !== $study_periods_data['current_period_id']) {
+        if (! isset($week_number) && isset($study_period_id) && $study_period_id !== $current_period_id) {
             return false;
         }
         if (isset($week_number) && ! DateHelpers::checkRegularLessonToWeek($study_period_id, $week_number)) {
@@ -344,7 +349,6 @@ class Instance
         if (! DateHelpers::checkOneTimeLessonToWeek($week_number, $date)) {
             return false;
         };
-        
         $week_schedule_lesson = DateHelpers::getWeeklyScheduleLesson($week_number, $checking_lesson);
         $w_p_field = 'weekly_period_id';
         if (isset($week_schedule_lesson)) {
@@ -355,7 +359,6 @@ class Instance
                 return false;
             }
         }
-        
         if ($type === 'additionally') {
             $is_periodic_replacing_lesson = $replaceble_lesson->weekly_period_id != $weekly_period_ids['every_week'];
             if ($checking_lesson->$w_p_field == $weekly_period_ids['every_week'] && $is_periodic_replacing_lesson

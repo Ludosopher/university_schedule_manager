@@ -86,7 +86,7 @@ class ScheduleElement extends Instance
 
         $data['lessons'] = [];
         foreach ($lessons as $lesson) {
-            $check_lesson = $this->checkLesson($lesson, $week_number);
+            $check_lesson = $this->checkLesson($lesson, $week_number, '', null, null, $required_study_period_id);
             if (is_object($check_lesson)) {
                 $lesson = $check_lesson;
             }
