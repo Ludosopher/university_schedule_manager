@@ -280,7 +280,8 @@ class ScheduleElement extends Instance
             'class_period_ids' => $schedule_data['class_period_ids'],
             'week_days_limit' => $schedule_data['week_days_limit'],
             'class_periods_limit' => $schedule_data['class_periods_limit'],
-            'appelation' => $this->config['instance_name']
+            'appelation' => $this->config['instance_name'],
+            'rescheduling_lesson_date' => $incoming_data['rescheduling_lesson_date'] ?? null,
         ];
 
         $data['week_dates'] = $reschedule_data['week_dates'];

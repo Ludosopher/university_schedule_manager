@@ -81,7 +81,6 @@ class LessonInstance extends Instance
         $teacher = Teacher::with(['lessons'])->where('id', $incoming_data['teacher_id'])->first();
         $lesson = Lesson::with(['groups.lessons'])->where('id', $incoming_data['lesson_id'])->first();
         $weekly_period_ids = config('enum.weekly_period_ids');
-        $study_seasons = config('enum.study_seasons');
         $week_days = WeekDay::select('id', 'name')->get();
         $class_periods = ClassPeriod::get();
         
@@ -110,6 +109,14 @@ class LessonInstance extends Instance
             $is_red_week = null;
         }
 
+        $date_or_weekly_period = __('dictionary.'.$lesson->weekly_period->name);
+        $reschedule_hours_diff = null;
+        if (isset($incoming_data['rescheduling_lesson_date'])) {
+            $date_or_weekly_period = date('d.m.y', strtotime(str_replace('"', '', $incoming_data['rescheduling_lesson_date'])));
+            $reschedule_date_time = date('Y-m-d H:i', strtotime(str_replace('"', '', $incoming_data['rescheduling_lesson_date'])));
+            $reschedule_hours_diff = round((strtotime($reschedule_date_time) - strtotime(now()))/3600);
+        }
+      
         $schedule_subjects[] = $teacher->lessons;
         foreach ($lesson->groups as $lesson_group) {
             $schedule_subjects[] = $lesson_group->lessons;
@@ -214,6 +221,9 @@ class LessonInstance extends Instance
             'class_periods_limit' => $class_periods_limit,
             'free_weekly_period_colors' => config('enum.free_weekly_period_colors'),
             'current_study_period_border_weeks' => DateHelpers::getCurrentStudyPeriodBorderWeeks(),
+            'rescheduling_lesson_date' => $incoming_data['rescheduling_lesson_date'] ?? null,
+            'date_or_weekly_period' => $date_or_weekly_period,
+            'reschedule_hours_diff' => $reschedule_hours_diff
         ];
 
         return $data;

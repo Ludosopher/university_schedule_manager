@@ -74,6 +74,12 @@
                                                     </a>
                                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                                         <li>
+                                                            @php
+                                                                $lesson_date = '';
+                                                                if (isset($data['week_dates'])) {
+                                                                    $lesson_date = date('Y-m-d '.$class_period_start_time, strtotime(str_replace('"', '', json_encode($data['week_dates'][$week_day_id]))));
+                                                                }
+                                                            @endphp
                                                             <form method="POST" action="{{ route('lesson-replacement') }}" target="_blank">
                                                             @csrf
                                                                 <input type="hidden" name="replace_rules[lesson_id]" value="{{ $lesson['id'] }}">
@@ -84,12 +90,6 @@
                                                                 @endphp
                                                                 <input type="hidden" name="replace_rules[weekly_period_id]" value="{{ $w_p_id }}">
                                                                 <input type="hidden" name="replace_rules[week_day_id]" value="{{ $lesson['week_day_id'] }}">
-                                                                @php
-                                                                    $lesson_date = '';
-                                                                    if (isset($data['week_dates'])) {
-                                                                        $lesson_date = date('Y-m-d '.$class_period_start_time, strtotime(str_replace('"', '', json_encode($data['week_dates'][$week_day_id]))));
-                                                                    }
-                                                                @endphp
                                                                 <input type="hidden" name="replace_rules[date]" value="{{ $lesson_date }}">
                                                                 <input type="hidden" name="week_data" value="{{ isset($data['week_data']) ? json_encode($data['week_data']) : '' }}">
                                                                 <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
@@ -107,6 +107,7 @@
                                                                 <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                                                                 <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] }}">
                                                                 <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
+                                                                <input type="hidden" name="rescheduling_lesson_date" value="{{ $lesson_date }}">
                                                                 <button type="submit" class="btn btn-light schedule-dropdown">{{ __('form.reschedule_variants') }}</button>
                                                             </form>
                                                         </li>

@@ -28,6 +28,7 @@ class RescheduleLessonRequest extends FormRequest
         return [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'rescheduling_lesson_date' => 'nullable|date',
             'week_data' => 'nullable|string',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',

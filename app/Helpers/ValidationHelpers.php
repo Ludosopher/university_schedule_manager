@@ -81,6 +81,7 @@ class ValidationHelpers
         $rules = [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'rescheduling_lesson_date' => 'nullable|date',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
             'week_number' => 'nullable|string',
@@ -101,6 +102,8 @@ class ValidationHelpers
             'group_id' => 'required|integer|exists:App\Group,id',
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
+            'rescheduling_lesson_date' => 'nullable|date',
+            'date_or_weekly_period' => 'nullable',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
             'week_number' => 'nullable|string',

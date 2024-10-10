@@ -24,6 +24,7 @@
             <input type="hidden" name="teacher_id" value="{{ $data['teacher_id'] }}">
             <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
             <input type="week" name="week_number" value="{{ $data['week_data']['week_number'] }}" min="{{ $data['current_study_period_border_weeks']['start'] }}" max="{{ $data['current_study_period_border_weeks']['end'] }}">
+            <input type="hidden" name="rescheduling_lesson_date" value="{{ $data['rescheduling_lesson_date'] ?? '' }}">
             <button type="submit" class="btn btn-primary">{{ __('form.this_week') }}</button>
         </form>
         <form method="POST" action="{{ route($data['appelation'].'-reschedule-doc-export') }}">

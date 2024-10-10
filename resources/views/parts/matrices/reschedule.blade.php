@@ -73,7 +73,12 @@
                                                     $other_lesson_participant = $lesson[$other_lesson_participant_name];
                                                     $title = '';
                                                     $color = '';
-                                                    if ($lesson['id'] == $data['rescheduling_lesson_id']) {
+                                                    if ($lesson['id'] == $data['rescheduling_lesson_id']
+                                                        && (! isset($data['rescheduling_lesson_date'])
+                                                            ||
+                                                            isset($data['week_dates'][$week_day_id])
+                                                            && isset($data['rescheduling_lesson_date'])
+                                                            && date('Y-m-d', strtotime($data['week_dates'][$week_day_id])) == date('Y-m-d', strtotime($data['rescheduling_lesson_date'])))) {
                                                         $color = 'Yellow';
                                                         $title = __('title.rescheduling_lesson');
                                                     }

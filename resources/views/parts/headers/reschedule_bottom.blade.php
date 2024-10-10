@@ -10,6 +10,7 @@
             <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
             <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
             <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
+            <input type="hidden" name="rescheduling_lesson_date" value="{{ $data['rescheduling_lesson_date'] ?? '' }}">
             <button type="submit" class="btn btn-light schedule-dropdown">{{ __("form.teacher's") }}</button>
         </form>
         @if (isset($data['groups_ids_names']) && is_array($data['groups_ids_names']))
@@ -23,6 +24,7 @@
                     <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
+                    <input type="hidden" name="rescheduling_lesson_date" value="{{ $data['rescheduling_lesson_date'] ?? '' }}">
                     <button type="submit" class="btn btn-light schedule-dropdown">{{ $group['name'] }}</button>
                 </form>
             @endforeach
