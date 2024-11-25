@@ -21,6 +21,7 @@
             <link href="{{ asset('css/app.css') }}" rel="stylesheet">
         </head>
         <body>
+            @includeIf('parts.notices.demo_chat')
             <section class="body-section">
                 <div class="container py-5">
                     <div class="row d-flex justify-content-center">
