@@ -55,7 +55,8 @@
             </section>
 
             <script>
-                let socket = new WebSocket("ws://localhost:8080"); // ws://192.168.56.1:8080
+                
+                let socket = new WebSocket("ws://localhost:8081");
                                 
                 var blade_data = @json($data);
                         
@@ -159,7 +160,7 @@
                 };
 
                 socket.onerror = function(error) {
-                    console.log(error.code);
+                    console.error('WebSocket error:', error);
                 };
                             
             </script>

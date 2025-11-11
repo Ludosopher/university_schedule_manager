@@ -410,8 +410,8 @@ class TeacherScheduleElement extends ScheduleElement
         }
 
         $mails_to = [];
-        if (env('is_testing') === true) {
-            $mails_to[] = env('testing_email');
+        if (env('IS_TESTING') === true) {
+            $mails_to[] = env('TESTING_EMAIL');
         } else {
             foreach ($replacing_lesson->teacher->users as $user) {
                 $mails_to[] = $user->email;

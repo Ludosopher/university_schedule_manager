@@ -3,6 +3,8 @@
 namespace App\Helpers;
 
 use App\Notifications\ReplacementRequestStatusChangedNotifi;
+use App\User;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Log;
 
@@ -20,18 +22,37 @@ class NotificationHelpers
         ];
         
         $notifi_data['teacher_name'] = $request->replaceable_lesson->teacher->first_name_patronymic;
-        Notification::send($replaceable_addressees, new ReplacementRequestStatusChangedNotifi($request, $notifi_data));
-        foreach ($replaceable_addressees as $addressee) {
-            Log::channel('notification_mail')->info('Email notification about replacement request status change was sent to '.$addressee->name.' on '.$addressee->email.'.');
+        if (env('IS_TESTING') === true) {
+            $notification = new ReplacementRequestStatusChangedNotifi($request, $notifi_data);
+            $mailMessage = $notification->toMail(null);
+            $content = $mailMessage->render();
+            Mail::send([], [], function ($message) use ($mailMessage, $content) {
+                $message->to(env('TESTING_EMAIL'))
+                        ->subject($mailMessage->subject)
+                        ->setBody($content, 'text/html');
+            });
+        } else {
+            Notification::send($replaceable_addressees, new ReplacementRequestStatusChangedNotifi($request, $notifi_data));
+            foreach ($replaceable_addressees as $addressee) {
+                Log::channel('notification_mail')->info('Email notification about replacement request status change was sent to '.$addressee->name.' on '.$addressee->email.'.');
+            }
         }
         
         $notifi_data['teacher_name'] = $request->replacing_lesson->teacher->first_name_patronymic;
-        Notification::send($replacing_addressees, new ReplacementRequestStatusChangedNotifi($request, $notifi_data));
-        foreach ($replacing_addressees as $addressee) {
-            Log::channel('notification_mail')->info('Email notification about replacement request status change was sent to '.$addressee->name.' on '.$addressee->email.'.');
+        if (env('IS_TESTING') === true) {
+            $notification = new ReplacementRequestStatusChangedNotifi($request, $notifi_data);
+            $mailMessage = $notification->toMail(null);
+            $content = $mailMessage->render();
+            Mail::send([], [], function ($message) use ($mailMessage, $content) {
+                $message->to(env('TESTING_EMAIL'))
+                        ->subject($mailMessage->subject)
+                        ->setBody($content, 'text/html');
+            });
+        } else {
+            Notification::send($replacing_addressees, new ReplacementRequestStatusChangedNotifi($request, $notifi_data));
+            foreach ($replacing_addressees as $addressee) {
+                Log::channel('notification_mail')->info('Email notification about replacement request status change was sent to '.$addressee->name.' on '.$addressee->email.'.');
+            }
         }
     }
-
-    
-
 }

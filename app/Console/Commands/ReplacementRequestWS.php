@@ -42,6 +42,8 @@ class ReplacementRequestWS extends Command
     public function handle()
     {
         $this->info('Start server');
+
+        $port = env('WEBSOCKET_PORT', 8081);
         
         $server = IoServer::factory(
             new HttpServer (
@@ -49,7 +51,7 @@ class ReplacementRequestWS extends Command
                     new WebsocketHelpers()
                 )
             ),
-            8080
+            $port
         );
     
         $server->run();
