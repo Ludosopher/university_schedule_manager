@@ -1,0 +1,93 @@
+FROM php:8.0-fpm
+
+# Installing system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    libzip-dev \
+    default-mysql-client \
+    gnupg \
+    supervisor \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installing Node.js and npm
+RUN curl -fsSL https://nodejs.org/dist/v18.20.8/node-v18.20.8-linux-x64.tar.xz | tar -xJ -C /usr/local --strip-components=1 \
+    && ln -s /usr/local/bin/node /usr/bin/node \
+    && ln -s /usr/local/bin/npm /usr/bin/npm
+
+# Installing PHP extensions
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip opcache
+
+# Installing Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copying the supervisor configuration file
+COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Creating a user for the application
+RUN groupadd -g 1000 www-data || true \
+    && useradd -u 1000 -ms /bin/bash -g www-data www-data || true
+
+# Setting up caches for www-data
+RUN mkdir -p /var/www/.npm /var/www/.composer \
+    && chown -R www-data:www-data /var/www/.npm /var/www/.composer
+
+# Installing the working directory
+WORKDIR /var/www/html
+
+# СОЗДАЕМ ВСЕ НЕОБХОДИМЫЕ ПАПКИ
+RUN mkdir -p database/seeders database/seeds database/factories
+
+# Копируем ТОЛЬКО файлы зависимостей
+COPY --chown=www-data:www-data composer.json composer.lock package.json package-lock.json ./
+
+# Switching to the www-data user
+USER www-data
+
+# Устанавливаем зависимости БЕЗ автозагрузки
+RUN composer install --no-dev --no-scripts --no-interaction --no-autoloader
+
+# Копируем ВСЁ приложение
+USER root
+COPY --chown=www-data:www-data . .
+USER www-data
+
+# ТЕПЕРЬ генерируем автозагрузку когда все файлы на месте
+RUN composer dump-autoload --optimize --no-dev
+
+# Устанавливаем Node зависимости
+RUN npm ci --no-audit --include=dev
+
+# Собираем ассеты
+RUN npx cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js
+
+# Чистим node_modules от dev-зависимостей
+RUN npm ci --production --no-audit
+
+# Безопасное кэширование
+RUN php artisan config:clear \
+    && php artisan route:clear \
+    && php artisan view:clear \
+    && php artisan view:cache
+
+# Пытаемся закэшировать конфиги и маршруты
+RUN php artisan config:cache || php artisan config:clear
+RUN php artisan route:cache || php artisan route:clear
+
+# Исправляем права
+USER root
+RUN chown -R www-data:www-data /var/www/html/storage \
+    && chown -R www-data:www-data /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
+USER www-data
+
+EXPOSE 9000
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

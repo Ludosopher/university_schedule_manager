@@ -9,7 +9,7 @@ use Log;
 class CronHelpers
 {
     public static function replacementRequestStatusesUpdate() {
-
+        Log::channel('cron')->info('replacementRequestStatusesUpdate function is started');
         $replacement_request_status_ids = config('enum.replacement_request_status_ids');
         
         $replace_reqs = ReplacementRequest::where('status_id', $replacement_request_status_ids['permitted'])

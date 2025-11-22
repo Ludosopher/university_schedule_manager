@@ -11,6 +11,7 @@ vendor
 .env.example
 .env.local
 .env.production
+.env.prod
 
 # Laravel-specific
 storage/logs/*
@@ -22,7 +23,9 @@ bootstrap/cache/*
 
 # Docker files (если не нужны в образе)
 Dockerfile
-docker-compose.yml
+Dockerfile.prod
+compose.yml
+compose.prod.yml
 .dockerignore
 
 # IDE and editor files

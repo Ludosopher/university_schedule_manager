@@ -25,9 +25,9 @@ class UsersTableSeeder extends Seeder
         \DB::table('users')->insert([
             [
                 'id' => 1,
-                'email' => 'schedule_manager@mail.ru',
-                'name' => 'Viktor Alikin',
-                'password' => bcrypt('schedule-admin'),
+                'email' => config('admin.admin_email'),
+                'name' => config('admin.admin_name'),
+                'password' => bcrypt(config('admin.admin_password')),
                 'is_admin' => true,
             ],
         ]);

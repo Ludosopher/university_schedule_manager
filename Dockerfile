@@ -1,5 +1,8 @@
 FROM php:8.0-fpm
 
+# Create the APT partial directory to avoid permission issues
+RUN mkdir -p /var/lib/apt/lists/partial
+
 # Installing system dependencies
 RUN apt-get update && apt-get install -y \
     git \

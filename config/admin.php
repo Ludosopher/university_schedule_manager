@@ -10,7 +10,7 @@ return [
     |
     */
 
-    'admin_name' => env('ADMIN_NAME', ''),
-    'admin_email' => env('ADMIN_EMAIL', ''),
-    'admin_password' =>env('ADMIN_PASSWORD', '')
+    'admin_name' => env('ADMIN_NAME', 'admin'),
+    'admin_email' => env('ADMIN_EMAIL', 'schedule_manager@xxxx.xx'),
+    'admin_password' =>env('ADMIN_PASSWORD', '123')
 ];

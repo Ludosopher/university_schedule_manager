@@ -26,6 +26,20 @@ MYSQL_ROOT_PASSWORD=***** // create your password
 DB_PASSWORD=***** // create your password
 
 
+## Administrator Credentials Settings
+In the .env configuration file, specify the following administrator credentials settings:
+
+ADMIN_NAME="********"
+ADMIN_EMAIL=********
+ADMIN_PASSWORD=********
+
+After performing migrations and siding using these credentials, you will be able to log into the administrator account with all rights. If you do not specify these parameters, then the default administrator credentials are:
+
+name: admin
+email: schedule_manager@xxxx.xx
+password: 123
+
+
 ## Email Sending settings
 
 The application provides for sending letters to teachers with suggestions for replacing or rescheduling classes.
@@ -113,6 +127,19 @@ DB_USERNAME=***** // укажите любое имя пользователя
 MYSQL_ROOT_PASSWORD=***** // создайте свой пароль
 DB_PASSWORD=***** // создайте свой пароль
 
+## Настройки учётных данных администратора
+В файле конфигурации .env укажите следующие параметры учётных данных администратора:
+
+ADMIN_NAME="********"
+ADMIN_EMAIL=********
+ADMIN_PASSWORD=********
+
+После выполнения миграций и сиддинга по этим учётным данным можно будет войти в аккаунт администратора со всеми правами. Если не указать эти параметры, то учётные данные администратора по умолчанию:
+
+name: admin
+email: schedule_manager@xxxx.xx
+password: 123
+
 
 ## Настройки отправки электронной почты
 
@@ -156,7 +183,7 @@ QUEUE_CONNECTION=database
 После этого ключ появится в конфигурационном файле .env (APP_KEY)
 
 5. Запустите миграцию и заполнение базы данных демоданными:
-`php artisan migrate —seed`
+`php artisan migrate --seed`
 или
 `php artisan migrate:fresh --seed` (при перезапуске).
 Приложение содержит вымышленные данные преподавателей, студенческих групп и учебных занятий и предназначено только для факультета бизнеса и социальных технологий.
