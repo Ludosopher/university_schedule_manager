@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Instances\ScheduleElements;
+namespace App\Services\ScheduleServices;
 
 use App\Group;
 
-class GroupScheduleElement extends ScheduleElement
+class GroupScheduleService extends ScheduleService
 {
     protected $config = [
         'model_name' => 'App\Group',
@@ -19,8 +19,13 @@ class GroupScheduleElement extends ScheduleElement
         'many_to_many_attributes' => [],
     ];
 
-    public function deleteGroupLessonRelation($id) {
-        
+    /**
+     * Remove all many-to-many study group and lesson relation.
+     *
+     * @return array|bool
+     */
+    public function deleteGroupLessonRelation(int $id) 
+    {
         $group = Group::with('lessons.groups')->find($id);
         
         foreach ($group->lessons as $lesson) {

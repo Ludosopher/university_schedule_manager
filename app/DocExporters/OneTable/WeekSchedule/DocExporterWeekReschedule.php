@@ -2,22 +2,27 @@
 
 namespace App\DocExporters\OneTable\WeekSchedule;
 
-use App\Helpers\DateHelpers;
 use App\Setting;
-use Illuminate\Support\Facades\Log as FacadesLog;
-use Log;
+use PhpOffice\PhpWord\Writer\WriterInterface;
 
 class DocExporterWeekReschedule extends DocExporterWeekSchedule
 {
     protected $data = [];
     protected $first_column_width = 1300;
         
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
 
-    public function createWriter() 
+    /**
+     * Create and return a configured Word 2007 document writer for the reschedule matrix.
+     *
+     * The document structure includes a header section and a matrix with the
+     * provided reschedule data.
+     *
+     */
+    public function createWriter(): WriterInterface 
     {
         $settings = Setting::pluck('value', 'name');
         $week_days_limit = $settings['full_time_week_days_limit'] ?? config('site.week_days_limits')['full_time'];
@@ -57,7 +62,21 @@ class DocExporterWeekReschedule extends DocExporterWeekSchedule
         ]);
     }
 
-    function getCellAdditional($data, $lesson, $week_day_id, &$lesson_other_participant, &$fontStyle, &$lesson_n, &$lesson_type, &$lesson_room)
+    /**
+     * Get additional cell content.
+     *
+     * @param array|bool $lesson
+     */
+    function getCellAdditional(
+        array $data, 
+        $lesson, 
+        int $week_day_id, 
+        string &$lesson_other_participant, 
+        array &$fontStyle, 
+        string &$lesson_n, 
+        string &$lesson_type, 
+        string &$lesson_room
+        ): array
     {
         if (!is_array($lesson) && $lesson) {
             $fontStyle = array_merge($fontStyle, ['name' => 'Segoe Script', 'color' => '#000000']);
@@ -70,7 +89,7 @@ class DocExporterWeekReschedule extends DocExporterWeekSchedule
             return ['text' => '('.__('title.rescheduling_lesson').')', 'font_style' => ['size' => 8, 'name' => 'Segoe Script', 'bold' => true], 'paragraph_style' => ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]];
         }
 
-        return '';
+        return [];
     }
 
 }

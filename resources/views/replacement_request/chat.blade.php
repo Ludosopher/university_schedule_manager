@@ -59,6 +59,11 @@
                 let socket = new WebSocket("ws://localhost:8081");
                                 
                 var blade_data = @json($data);
+
+                const translations = {
+                    logged_into_chat: '{{ __('chat.logged_into_chat') }}',
+                    left_chat: '{{ __('chat.left_chat') }}',
+                };
                         
                 socket.onopen = function(e) {
                     socket.send('{"open_replacement_request_id": ' + blade_data['replacement_request_id'] + ', "author_name": "' + blade_data['author_name'] + '"}');
@@ -93,12 +98,12 @@
                     }
                     if (socket_data.new_partisipant !== undefined) {
                         message = '<div>' +
-                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-success" style="font-size: 100%; letter-spacing: 0.1em;">' + socket_data.new_partisipant + ' logged into the chat</p>' +
+                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-success" style="font-size: 100%; letter-spacing: 0.1em;">' + socket_data.new_partisipant + ' ' + translations.logged_into_chat +'</p>' +
                                       '</div>'
                     }
                     if (socket_data.left_partisipant !== undefined) {
                         message = '<div>' +
-                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-info" style="font-size: 100%; letter-spacing: 0.1em;">' + socket_data.left_partisipant + ' left the chat</p>' +
+                                          '<p class="small p-2 me-3 mb-3 text-white rounded-3 bg-info" style="font-size: 100%; letter-spacing: 0.1em;">' + socket_data.left_partisipant + ' ' + translations.left_chat +'</p>' +
                                       '</div>'
                     }
                     if (socket_data.existing_messages !== undefined && socket_data.existing_messages.length !== 0) {
@@ -147,8 +152,14 @@
                         body: body.value,
                     }
 
+                    if (!body.value.trim()) {
+                        return;
+                    }
+
                     let json = JSON.stringify(data);
                     socket.send(json);
+
+                    body.value = '';
                 };
 
                 socket.onclose = function(event) {

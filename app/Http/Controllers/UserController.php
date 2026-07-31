@@ -7,39 +7,60 @@ use App\Http\Requests\user\DeleteUserRequest;
 use App\Http\Requests\user\AdminStoreUserRequest;
 use App\Http\Requests\user\FilterUserRequest;
 use App\Http\Requests\user\SelfStoreUserRequest;
-use App\Instances\UserInstance;
+use App\Services\UserService;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
-    public function getUsers (FilterUserRequest $request)
+    /** @var UserService $userService */
+    private $userService;
+    
+    public function __construct(
+        UserService $userService
+        )
+    {
+        $this->userService = $userService;
+    }    
+
+    /**
+     * Display list of users.
+     */
+    public function getUsers (FilterUserRequest $request): Renderable
     {
         $request->validated();
-        $data = (new UserInstance())->getInstances(request()->all());
+        $data = $this->userService->getInstances(request()->all());
 
         return view("user.users")->with('data', $data);
     }
 
-    public function addUserForm (Request $request)
+    /**
+     * Display the form for updating a user.
+     */
+    public function addUserForm (Request $request): Renderable
     {
-        $data = (new UserInstance())->getInstanceFormData($request->all());
+        $data = $this->userService->getInstanceFormData($request->all());
         
         if (isset($data['updating_instance'])) {
-            $data = (new UserInstance())->getManyToManyData($data);
+            $data = $this->userService->getManyToManyData($data);
         }
 
         return view("user.add_user_form")->with('data', $data);
     }
 
-    public function adminUpdateUser (AdminStoreUserRequest $request)
+    /**
+     * Update user by admin.
+     */
+    public function adminUpdateUser (AdminStoreUserRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $validated = (new UserInstance())->preparingBooleans($validated);
+        $validated = $this->userService->preparingBooleans($validated);
         
-        $user = (new UserInstance())->addOrUpdateInstance($validated);
-        (new UserInstance())->addOrUpdateManyToManyAttributes($validated, $user['id']);
+        $user = $this->userService->addOrUpdateInstance($validated);
+        $this->userService->addOrUpdateManyToManyAttributes($validated, $user['id']);
 
         $response_content = ResponseHelpers::getContent($user, 'user');
         
@@ -49,11 +70,14 @@ class UserController extends Controller
         ]);
     }
 
-    public function selfUpdateUser (SelfStoreUserRequest $request)
+    /**
+     * User self-update.
+     */
+    public function selfUpdateUser (SelfStoreUserRequest $request): RedirectResponse
     {
         $validated = $request->validated();
         
-        $user = (new UserInstance())->addOrUpdateInstance($validated);
+        $user = $this->userService->addOrUpdateInstance($validated);
         
         $response_content = ResponseHelpers::getContent($user, 'user');
         
@@ -63,11 +87,14 @@ class UserController extends Controller
         ]);
     }
 
-    public function deleteUser (DeleteUserRequest $request)
+    /**
+     * Delete user.
+     */
+    public function deleteUser (DeleteUserRequest $request): RedirectResponse
     {
-        (new UserInstance())->deleteManyToManyAttributes($request->validated()['deleting_id']);
+        $this->userService->deleteManyToManyAttributes($request->validated()['deleting_id']);
         
-        $deleted_instance = (new UserInstance())->deleteInstance($request->validated()['deleting_id']);
+        $deleted_instance = $this->userService->deleteInstance($request->validated()['deleting_id']);
         $response_content = ResponseHelpers::getContent($deleted_instance, 'user');
         return redirect()->back()->with('response', [
             'success' => $response_content['success'],
@@ -75,14 +102,20 @@ class UserController extends Controller
         ]);
     }
 
-    public function getAccountMain (Request $request)
+    /**
+     * Display user account.
+     */
+    public function getAccountMain (Request $request): Renderable
     {
-        $data = (new UserInstance())->getAccountMain(Auth::user());
+        $data = $this->userService->getAccountMain(Auth::user());
 
         return view("user.account_main")->with('data', $data);
     }
 
-    public function setLocate (Request $request)
+    /**
+     * Change the language of the application for the user.
+     */
+    public function setLocate (Request $request): RedirectResponse
     {
         if (in_array($request->lang, config('enum.languages'))) {
             Session::put('applocale', $request->lang);

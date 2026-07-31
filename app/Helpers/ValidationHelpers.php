@@ -7,7 +7,16 @@ use Illuminate\Support\Facades\Validator;
 
 class ValidationHelpers
 {
-    public static function validation($data, $rules, $messages = [], $attributes = []) 
+    /**
+     * Validate data against the given rules and return a structured response.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function validation(
+        array $data, 
+        array $rules, 
+        array $messages = [], 
+        array $attributes = []) 
     {
         $validator = Validator::make($data, $rules, $messages, $attributes);
         if ($validator->fails()) {
@@ -22,8 +31,13 @@ class ValidationHelpers
         ];
     }
 
-    public static function getReplacementVariantsValidation($data) {
-        
+    /**
+     * Validate replacement variants data against the given rules and return a structured response.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function getReplacementVariantsValidation(array $data) 
+    {
         $rules = [
             'week_day_id' => 'nullable|array',
             'weekly_period_id' => 'nullable|array',
@@ -37,16 +51,18 @@ class ValidationHelpers
             'week_data' => 'nullable|string',
             'week_dates' => 'nullable|string', 
             'is_red_week' => 'nullable|boolean',
-            'week_number' => 'nullable|string',
-            'week_number' => function ($attribute, $value, $fail) {
-                $currentStudyPeriodBorderWeeks = DateHelpers::getCurrentStudyPeriodBorderWeeks();
-                if (isset($value) 
-                    && 
-                    (date('Y-W', strtotime($value)) < date('Y-W', strtotime($currentStudyPeriodBorderWeeks['start'])) 
-                     || date('Y-W', strtotime($value)) > date('Y-W', strtotime($currentStudyPeriodBorderWeeks['end'])))
-                   )  $fail(__('user_validation.failed_week_number'));
-            },
-      
+            'week_number' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $currentStudyPeriodBorderWeeks = DateHelpers::getCurrentStudyPeriodBorderWeeks();
+                    if (isset($value) 
+                        && 
+                        (date('Y-W', strtotime($value)) < date('Y-W', strtotime($currentStudyPeriodBorderWeeks['start'])) 
+                        || date('Y-W', strtotime($value)) > date('Y-W', strtotime($currentStudyPeriodBorderWeeks['end'])))
+                    )  $fail(__('user_validation.failed_week_number'));
+                }
+            ],
             'replace_rules' => 'nullable|array',
             'replace_rules.*.week_day_id' => 'nullable|integer|exists:App\WeekDay,id',
             'replace_rules.*.weekly_period_id' => 'nullable|integer|exists:App\WeeklyPeriod,id',
@@ -76,28 +92,41 @@ class ValidationHelpers
         return self::validation($data, $rules, $messages, $attributes);
     }
 
-    public static function getTeacherRescheduleValidation($data) {
-        
+    /**
+     * Validate teacher reschedule data .
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function getTeacherRescheduleValidation(array $data) 
+    {
         $rules = [
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
             'lesson_id' => 'required|integer|exists:App\Lesson,id',
             'rescheduling_lesson_date' => 'nullable|date',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
-            'week_number' => 'nullable|string',
-            'week_number' => function ($attribute, $value, $fail) {
-                $study_seasons = config('enum.study_seasons');
-                $study_periods_data = DateHelpers::getStudyPeriodsData();
-                $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
-                if (isset($value) && DateHelpers::checkWeekToStudyPeriodSeason($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
-            },
+            'week_number' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $study_seasons = config('enum.study_seasons');
+                    $study_periods_data = DateHelpers::getStudyPeriodsData();
+                    $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
+                    if (isset($value) && DateHelpers::checkWeekToStudyPeriodSeason($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
+                }
+            ]
         ];
         
         return self::validation($data, $rules);
     }
 
-    public static function getGroupRescheduleValidation($data) {
-        
+    /**
+     * Validate group reschedule data.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function getGroupRescheduleValidation(array $data) 
+    {
         $rules = [
             'group_id' => 'required|integer|exists:App\Group,id',
             'teacher_id' => 'required|integer|exists:App\Teacher,id',
@@ -106,20 +135,28 @@ class ValidationHelpers
             'date_or_weekly_period' => 'nullable',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
-            'week_number' => 'nullable|string',
-            'week_number' => function ($attribute, $value, $fail) {
-                $study_seasons = config('enum.study_seasons');
-                $study_periods_data = DateHelpers::getStudyPeriodsData();
-                $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
-                if (isset($value) && DateHelpers::checkWeekToStudyPeriodSeason($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
-            },
+            'week_number' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $study_seasons = config('enum.study_seasons');
+                    $study_periods_data = DateHelpers::getStudyPeriodsData();
+                    $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
+                    if (isset($value) && DateHelpers::checkWeekToStudyPeriodSeason($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
+                }
+            ],
         ];
         
         return self::validation($data, $rules);
     }
 
-    public static function exportTeacherRescheduleToDocValidation($data) {
-        
+    /**
+     * Validate the teacher reschedule data for document export.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function exportTeacherRescheduleToDocValidation(array $data) 
+    {
         $rules = [
             'lessons' => 'required|string',
             'teacher_name' => 'required|string',
@@ -132,8 +169,13 @@ class ValidationHelpers
         return self::validation($data, $rules);
     }
 
-    public static function exportGroupRescheduleToDocValidation($data) {
-        
+    /**
+     * Validate the group reschedule data for document export.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function exportGroupRescheduleToDocValidation(array $data) 
+    {
         $rules = [
             'lessons' => 'required|string',
             'group_name' => 'required|string',
@@ -146,8 +188,13 @@ class ValidationHelpers
         return self::validation($data, $rules);
     }
 
-    public static function exportReplacementToDocValidation($data) {
-        
+    /**
+     * Validate the replacement data for document export.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function exportReplacementToDocValidation(array $data) 
+    {
         $rules = [
             'replacement_lessons' => 'required|string',
             'header_data' => 'required|string',
@@ -160,8 +207,13 @@ class ValidationHelpers
         return self::validation($data, $rules);
     }
 
-    public static function exportReplacementScheduleToDocValidation($data) {
-        
+    /**
+     * Validate the replacement schedule data for document export.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function exportReplacementScheduleToDocValidation(array $data) 
+    {
         $rules = [
             'lessons' => 'required|string',
             'header_data' => 'required|string',
@@ -175,8 +227,13 @@ class ValidationHelpers
         return self::validation($data, $rules);
     }
 
-    public static function exportMonthTeacherScheduleToDocValidation($data) {
-        
+    /**
+     * Validate the month teacher schedule data for document export.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function exportMonthTeacherScheduleToDocValidation(array $data) 
+    {
         $rules = [
             "month_name" => "required|string",
             "teacher_name" => "required|string",
@@ -186,8 +243,13 @@ class ValidationHelpers
         return self::validation($data, $rules);
     }
 
-    public static function exportMonthGroupScheduleToDocValidation($data) {
-        
+    /**
+     * Validate the month study group schedule data for document export.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function exportMonthGroupScheduleToDocValidation(array $data) 
+    {
         $rules = [
             "month_name" => "required|string",
             "group_name" => "required|string",
@@ -197,38 +259,53 @@ class ValidationHelpers
         return self::validation($data, $rules);
     }
 
-    public static function addReplacementRequestValidation($data) {
-        
+    /**
+     * Validate the replacement request data.
+     *
+     * @return array{success: bool, validated?: array, validator?: \Illuminate\Contracts\Validation\Validator}
+     */
+    public static function addReplacementRequestValidation(array $data) 
+    {
         $min_replacement_period = config('site.min_replacement_period');
         $replacement_request_status_groups = config('enum.replacement_request_status_groups');
                         
         $rules = [
             'replaceable_lesson_id' => 'required|integer|exists:App\Lesson,id',
-            'replacing_lesson_id' => 'required|integer|exists:App\Lesson,id',
-            'replacing_lesson_id' => function ($attribute, $value, $fail) use ($data, $replacement_request_status_groups) {
-                $same_replacement_request = ReplacementRequest::where([
-                                                                ['replaceable_lesson_id', $data['replaceable_lesson_id']],
-                                                                ['replacing_lesson_id', $value],
-                                                            ])->whereDate('replaceable_date', date('Y-m-d', strtotime($data['replaceable_date'])))
-                                                              ->whereDate('replacing_date', date('Y-m-d', strtotime($data['replacing_date'])))
-                                                              ->whereIn('status_id', $replacement_request_status_groups['in_management'])
-                                                              ->exists();
-                if ($same_replacement_request) $fail(__('user_validation.request_already_exists')); 
-            },
-            'replaceable_date' => 'nullable|string',
-            'replaceable_date' => function ($attribute, $value, $fail) use ($min_replacement_period) {
-                if (isset($value)) {
-                    $replaceable_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
-                    if ($replaceable_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+            'replacing_lesson_id' => [
+                'required',
+                'integer',
+                'exists:App\Lesson,id',
+                function ($attribute, $value, $fail) use ($data, $replacement_request_status_groups) {
+                    $same_replacement_request = ReplacementRequest::where([
+                                                                    ['replaceable_lesson_id', $data['replaceable_lesson_id']],
+                                                                    ['replacing_lesson_id', $value],
+                                                                ])->whereDate('replaceable_date', date('Y-m-d', strtotime($data['replaceable_date'])))
+                                                                ->whereDate('replacing_date', date('Y-m-d', strtotime($data['replacing_date'])))
+                                                                ->whereIn('status_id', $replacement_request_status_groups['in_management'])
+                                                                ->exists();
+                    if ($same_replacement_request) $fail(__('user_validation.request_already_exists')); 
                 }
-            },
-            'replacing_date' => 'nullable|string',
-            'replacing_date' => function ($attribute, $value, $fail) use ($min_replacement_period) {
-                if (isset($value)) {
-                    $replacing_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
-                    if ($replacing_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+            ],
+            'replaceable_date' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($min_replacement_period) {
+                    if (isset($value)) {
+                        $replaceable_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
+                        if ($replaceable_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+                    }
                 }
-            },
+            ],
+            'replacing_date' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) use ($min_replacement_period) {
+                    if (isset($value)) {
+                        $replacing_hours_diff = round((strtotime($value) - strtotime(now()))/3600);
+                        if ($replacing_hours_diff < $min_replacement_period) $fail(__('user_validation.not_time_for_replacement_request_process'));
+                    }
+                }
+            ],
             'is_regular' => 'required|boolean',
             'initiator_id' => 'required|integer|exists:App\User,id', 
         ];

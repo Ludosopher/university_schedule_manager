@@ -17,7 +17,9 @@ class SendReplacementRequestMailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /** @var string $mail_to */
     protected $mail_to;
+    /** @var array $data */
     protected $data;
     
     /**
@@ -25,7 +27,7 @@ class SendReplacementRequestMailJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($mail_to, $data)
+    public function __construct(string $mail_to, array $data)
     {
         $this->mail_to = $mail_to;
         $this->data = $data;
@@ -53,7 +55,7 @@ class SendReplacementRequestMailJob implements ShouldQueue
     }
 
     /**
-     * Обработать провал задания.
+     * Handle job failure.
      *
      * @param  \Throwable  $exception
      * @return void

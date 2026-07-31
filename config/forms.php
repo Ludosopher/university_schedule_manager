@@ -197,16 +197,16 @@ return [
       ],
    ],
    'group_filter' => [
-      [
-         'type' => 'objects-select',
-         'multiple_options' => [
-             'is_multiple' => true,
-             'size' => 3,
-         ],
-         'plural_name' => 'groups',
-         'name' => '',
-         'is_localized' => false,
-      ],
+      // [
+      //    'type' => 'objects-select',
+      //    'multiple_options' => [
+      //        'is_multiple' => true,
+      //        'size' => 3,
+      //    ],
+      //    'plural_name' => 'groups',
+      //    'name' => '',
+      //    'is_localized' => false,
+      // ],
       [
          'type' => 'objects-select',
          'multiple_options' => [
@@ -288,7 +288,7 @@ return [
          'plural_name' => 'study_periods',
          'name' => 'study_period',
          'is_required' => true,
-         'is_localized' => false,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',
@@ -364,7 +364,7 @@ return [
          ],
          'plural_name' => 'study_periods',
          'name' => 'study_period',
-         'is_localized' => false,
+         'is_localized' => true,
       ],
       [
          'type' => 'objects-select',

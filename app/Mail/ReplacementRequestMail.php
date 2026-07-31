@@ -11,7 +11,9 @@ class ReplacementRequestMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    /** @var array $data */
     public $data;
+    /** @var string $subject */
     public $subject;
     
     /**

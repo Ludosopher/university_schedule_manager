@@ -3,15 +3,26 @@
 namespace App\Helpers;
 
 use App\ExternalDataset;
-use App\Lesson;
 use App\Setting;
 use App\StudyPeriod;
+use App\Lesson;
 use DateTime;
-
+use Illuminate\Database\Eloquent\Collection;
 
 class DateHelpers
 {
-    public static function getWeekData($week_str) {
+    /**
+     * Get week data from "week_number" string.
+     *
+     * @param string|null $week_str
+     * @return array|bool
+     */
+    public static function getWeekData($week_str) 
+    {
+        if (!isset($week_str)) {
+            return false;
+        }
+
         $pos = strpos($week_str, '-W');
         if ($pos !== false) {
             $week_data = explode('-W', $week_str);
@@ -25,8 +36,11 @@ class DateHelpers
         }
         return false;
     }
-    
-    public static function getWeekStartEndDates($year, $week)
+
+    /**
+     * Get week start and end dates.
+     */
+    public static function getWeekStartEndDates(string $year, string $week): array
     {
         return [
             'start_date' => (new DateTime())->setISODate($year, $week)->format('d.m.y'),
@@ -34,7 +48,10 @@ class DateHelpers
         ];
     }
 
-    public static function getWeekDates($year, $week)
+    /**
+     * Get the dates of all the days of the week.
+     */
+    public static function getWeekDates(string $year, string $week): array
     {
         $holidays = self::getHolidays();
         $dates =  [
@@ -65,6 +82,12 @@ class DateHelpers
         return $dates;
     }
 
+    /**
+     * Get week start and end dates if "$week_str" is valid.
+     *
+     * @param string|null $week_str
+     * @return array|bool
+     */
     public static function weekStartEndDates($week_str) {
         $week_data = self::getWeekData($week_str);
         if ($week_data) {
@@ -73,6 +96,12 @@ class DateHelpers
         return false; 
     }
 
+    /**
+     * Get the dates of all the days of the week if "$week_str" is valid.
+     *
+     * @param string|null $week_str
+     * @return array|bool
+     */
     public static function weekDates($week_str) {
         $week_data = self::getWeekData($week_str);
         if ($week_data) {
@@ -81,7 +110,18 @@ class DateHelpers
         return false; 
     }
 
-    public static function checkOneTimeLessonToWeek($week_number, $date) {
+    /**
+     * Check if a date belongs to the specified week number.
+     *
+     * This method verifies whether the given date falls within the specified
+     * week number (ISO-8601 week). If no week number is provided, the function
+     * returns false only when a date is present.
+     *
+     * @param string|null $week_number The week number in 'Y-W' format (e.g., '2026-28').
+     * @param string|null $date The date to check (any format parsable by strtotime).
+     */
+    public static function checkOneTimeLessonToWeek($week_number, $date): bool 
+    {
         if (!isset($week_number) && isset($date)) {
             return false;
         }
@@ -93,15 +133,27 @@ class DateHelpers
         return true;
     }
 
-    public static function getWeekNumberFromDate($date) {
+    /**
+     * Get week number from date.
+     */
+    public static function getWeekNumberFromDate(string $date): string 
+    {
         $year = date('Y', strtotime($date));
         $week = date('W', strtotime($date));
 
         return "{$year}-W{$week}";
     }
 
-    public static function weekColorIsRed($week_number_str) {
-        
+    /**
+     * Checks whether the week is "red".
+     * 
+     * The academic schedule alternates weekly: odd weeks (red) and even weeks (blue) have different versions. 
+     * The rotation continues consistently throughout the entire academic period.
+     * 
+     * @param string|null $week_number_str
+     */
+    public static function weekColorIsRed($week_number_str): bool 
+    {
         $red_week_is_odd_setting = Setting::where('name', 'red_week_is_odd')->first();
         $red_week_is_odd = $red_week_is_odd_setting ? $red_week_is_odd_setting->value : config('site.red_week_is_odd');
         $week_data = self::getWeekData($week_number_str);
@@ -114,7 +166,13 @@ class DateHelpers
         return false;
     }
 
-    public static function getMonthWeeklyScheduleLesson ($week_number, $lesson) {
+    /**
+     * Processing an alternating lesson for a monthly schedule.
+     *
+     * @param string|null $week_number
+     * @return array|bool|void
+     */
+    public static function getMonthWeeklyScheduleLesson ($week_number, array $lesson) {
         
         if (! isset($week_number)) {
             return;
@@ -134,6 +192,13 @@ class DateHelpers
         return false;
     }
 
+    /**
+     * Processing an alternating lesson for a weekly schedule.
+     *
+     * @param string|null $week_number
+     * @param array|Lesson $lesson
+     * @return array|bool|void
+     */
     public static function getWeeklyScheduleLesson ($week_number, $lesson) {
         
         if (! isset($week_number)) {
@@ -166,7 +231,10 @@ class DateHelpers
         return false;
     }
 
-    public static function getMonthWeekNumbers($month_number) 
+    /**
+     * Get week numbers for the month.
+     */
+    public static function getMonthWeekNumbers(string $month_number): array
     {
         $first_month_day = date('Y-m-01', strtotime($month_number));
         if (date('w', strtotime($first_month_day)) == 0) {
@@ -189,6 +257,16 @@ class DateHelpers
         return $month_week_numbers;
     }
 
+    /**
+     * Get the list of public holidays for the current year.
+     *
+     * This method retrieves holiday data from an external XML calendar source.
+     * The data is cached in the database to avoid unnecessary external requests
+     * and is automatically updated once per year.
+     *
+     * @return array|false Returns an array of holiday dates (in 'dd.mm.Y' format)
+     *                     or false if the external source is unavailable.
+     */
     public static function getHolidays() {
 
         $external_dataset_ids = config('enum.external_dataset_ids');
@@ -223,7 +301,11 @@ class DateHelpers
         }
     }
 
-    public static function getStudyPeriodsData() {
+    /**
+     * Get study periods data.
+     */
+    public static function getStudyPeriodsData(): array
+    {
         $current_study_period_id = null;
         $current_date = date('Y-m-d');
         $study_periods = StudyPeriod::orderBy('start')
@@ -257,7 +339,13 @@ class DateHelpers
         ];
     }
 
-    public static function getRequiredStudyPeriod($study_periods, $required_study_period_id) 
+    /**
+     * Get required study period.
+     *
+     * @param Collection $study_periods
+     * @return StudyPeriod|bool
+     */
+    public static function getRequiredStudyPeriod(Collection $study_periods, int $required_study_period_id) 
     {
         foreach ($study_periods as $study_period) {
             if ($study_period->id === $required_study_period_id) {
@@ -267,7 +355,12 @@ class DateHelpers
         return false;
     }
 
-    public static function checkWeekToStudyPeriodSeason(StudyPeriod $study_period, $week_number)
+    /**
+     * Get study period name for the week.
+     * 
+     * @param string $week_number
+     */
+    public static function checkWeekToStudyPeriodSeason(StudyPeriod $study_period, $week_number): int
     {
         $study_seasons = config('enum.study_seasons');
         $study_season_name_parts = config('enum.study_season_name_parts');
@@ -279,14 +372,19 @@ class DateHelpers
                 &&
                 date('Y-W', strtotime($week_number)) <= date('Y-W', strtotime($study_period->$end))) 
             {
-                return $study_seasons[$study_season];
+                return (int) $study_seasons[$study_season];
             }
         }
         
-        return $study_seasons['vacation'];
+        return (int) $study_seasons['vacation'];
     }
 
-    public static function checkWeekToStudyPeriod(StudyPeriod $study_period, $week_number)
+    /**
+     * Check if the week matches the study period.
+     * 
+     * @param string $week_number
+     */
+    public static function checkWeekToStudyPeriod(StudyPeriod $study_period, $week_number): bool
     {
         if (date('Y-W', strtotime($week_number)) >= date('Y-W', strtotime($study_period->start))
             &&
@@ -297,16 +395,24 @@ class DateHelpers
         return false;
     }
 
-    public static function checkRegularLessonToWeek($study_period_id, $week_number)
+    /**
+     * Check if the week matches the lesson study period.
+     * 
+     * @param string $week_number
+     */
+    public static function checkRegularLessonToWeek(int $study_period_id, $week_number): bool
     {
         if (isset($study_period_id)) {
             $lesson_study_period = StudyPeriod::find($study_period_id);
             return self::checkWeekToStudyPeriod($lesson_study_period, $week_number);
         }
-        return false;
+        return true;
     }
 
-    public static function getCurrentStudyPeriodBorderWeeks()
+    /**
+     * Get currentsStudy period border weeks.
+     */
+    public static function getCurrentStudyPeriodBorderWeeks(): array
     {
         $study_periods_data = self::getStudyPeriodsData();
         $current_study_period = StudyPeriod::find($study_periods_data['current_period_id']);

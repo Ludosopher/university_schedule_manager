@@ -4,20 +4,29 @@ namespace App\DocExporters\ManyTables;
 
 use App\ClassPeriod;
 use App\Setting;
+use PhpOffice\PhpWord\Writer\WriterInterface;
+use PhpOffice\PhpWord\IOFactory;
 
 class DocExporterMonthSchedule
 {
-    public $data;
+    public $data = [];
     protected $leftHeaderCellWidth = 1300;
     protected $cellWidth = 1600;
     protected $rowHeight = 900;
 
-    public function __construct($data) {
+    public function __construct(array $data) {
         $this->data = $data;
     }
 
-    public function createWriter() {
-        
+    /**
+     * Create and return a configured Word 2007 document writer for the schedule.
+     *
+     * The document structure includes a header section and multiple matrices with the
+     * provided schedule data.
+     *
+     */
+    public function createWriter(): WriterInterface 
+    {
         $weeks = json_decode($this->data['weeks'], true);
         $week_day_ids = config('enum.week_day_ids');
         $weekly_period_id = config('enum.weekly_period_ids');
@@ -122,7 +131,7 @@ class DocExporterMonthSchedule
             }
         }
         
-        return \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+        return IOFactory::createWriter($phpWord, 'Word2007');
     }
 
     

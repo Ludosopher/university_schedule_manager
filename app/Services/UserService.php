@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Instances;
+namespace App\Services;
 
-use App\Instances\Instance;
+use App\Services\Service;
 use App\User;
 
-class UserInstance extends Instance
+class UserService extends Service
 {
     protected $config = [
         'model_name' => 'App\User',
@@ -23,8 +23,11 @@ class UserInstance extends Instance
         ],
     ];
 
-    public function getAccountMain(User $user) {
-
+    /**
+     * Get account data.
+     */
+    public function getAccountMain(User $user): array 
+    {
         $teacher_names = [];
         foreach ($user->teachers as $teacher) {
             $teacher_names[] = $teacher->profession_level_name;

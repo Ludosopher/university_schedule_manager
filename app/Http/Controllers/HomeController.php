@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -17,11 +18,9 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * Show the application home page.
      */
-    public function index(Request $request)
+    public function index(Request $request): Renderable
     {
         if (isset($request->permission_error) && $request->permission_error) {
             return view('home')->with(['permission_error' => $request->permission_error]);
@@ -29,7 +28,10 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function about()
+    /**
+     * Show the application presentation.
+     */
+    public function about(): Renderable
     {
         return view('about');
     }

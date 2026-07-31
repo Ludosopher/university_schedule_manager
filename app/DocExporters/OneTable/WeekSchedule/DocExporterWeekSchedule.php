@@ -5,6 +5,7 @@ namespace App\DocExporters\OneTable\WeekSchedule;
 use App\ClassPeriod;
 use App\DocExporters\OneTable\DocExporter;
 use App\Setting;
+use PhpOffice\PhpWord\Writer\WriterInterface;
 
 abstract class DocExporterWeekSchedule extends DocExporter
 {
@@ -12,14 +13,35 @@ abstract class DocExporterWeekSchedule extends DocExporter
     protected $first_column_width = 1300;
     protected $cell_width = 2000;
         
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
     
-    abstract function getCellAdditional($data, $lesson, $week_day_id, &$lesson_other_participant, &$fontStyle, &$lesson_n, &$lesson_type, &$lesson_room);
+    /**
+     * Get additional cell content.
+     *
+     * @param array|bool $lesson
+     */
+    abstract function getCellAdditional(
+        array $data, 
+        $lesson, 
+        int $week_day_id, 
+        string &$lesson_other_participant, 
+        array &$fontStyle, 
+        string &$lesson_n, 
+        string &$lesson_type, 
+        string &$lesson_room
+        ): array;
 
-    protected function getWeekWriter($data)
+    /**
+     * Create and return a configured Word 2007 document writer for the schedule matrix.
+     *
+     * The document structure includes a header section and a matrix with the
+     * provided schedule data.
+     *
+     */  
+    protected function getWeekWriter(array $data): WriterInterface
     {
         $week_day_ids = config('enum.week_day_ids');
         $class_period_ids = config('enum.class_period_ids');
@@ -57,18 +79,26 @@ abstract class DocExporterWeekSchedule extends DocExporter
                 foreach($week_day_ids as $wd_name => $week_day_id) {
                     $is_holiday = isset($week_dates) && is_array($week_dates[$week_day_id]) && isset($week_dates[$week_day_id]['is_holiday']); 
                     if ($week_day_id <= $data['week_days_limit']) {
-                        if (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']]) && ! $is_holiday) {
-                            $lesson = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']];
-                            $lesson_n = __('content.'.$lesson['name']); 
-                            $lesson_type = '('.__('dictionary.'.$lesson['type']).')';
-                            $lesson_room = __('content.room').' '.$lesson['room'];
-                            $lesson_other_participant = $lesson[$other_partic];
+                        $lesson_every_week = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['every_week']] ?? false;
+                        $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
+                        $lesson_blue = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']] ?? false;
+                        $lesson_n = ''; 
+                        $lesson_type = '';
+                        $lesson_room ='';
+                        $lesson_other_participant ='';
+                        if ($lesson_every_week && ! $is_holiday) {
+                            if (is_array($lesson_every_week)) {
+                                $lesson_n = __('content.'.$lesson_every_week['name']); 
+                                $lesson_type = '('.__('dictionary.'.$lesson_every_week['type']).')';
+                                $lesson_room = __('content.room').' '.$lesson_every_week['room'];
+                                $lesson_other_participant = $lesson_every_week[$other_partic];
+                            }
                             $everyWeekFontStyle = array('size' => 8);
                             $currentEveryWeekCellStyle = $everyWeekCellStyle;
                             if (isset($lesson['date'])) {
                                 $currentEveryWeekCellStyle = array_merge($everyWeekCellStyle, ['borderStyle' => 'double', 'borderSize' => 8]);
                             }
-                            $additional_row = $this->getCellAdditional($this->data, $lesson, $week_day_id, $lesson_other_participant, $everyWeekFontStyle, $lesson_n, $lesson_type, $lesson_room);
+                            $additional_row = $this->getCellAdditional($this->data, $lesson_every_week, $week_day_id, $lesson_other_participant, $everyWeekFontStyle, $lesson_n, $lesson_type, $lesson_room);
                             $cell_data['add_cell'] = ['value' => $this->cell_width, 'cell_style' => $currentEveryWeekCellStyle];
                             $cell_data['add_text'] = [
                                 ['text' => "{$lesson_n} {$lesson_type}", 'font_style' => $everyWeekFontStyle, 'paragraph_style' => $everyWeekParagraphStyle],
@@ -78,48 +108,62 @@ abstract class DocExporterWeekSchedule extends DocExporter
                             if (! empty($additional_row)) {
                                 $cell_data['add_text'][] = $additional_row;
                             }
-                        } elseif (isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']]) || isset($lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']])) {
-                            $lesson_red = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['red_week']] ?? false;
-                            $lesson_blue = $lessons[$class_period_ids[$lesson_name]][$week_day_ids[$wd_name]][$weekly_period_id['blue_week']] ?? false;
+                        } elseif (($lesson_red || $lesson_blue) && ! $is_holiday) {    
+                            $red_name = '';
+                            $red_type = '';
+                            $red_room = '';
+                            $red_group = '';
+                            $blue_name = '';
+                            $blue_type = '';
+                            $blue_room = '';
+                            $blue_group = '';
                             if (!$lesson_red) {
                                 $redFontStyle = array('size' => 6, 'color' => '#ffffff');
                                 $blueFontStyle = array('size' => 6);
-                                $red_name = __('content.'.$lesson_blue['name']);
                                 $red_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                                $red_type = '('.__('dictionary.'.$lesson_blue['type']).')';
-                                $red_room = __('content.room').' '.$lesson_blue['room'];
-                                $red_group = $lesson_blue[$other_partic];
-                                $blue_name = __('content.'.$lesson_blue['name']);
-                                $blue_type = '('.__('dictionary.'.$lesson_blue['type']).')';
                                 $blue_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                                $blue_room = __('content.room').' '.$lesson_blue['room'];
-                                $blue_group = $lesson_blue[$other_partic];
+                                if (is_array($lesson_blue)) {
+                                    $red_name = __('content.'.$lesson_blue['name']);
+                                    $red_type = '('.__('dictionary.'.$lesson_blue['type']).')';
+                                    $red_room = __('content.room').' '.$lesson_blue['room'];
+                                    $red_group = $lesson_blue[$other_partic];
+                                    $blue_name = __('content.'.$lesson_blue['name']);
+                                    $blue_type = '('.__('dictionary.'.$lesson_blue['type']).')';
+                                    $blue_room = __('content.room').' '.$lesson_blue['room'];
+                                    $blue_group = $lesson_blue[$other_partic];
+                                }
                             } elseif (!$lesson_blue) {
                                 $blueFontStyle = array('size' => 6, 'color' => '#ffffff');
                                 $redFontStyle = array('size' => 6);
-                                $red_name = __('content.'.$lesson_red['name']);
-                                $red_type = '('.__('dictionary.'.$lesson_red['type']).')';
                                 $red_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                                $red_room = __('content.room').' '.$lesson_red['room'];
-                                $red_group = $lesson_red[$other_partic];
-                                $blue_name = __('content.'.$lesson_red['name']);
-                                $blue_type = '('.__('dictionary.'.$lesson_red['type']).')';
                                 $blue_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                                $blue_room = __('content.room').' '.$lesson_red['room'];
-                                $blue_group = $lesson_red[$other_partic];
+                                if (is_array($lesson_red)) {
+                                    $red_name = __('content.'.$lesson_red['name']);
+                                    $red_type = '('.__('dictionary.'.$lesson_red['type']).')';
+                                    $red_room = __('content.room').' '.$lesson_red['room'];
+                                    $red_group = $lesson_red[$other_partic];
+                                    $blue_name = __('content.'.$lesson_red['name']);
+                                    $blue_type = '('.__('dictionary.'.$lesson_red['type']).')';
+                                    $blue_room = __('content.room').' '.$lesson_red['room'];
+                                    $blue_group = $lesson_red[$other_partic];
+                                }
                             } else {
                                 $redFontStyle = array('size' => 6, 'color' => '#ffffff');
                                 $blueFontStyle = array('size' => 6);
-                                $red_name = __('content.'.$lesson_red['name']);
-                                $red_type = '('.__('dictionary.'.$lesson_red['type']).')';
                                 $red_date = isset($lesson_red['date']) ? "//{$lesson_red['date']}// " : "";
-                                $red_room = __('content.room').' '.$lesson_red['room'];
-                                $red_group = $lesson_red[$other_partic];
-                                $blue_name = __('content.'.$lesson_blue['name']);
-                                $blue_type = '('.__('dictionary.'.$lesson_blue['type']).')';
                                 $blue_date = isset($lesson_blue['date']) ? "//{$lesson_blue['date']}// " : "";
-                                $blue_room = __('content.room').' '.$lesson_blue['room'];
-                                $blue_group = $lesson_blue[$other_partic];
+                                if (is_array($lesson_red)) {
+                                    $red_name = __('content.'.$lesson_red['name']);
+                                    $red_type = '('.__('dictionary.'.$lesson_red['type']).')';
+                                    $red_room = __('content.room').' '.$lesson_red['room'];
+                                    $red_group = $lesson_red[$other_partic];
+                                }
+                                if (is_array($lesson_blue)) {
+                                    $blue_name = __('content.'.$lesson_blue['name']);
+                                    $blue_type = '('.__('dictionary.'.$lesson_blue['type']).')';
+                                    $blue_room = __('content.room').' '.$lesson_blue['room'];
+                                    $blue_group = $lesson_blue[$other_partic];
+                                }
                             }
                             $additional_red_row = $this->getCellAdditional($this->data, $lesson_red, $week_day_id, $red_group, $redFontStyle, $red_name, $red_type, $red_room);
                             $additional_blue_row = $this->getCellAdditional($this->data, $lesson_blue, $week_day_id, $blue_group, $blueFontStyle, $blue_name, $blue_type, $blue_room);
@@ -161,7 +205,8 @@ abstract class DocExporterWeekSchedule extends DocExporter
         ]);
     }
 
-    protected function getTableHeaderCells($data, $first_column_width) {
+    protected function getTableHeaderCells(array $data, int $first_column_width): array 
+    {
         $week_days = config('enum.week_days');
         $settings = Setting::pluck('value', 'name');
         

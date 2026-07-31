@@ -8,7 +8,11 @@ use Log;
 
 class CronHelpers
 {
-    public static function replacementRequestStatusesUpdate() {
+    /**
+     * Changing the status of lesson replacement requests depending on the current time.
+     */
+    public static function replacementRequestStatusesUpdate(): void 
+    {
         Log::channel('cron')->info('replacementRequestStatusesUpdate function is started');
         $replacement_request_status_ids = config('enum.replacement_request_status_ids');
         

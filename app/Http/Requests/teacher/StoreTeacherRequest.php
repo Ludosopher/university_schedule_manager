@@ -4,7 +4,6 @@ namespace App\Http\Requests\teacher;
 
 use App\Department;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Factory as ValidationFactory;
 
 class StoreTeacherRequest extends FormRequest
 {
@@ -34,10 +33,18 @@ class StoreTeacherRequest extends FormRequest
             'phone' => 'required|string',
             'email' => 'required|email',
             'faculty_id' => 'required|integer|exists:App\Faculty,id',
-            'department_id' => function ($attribute, $value, $fail) {
-                if (!in_array($value, Department::where('faculty_id', request()->input('faculty_id'))->pluck('id')->toArray())) $fail(__('user_validation.faculty_department_discrepancy'));
-            },
-            'department_id' => 'required|integer|exists:App\Department,id',
+            'department_id' => [
+                'required',
+                'integer',
+                'exists:App\Department,id',
+                function ($attribute, $value, $fail) {
+                    $facultyId = request()->input('faculty_id');
+                    $validDepartmentIds = Department::where('faculty_id', $facultyId)->pluck('id')->toArray();
+                    if (!in_array($value, $validDepartmentIds)) {
+                        $fail(__('user_validation.faculty_department_discrepancy'));
+                    }
+                },
+            ],
             'professional_level_id' => 'required|integer|exists:App\ProfessionalLevel,id',
             'position_id' => 'required|integer|exists:App\Position,id',
             'academic_degree_id' => 'nullable|integer|exists:App\AcademicDegree,id',

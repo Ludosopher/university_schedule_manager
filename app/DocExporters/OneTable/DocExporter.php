@@ -3,11 +3,20 @@
 namespace App\DocExporters\OneTable;
 
 use App\ClassPeriod;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\Writer\WriterInterface;
 
 class DocExporter
 {
-    protected function getWriter($data) {
-        
+    /**
+     * Create and return a configured Word 2007 document writer for the schedule.
+     *
+     * The document structure includes a header section and a table/matrix with the
+     * provided schedule data.
+     *
+     */
+    protected function getWriter(array $data): WriterInterface
+    {
         $class_periods = ClassPeriod::get();
         $class_periods = array_combine(range(1, count($class_periods)), array_values($class_periods->toArray()));
         //------------------------------------------------------
@@ -54,8 +63,6 @@ class DocExporter
             }
         }
            
-        return \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+        return IOFactory::createWriter($phpWord, 'Word2007');
     }
-
-    
 }

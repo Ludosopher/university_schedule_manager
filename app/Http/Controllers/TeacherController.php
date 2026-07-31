@@ -2,13 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\DocExporters\DocExporterRegularSchedule;
-use App\DocExporters\DocExporterSchedule;
-use App\DocExporters\ManyTables\DocExporterMonthSchedule;
-use App\DocExporters\OneTable\WeekSchedule\DocExporterOrdinaryWeekSchedule;
-use App\DocExporters\WeekSchedule\DocExporterRegularWeekSchedule;
-use App\DocExporters\WeekSchedule\DocExporterWeeklyWeekSchedule;
-use App\DocExporters\OneTable\WeekSchedule\DocExporterWeekReschedule;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\teacher\DeleteTeacherRequest;
@@ -17,31 +10,57 @@ use App\Http\Requests\teacher\FilterTeacherRequest;
 use App\Http\Requests\teacher\MonthScheduleTeacherRequest;
 use App\Http\Requests\teacher\ScheduleTeacherRequest;
 use App\Http\Requests\teacher\StoreTeacherRequest;
-use App\Instances\LessonInstance;
-use App\Instances\ScheduleElements\TeacherScheduleElement;
+use App\Services\LessonService;
+use App\Services\ScheduleServices\TeacherScheduleService;
+use App\Factories\DocExporterFactory;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-
 
 class TeacherController extends Controller
 {
-    public function getTeachers (FilterTeacherRequest $request)
+    /** @var TeacherScheduleService $teacherService */
+    private $teacherService;
+    /** @var LessonService $lessonService */
+    private $lessonService;
+    
+
+    public function __construct(
+        TeacherScheduleService $teacherService,
+        LessonService $lessonService
+        )
+    {
+        $this->teacherService = $teacherService;
+        $this->lessonService = $lessonService;
+    }
+    
+    /**
+     * Display filtered list of teachers.
+     */    
+    public function getTeachers (FilterTeacherRequest $request): Renderable
     {
         $request->validated();
-        $data = (new TeacherScheduleElement())->getInstances(request()->all());
+        $data = $this->teacherService->getInstances(request()->all());
 
         return view("teacher.teachers")->with('data', $data);
     }
 
-    public function addTeacherForm (Request $request)
+    /**
+     * Display the form for adding or updating a teacher.
+     */
+    public function addTeacherForm (Request $request): Renderable
     {
-        $data = (new TeacherScheduleElement())->getInstanceFormData($request->all());
+        $data = $this->teacherService->getInstanceFormData($request->all());
 
         return view("teacher.add_teacher_form")->with('data', $data);
     }
 
-    public function addOrUpdateTeacher (StoreTeacherRequest $request)
+    /**
+     * Add or update teacher.
+     */
+    public function addOrUpdateTeacher (StoreTeacherRequest $request): RedirectResponse
     {
-        $data = (new TeacherScheduleElement())->addOrUpdateInstance($request->validated());
+        $data = $this->teacherService->addOrUpdateInstance($request->validated());
 
         $response_content = ResponseHelpers::getContent($data, 'teacher');
         
@@ -51,9 +70,12 @@ class TeacherController extends Controller
         ]);
     }
 
-    public function deleteTeacher (DeleteTeacherRequest $request)
+    /**
+     * Delete teacher.
+     */
+    public function deleteTeacher (DeleteTeacherRequest $request): RedirectResponse
     {
-        $deleted_instance = (new TeacherScheduleElement())->deleteInstance($request->validated()['deleting_id']);
+        $deleted_instance = $this->teacherService->deleteInstance($request->validated()['deleting_id']);
 
         $response_content = ResponseHelpers::getContent($deleted_instance, 'teacher');
         
@@ -63,9 +85,14 @@ class TeacherController extends Controller
         ]);
     }
 
+    /**
+     * Display the teacher week schedule.
+     *
+     * @return Renderable|RedirectResponse
+     */
     public function getTeacherSchedule (ScheduleTeacherRequest $request)
     {
-        $data = (new TeacherScheduleElement())->getSchedule($request->validated());
+        $data = $this->teacherService->getSchedule($request->validated());
         if (isset($data['duplicated_lesson'])) {
             $response_content = ResponseHelpers::getContent($data, 'teacher');
         
@@ -78,9 +105,14 @@ class TeacherController extends Controller
         return view("teacher.teacher_schedule")->with('data', $data);
     }
 
+    /**
+     * Display the teacher month schedule.
+     *
+     * @return Renderable|RedirectResponse
+     */
     public function getMonthTeacherSchedule (MonthScheduleTeacherRequest $request)
     {
-        $data = (new TeacherScheduleElement())->getMonthSchedule($request->validated());
+        $data = $this->teacherService->getMonthSchedule($request->validated());
         request()->flash();
         if (isset($data['duplicated_lesson'])) {
             $response_content = ResponseHelpers::getContent($data, 'teacher');
@@ -94,6 +126,11 @@ class TeacherController extends Controller
         return view("teacher.teacher_month_schedule")->with('data', $data);
     }
 
+    /**
+     * Display reschedule variants in the teacher week schedule.
+     *
+     * @return Renderable|RedirectResponse
+     */
     public function getTeacherReschedule (Request $request)
     {
         $request->flash();
@@ -103,13 +140,16 @@ class TeacherController extends Controller
             return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validation['validator']);
         }
 
-        $reschedule_data = (new LessonInstance())->getReschedulingData($validation['validated']);
-        $data = (new TeacherScheduleElement())->getModelRechedulingData($validation['validated'], $reschedule_data);
+        $reschedule_data = $this->lessonService->getReschedulingData($validation['validated']);
+        $data = $this->teacherService->getModelRechedulingData($validation['validated'], $reschedule_data);
 
         return view("teacher.teacher_reschedule")->with('data', $data);
     }
 
-    public function exportScheduleToDoc (ExportScheduleToDocTeacherRequest $request)
+    /**
+     * Export teacher week schedule to a Word document.
+     */
+    public function exportScheduleToDoc (ExportScheduleToDocTeacherRequest $request): void
     {
         $data = $request->validated();
         $data['other_participant'] = 'group';
@@ -118,11 +158,14 @@ class TeacherController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        //$objWriter = (new TeacherScheduleElement())->scheduleExport($data);
-        $objWriter = (new DocExporterOrdinaryWeekSchedule($data))->createWriter();
+        $objWriter = DocExporterFactory::createRegWeekScheduleDocExporter($data)->createWriter();
         $objWriter->save("php://output");
     }
 
+    /**
+     * Export teacher month schedule to a Word document.
+     * @return void|RedirectResponse
+     */
     public function exportMonthScheduleToDoc (Request $request)
     {
         $request->flash();
@@ -136,14 +179,18 @@ class TeacherController extends Controller
         $data['other_participant'] = 'group';
 
         $filename = "teacher_month_schedule.docx";
+        
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        //$objWriter = (new TeacherScheduleElement())->monthScheduleExport($data);
-        $objWriter = (new DocExporterMonthSchedule($data))->createWriter();
+        $objWriter = DocExporterFactory::createMonthScheduleDocExporter($data)->createWriter();
         $objWriter->save("php://output");
     }
 
+    /**
+     * Export teacher week reschedule variants to a Word document.
+     * @return void|RedirectResponse
+     */
     public function exportRescheduleToDoc (Request $request)
     {
         $validation = ValidationHelpers::exportTeacherRescheduleToDocValidation($request->all());
@@ -161,9 +208,7 @@ class TeacherController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        //$objWriter = (new TeacherScheduleElement())->scheduleExport($data);
-        $objWriter = (new DocExporterWeekReschedule($data))->createWriter();
+        $objWriter = DocExporterFactory::createWeekRescheduleDocExporter($data)->createWriter();
         $objWriter->save("php://output");
     }
-
 }

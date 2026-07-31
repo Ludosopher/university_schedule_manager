@@ -5,8 +5,12 @@ namespace App\Helpers;
 
 class ResponseHelpers
 {
-    public static function getContent($data, $instance_name) {
-        
+    /**
+     * Preparing response messages for different cases.
+     */
+    public static function getContent(array $data, string $instance_name): array 
+    {
+        $success = false;
         $message = '';
         if (isset($data['updated_instance_name'])) {
             $message = str_replace('?', $data['updated_instance_name'], __($instance_name.'.'.$instance_name.'_updated'));
@@ -36,17 +40,19 @@ class ResponseHelpers
                 $data['duplicated_lesson']['group']
             ], __('lesson.is_group_lesson_dublicate'));
             $success = false;
+        } elseif (isset($data['error'])) {
+            $message = $data['error'];
+            $success = false;
         }
 
         return [
             'success' => $success,
             'message' => $message
         ];
-    
     }
 
-    public static function getLessonReplacementBackData($data) {
-        
+    public static function getLessonReplacementBackData(array $data): array 
+    {
         if (isset($data['prev_replace_rules'])) {
             $replace_rules = json_decode($data['prev_replace_rules'], true);
         } else {

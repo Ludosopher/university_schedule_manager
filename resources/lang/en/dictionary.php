@@ -111,6 +111,9 @@
         'third' => 'third',
         'fourth' => 'fourth',
         'fifth' => 'fifth',
+        // study_periods
+        'autumn 2026' => 'Autumn 2026',
+        'spring 2026' => 'Spring 2026',
         //lesson_types
         'lecture' => 'lecture',
         'practical' => 'practical',

@@ -9,6 +9,6 @@
 @if (env('IS_TESTING') === true && $first_msg)
     <div class="alertAccess">
         <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-        Демоверсия содержит вымышленные данные и только для факультета бизнеса и социальных технологий !
+        В демоверсии используются тестовые данные. В полном объеме (для всех сценариев) они заполнены только для факультета бизнеса и социальных технологий.
     </div>
 @endif

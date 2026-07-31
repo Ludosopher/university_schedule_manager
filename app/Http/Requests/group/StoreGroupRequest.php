@@ -27,17 +27,25 @@ class StoreGroupRequest extends FormRequest
     {
         return [
             'faculty_id' => 'required|integer|exists:App\Faculty,id',
-            'study_program_id' => function ($attribute, $value, $fail) {
-                if (!in_array($value, StudyProgram::where('faculty_id', request()->input('faculty_id'))->pluck('id')->toArray())) $fail(__('user_validation. '));
-            },
-            'study_program_id' => function ($attribute, $value, $fail) {
-                if (!in_array($value, StudyProgram::where('study_degree_id', request()->input('study_degree_id'))->pluck('id')->toArray())) $fail(__('user_validation.study_degree_study_program_discrepancy'));
-            },
-            'study_program_id' => 'required|integer|exists:App\StudyProgram,id',
-            'study_orientation_id' => function ($attribute, $value, $fail) {
-                if (!in_array($value, StudyOrientation::where('study_program_id', request()->input('study_program_id'))->pluck('id')->toArray())) $fail(__('user_validation.study_program_study_orientation_discrepancy'));
-            },
-            'study_orientation_id' => 'required|integer|exists:App\StudyOrientation,id',
+            'study_program_id' => [
+                'required',
+                'integer',
+                'exists:App\StudyProgram,id',
+                function ($attribute, $value, $fail) {
+                    if (!in_array($value, StudyProgram::where('faculty_id', request()->input('faculty_id'))->pluck('id')->toArray())) $fail(__('user_validation. '));
+                },
+                function ($attribute, $value, $fail) {
+                    if (!in_array($value, StudyProgram::where('study_degree_id', request()->input('study_degree_id'))->pluck('id')->toArray())) $fail(__('user_validation.study_degree_study_program_discrepancy'));
+                },
+            ],
+            'study_orientation_id' => [
+                'required',
+                'integer',
+                'exists:App\StudyOrientation,id',
+                function ($attribute, $value, $fail) {
+                    if (!in_array($value, StudyOrientation::where('study_program_id', request()->input('study_program_id'))->pluck('id')->toArray())) $fail(__('user_validation.study_program_study_orientation_discrepancy'));
+                }
+            ],
             'study_degree_id' => 'required|integer|exists:App\StudyDegree,id',
             'study_form_id' => 'required|integer|exists:App\StudyForm,id',
             'course_id' => 'required|integer|exists:App\Course,id',

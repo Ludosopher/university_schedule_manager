@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Instances;
+namespace App\Services;
 
-use App\Instances\Instance;
+use App\Services\Service;
 use App\Lesson;
 use App\ClassPeriod;
-use App\Group;
 use App\Helpers\DateHelpers;
-use App\Http\Controllers\TeacherController;
 use App\Setting;
 use App\Teacher;
 use App\WeekDay;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Auth;
 
-class LessonInstance extends Instance
+
+class LessonService extends Service
 {
     protected $config = [
         'model_name' => 'App\Lesson',
@@ -29,8 +26,11 @@ class LessonInstance extends Instance
         'many_to_many_attributes' => ['group_id' => 'groups'],
     ];
 
-    public static function searchSameLesson($data, $field) {
-
+    /**
+     * Search duplicate of the lesson.
+     */
+    public static function searchSameLesson(array $data, string $field): bool
+    {
         $weekly_period_ids = config('enum.weekly_period_ids');
 
         $like_lessons_query = Lesson::where([
@@ -70,7 +70,10 @@ class LessonInstance extends Instance
         return $is_dublicate;
     }
 
-    public function getReschedulingData($incoming_data)
+    /**
+     * Get rescheduling data.
+     */
+    public function getReschedulingData(array $incoming_data): array
     {
         $settings = Setting::pluck('value', 'name');
         $study_periods_data = DateHelpers::getStudyPeriodsData();
@@ -154,8 +157,8 @@ class LessonInstance extends Instance
                                 }
 
                                 $check_lesson = $this->checkLesson($sub_lesson, $week_number);
-                                if (is_object($check_lesson)) {
-                                    $subject_lessons = $check_lesson;
+                                if (!is_bool($check_lesson)) {
+                                    $sub_lesson = $check_lesson;
                                 }
                                 if ($check_lesson) {
                                     if ($sub_lesson->week_day_id == $week_day->id

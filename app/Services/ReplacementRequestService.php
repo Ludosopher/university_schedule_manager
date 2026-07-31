@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Instances;
+namespace App\Services;
 
 use App\Helpers\NotificationHelpers;
-use App\Instances\Instance;
+use App\Services\Service;
 use App\ReplacementRequest;
 use App\ReplacementRequestMessage;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 
-class ReplacementRequestInstance extends Instance
+class ReplacementRequestService extends Service
 {
     protected $config = [
         'model_name' => 'App\ReplacementRequest',
@@ -24,7 +24,10 @@ class ReplacementRequestInstance extends Instance
         'many_to_many_attributes' => ['is_regular'],
     ];
 
-    public function getMyReplacementRequests ($initiator_id)
+    /**
+     * Get current user replacement requests.
+     */
+    public function getMyReplacementRequests (int $initiator_id): array
     {
         $replacement_request_status_ids = config('enum.replacement_request_status_ids');
 
@@ -61,8 +64,15 @@ class ReplacementRequestInstance extends Instance
         return $result;
     }
 
-    public function updatingStatus($request) {
-
+    /**
+     * Update the replacement request status based on changed boolean fields.
+     *
+     * This method is designed to be called within the Eloquent 'updating' event.
+     * It modifies the model properties directly; changes will be saved automatically
+     * as part of the ongoing save operation.
+     */
+    public function updatingStatus(ReplacementRequest $request): void 
+    {
         $replacement_request_status_ids = config('enum.replacement_request_status_ids');
 
         $original_is_sent = $request->getOriginal('is_sent');
@@ -103,8 +113,11 @@ class ReplacementRequestInstance extends Instance
         }
     }
 
-    public function updatadStatus($request) {
-        
+    /**
+     * Send a notification when the replacement request status changes.
+     */
+    public function updatedStatus(ReplacementRequest $request): void 
+    {
         $replacement_request_status_ids = config('enum.replacement_request_status_ids');
         
         $original_status_id = $request->getOriginal('status_id');
@@ -114,10 +127,10 @@ class ReplacementRequestInstance extends Instance
         }
     }
 
-    public function deleteReplacementRequest ($deleting_id) {
-        
+    public function deleteReplacementRequest (int $deleting_id): array 
+    {
         ReplacementRequestMessage::where('replacement_request_id', $deleting_id)->delete();
         
-        return $this->deleteInstance($deleting_id, $this->config);
+        return $this->deleteInstance($deleting_id);
     }
 }

@@ -28,7 +28,7 @@ return [
             'name'
          ],
          'header' => 'faculty',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -36,7 +36,7 @@ return [
             'name'
          ],
          'header' => 'department',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -44,7 +44,7 @@ return [
             'name'
          ],
          'header' => 'professional_level',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -52,7 +52,7 @@ return [
             'name'
          ],
          'header' => 'position',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -60,7 +60,7 @@ return [
             'name'
          ],
          'header' => 'academic_degree',
-         'sorting' => true
+         'sorting' => false
       ],
    ],
    'groups' => [
@@ -75,7 +75,7 @@ return [
             'name'
          ],
          'header' => 'faculty',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -83,7 +83,7 @@ return [
             'name'
          ],
          'header' => 'study_program',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -91,7 +91,7 @@ return [
             'name'
          ],
          'header' => 'study_orientation',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -135,7 +135,7 @@ return [
       [
          'field' => 'name',
          'header' => 'subject',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -143,7 +143,7 @@ return [
             'name'
          ],
          'header' => 'lesson_type',
-         'sorting' => true
+         'sorting' => false
       ],
       [
         'field' => [
@@ -159,7 +159,7 @@ return [
             'name'
          ],
          'header' => 'week_day',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => [
@@ -167,7 +167,7 @@ return [
             'name'
          ],
          'header' => 'weekly_period',
-         'sorting' => true
+         'sorting' => false
       ],
       [
          'field' => 'groups_name',

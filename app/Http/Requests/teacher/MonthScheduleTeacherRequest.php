@@ -23,7 +23,6 @@ class MonthScheduleTeacherRequest extends FormRequest
      */
     public function rules()
     {
-//dd($this->all());        
         return [
             'schedule_teacher_id' => 'required|integer|exists:App\Teacher,id',
             'month_number' => 'required|string',

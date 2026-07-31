@@ -12,8 +12,9 @@ class ReplacementRequestStatusChangedNotifi extends Notification implements Shou
 {
     use Queueable;
 
+    /** @var ReplacementRequest $replacement_request */
     protected $replacement_request;
-    
+    /** @var array $notifi_data */
     protected $notifi_data;
     
     /**
@@ -21,7 +22,7 @@ class ReplacementRequestStatusChangedNotifi extends Notification implements Shou
      *
      * @return void
      */
-    public function __construct(ReplacementRequest $replacement_request, $notifi_data)
+    public function __construct(ReplacementRequest $replacement_request, array $notifi_data)
     {
         $this->replacement_request = $replacement_request;
         $this->notifi_data = $notifi_data;
@@ -72,7 +73,7 @@ class ReplacementRequestStatusChangedNotifi extends Notification implements Shou
     }
 
     /**
-     * Определить, какие очереди следует использовать для каждого канала уведомления.
+     * Determine which queues should be used for each notification channel.
      *
      * @return array
      */

@@ -32,13 +32,16 @@ class RescheduleLessonRequest extends FormRequest
             'week_data' => 'nullable|string',
             'week_dates' => 'nullable|string',
             'is_red_week' => 'nullable|boolean',
-            'week_number' => 'nullable|string',
-            'week_number' => function ($attribute, $value, $fail) {
-                $study_seasons = config('enum.study_seasons');
-                $study_periods_data = DateHelpers::getStudyPeriodsData();
-                $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
-                if (isset($value) && DateHelpers::checkWeekToStudyPeriodSeason($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
-            },
+            'week_number' => [
+                'nullable',
+                'string',
+                function ($attribute, $value, $fail) {
+                    $study_seasons = config('enum.study_seasons');
+                    $study_periods_data = DateHelpers::getStudyPeriodsData();
+                    $required_study_period = DateHelpers::getRequiredStudyPeriod($study_periods_data['all_periods'], $study_periods_data['current_period_id']);
+                    if (isset($value) && DateHelpers::checkWeekToStudyPeriodSeason($required_study_period, $value) !== $study_seasons['studies']) $fail(__('user_validation.failed_week_number'));
+                }
+            ],
         ];
     }
 }

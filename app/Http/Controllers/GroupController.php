@@ -5,39 +5,65 @@ namespace App\Http\Controllers;
 use App\DocExporters\ManyTables\DocExporterMonthSchedule;
 use App\DocExporters\OneTable\WeekSchedule\DocExporterOrdinaryWeekSchedule;
 use App\DocExporters\OneTable\WeekSchedule\DocExporterWeekReschedule;
+use App\Factories\DocExporterFactory;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
-use App\Instances\LessonInstance;
+use App\Services\LessonService;
 use App\Http\Requests\group\DeleteGroupRequest;
 use App\Http\Requests\group\ExportScheduleToDocGroupRequest;
 use App\Http\Requests\group\FilterGroupRequest;
 use App\Http\Requests\group\MonthScheduleGroupRequest;
 use App\Http\Requests\group\ScheduleGroupRequest;
 use App\Http\Requests\group\StoreGroupRequest;
-use App\Instances\ScheduleElements\GroupScheduleElement;
+use App\Services\ScheduleServices\GroupScheduleService;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-
 
 class GroupController extends Controller
 {
-    public function getGroups (FilterGroupRequest $request)
+    /** @var GroupScheduleService $groupService */
+    private $groupService;
+    /** @var LessonService $lessonService */
+    private $lessonService;
+    
+
+    public function __construct(
+        GroupScheduleService $groupService,
+        LessonService $lessonService
+        )
+    {
+        $this->groupService = $groupService;
+        $this->lessonService = $lessonService;
+    }    
+
+    /**
+     * Display filtered list of of study groups.
+     */    
+    public function getGroups (FilterGroupRequest $request): Renderable
     {
         $request->validated();
-        $data = (new GroupScheduleElement())->getInstances(request()->all());
+        $data = $this->groupService->getInstances(request()->all());
 
         return view("group.groups")->with('data', $data);
     }
 
-    public function addGroupForm (Request $request)
+    /**
+     * Display the form for adding or updating a study group.
+     */
+    public function addGroupForm (Request $request): Renderable
     {
-        $data = (new GroupScheduleElement())->getInstanceFormData($request->all());
+        $data = $this->groupService->getInstanceFormData($request->all());
 
         return view("group.add_group_form")->with('data', $data);
     }
 
-    public function addOrUpdateGroup (StoreGroupRequest $request)
+    /**
+     * Add or update study group.
+     */
+    public function addOrUpdateGroup (StoreGroupRequest $request): RedirectResponse
     {
-        $data = (new GroupScheduleElement())->addOrUpdateInstance($request->validated());
+        $data = $this->groupService->addOrUpdateInstance($request->validated());
 
         $response_content = ResponseHelpers::getContent($data, 'group');
         
@@ -47,9 +73,12 @@ class GroupController extends Controller
         ]);
     }
 
-    public function deleteGroup (DeleteGroupRequest $request)
+    /**
+     * Delete teacher study group.
+     */
+    public function deleteGroup (DeleteGroupRequest $request): RedirectResponse
     {
-        $relation_delited_result = (new GroupScheduleElement())->deleteGroupLessonRelation($request->validated()['deleting_id']);
+        $relation_delited_result = $this->groupService->deleteGroupLessonRelation($request->validated()['deleting_id']);
         if (isset($relation_delited_result['there_are_lessons_only_with_this_group'])) {
             $response_content = ResponseHelpers::getContent($relation_delited_result, 'group');
             
@@ -59,7 +88,7 @@ class GroupController extends Controller
             ]);
         }
         
-        $deleted_instance = (new GroupScheduleElement())->deleteInstance($request->validated()['deleting_id']);
+        $deleted_instance = $this->groupService->deleteInstance($request->validated()['deleting_id']);
         $response_content = ResponseHelpers::getContent($deleted_instance, 'group');
         
         return redirect()->back()->with('response', [
@@ -68,9 +97,14 @@ class GroupController extends Controller
         ]);
     }
 
+    /**
+     * Display the study group week schedule.
+     *
+     * @return Renderable|RedirectResponse
+     */
     public function getGroupSchedule (ScheduleGroupRequest $request)
     {
-        $data = (new GroupScheduleElement())->getSchedule($request->validated());
+        $data = $this->groupService->getSchedule($request->validated());
         if (isset($data['duplicated_lesson'])) {
             $response_content = ResponseHelpers::getContent($data, 'group');
         
@@ -83,9 +117,14 @@ class GroupController extends Controller
         return view("group.group_schedule")->with('data', $data);
     }
 
+    /**
+     * Display the study group month schedule.
+     *
+     * @return Renderable|RedirectResponse
+     */
     public function getMonthGroupSchedule (MonthScheduleGroupRequest $request)
     {
-        $data = (new GroupScheduleElement())->getMonthSchedule($request->validated());
+        $data = $this->groupService->getMonthSchedule($request->validated());
         request()->flash();
         if (isset($data['duplicated_lesson'])) {
             $response_content = ResponseHelpers::getContent($data, 'group');
@@ -99,6 +138,11 @@ class GroupController extends Controller
         return view("group.group_month_schedule")->with('data', $data);
     }
 
+    /**
+     * Display reschedule variants in the study group week schedule.
+     *
+     * @return Renderable|RedirectResponse
+     */
     public function getGroupReschedule (Request $request)
     {
         $request->flash();
@@ -108,8 +152,8 @@ class GroupController extends Controller
             return redirect()->route('lesson-rescheduling', $prev_data)->withErrors($validation['validator']);
         }
 
-        $reschedule_data = (new LessonInstance)->getReschedulingData($validation['validated']);
-        $data = (new GroupScheduleElement())->getModelRechedulingData($validation['validated'], $reschedule_data);
+        $reschedule_data = $this->lessonService->getReschedulingData($validation['validated']);
+        $data = $this->groupService->getModelRechedulingData($validation['validated'], $reschedule_data);
 
         if (isset($data['duplicated_lesson'])) {
             return redirect()->route("lessons")->with('duplicated_lesson', $data['duplicated_lesson']);
@@ -118,7 +162,10 @@ class GroupController extends Controller
         return view("group.group_reschedule")->with('data', $data);
     }
 
-    public function exportScheduleToDoc (ExportScheduleToDocGroupRequest $request)
+    /**
+     * Export study group week schedule to a Word document.
+     */
+    public function exportScheduleToDoc (ExportScheduleToDocGroupRequest $request): void
     {
         $data = $request->validated();
         $data['other_participant'] = 'teacher';
@@ -127,11 +174,14 @@ class GroupController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        //$objWriter = (new GroupScheduleElement())->scheduleExport($data);
-        $objWriter = (new DocExporterOrdinaryWeekSchedule($data))->createWriter();
+        $objWriter = DocExporterFactory::createRegWeekScheduleDocExporter($data)->createWriter();
         $objWriter->save("php://output");
     }
 
+    /**
+     * Export study group month schedule to a Word document.
+     * @return Renderable|RedirectResponse
+     */
     public function exportMonthScheduleToDoc (Request $request)
     {
         $request->flash();
@@ -148,11 +198,14 @@ class GroupController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        //$objWriter = (new GroupScheduleElement())->monthScheduleExport($data);
-        $objWriter = (new DocExporterMonthSchedule($data))->createWriter();
+        $objWriter = DocExporterFactory::createMonthScheduleDocExporter($data)->createWriter();
         $objWriter->save("php://output");
     }
 
+    /**
+     * Export study group week reschedule variants to a Word document.
+     * @return Renderable|RedirectResponse
+     */
     public function exportRescheduleToDoc (Request $request)
     {
         $validation = ValidationHelpers::exportGroupRescheduleToDocValidation($request->all());
@@ -170,8 +223,7 @@ class GroupController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        //$objWriter = (new GroupScheduleElement())->scheduleExport($data);
-        $objWriter = (new DocExporterWeekReschedule($data))->createWriter();
+        $objWriter = DocExporterFactory::createWeekRescheduleDocExporter($data)->createWriter();
         $objWriter->save("php://output");
     }
 }

@@ -3,15 +3,15 @@
 namespace App\Helpers;
 
 use App\Notifications\ReplacementRequestStatusChangedNotifi;
-use App\User;
+use App\ReplacementRequest;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Log;
 
 class NotificationHelpers
 {
-    public static function sendReplacementRequestStatusChangedNotifi($request, $old_status_id) {
-        
+    public static function sendReplacementRequestStatusChangedNotifi(ReplacementRequest $request, int $old_status_id): void 
+    {
         $replacement_request_statuses = config('enum.replacement_request_statuses');
         
         $replaceable_addressees = $request->replaceable_lesson->teacher->users;

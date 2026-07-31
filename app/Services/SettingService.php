@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Instances;
+namespace App\Services;
 
-use App\Instances\Instance;
+use App\Services\Service;
 use App\Setting;
 
-class SettingInstance extends Instance
+class SettingService extends Service
 {
     protected $config = [
         'model_name' => 'App\Setting',
@@ -20,7 +20,10 @@ class SettingInstance extends Instance
         'many_to_many_attributes' => [],
     ];
 
-    public function updateSettings($data) 
+    /**
+     * Update settings.
+     */
+    public function updateSettings(array $data): void
     {
         $settings = Setting::get();
         $data = $this->preparingBooleans($data);

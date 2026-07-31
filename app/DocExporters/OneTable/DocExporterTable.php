@@ -2,20 +2,27 @@
 
 namespace App\DocExporters\OneTable;
 
-use App\ClassPeriod;
-use App\Setting;
+use PhpOffice\PhpWord\Writer\WriterInterface;
 
 class DocExporterTable extends DocExporter
 {
     protected $data = [];
     protected $cell_width = 1400;
         
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
     
-    public function createWriter() {
+    /**
+     * Create and return a configured Word 2007 document writer for the schedule table.
+     *
+     * The document structure includes a header section and a table with the
+     * provided schedule data.
+     *
+     */
+    public function createWriter(): WriterInterface 
+    {
         
         $table_properties = config('tables.replacement_variants');
         $header_data = json_decode($this->data['header_data'], true);
@@ -85,5 +92,4 @@ class DocExporterTable extends DocExporter
             'table_content' => $table_content
         ]);
     }
-
 }

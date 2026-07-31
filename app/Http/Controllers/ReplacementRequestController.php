@@ -9,32 +9,56 @@ use App\Http\Requests\replacement_request\DeleteReplacementReqRequest;
 use App\Http\Requests\replacement_request\FilterReplacementReqRequest;
 use App\Http\Requests\replacement_request\SendReplacementReqRequest;
 use App\Http\Requests\replacement_request\StoreReplacementReqRequest;
-use App\Instances\ReplacementRequestInstance;
-use App\Instances\ScheduleElements\TeacherScheduleElement;
+use App\Services\ReplacementRequestService;
+use App\Services\ScheduleServices\TeacherScheduleService;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Log;
 
 
 class ReplacementRequestController extends Controller
 {
-    public function getReplacementRequests (FilterReplacementReqRequest $request)
+    /** @var TeacherScheduleService $teacherService */
+    private $teacherService;
+    /** @var ReplacementRequestService $replacementService */
+    private $replacementService;
+    
+
+    public function __construct(
+        TeacherScheduleService $teacherService,
+        ReplacementRequestService $replacementService
+        )
+    {
+        $this->teacherService = $teacherService;
+        $this->replacementService = $replacementService;
+    }
+
+    /**
+     * Display filtered list of replacement requests.
+     */
+    public function getReplacementRequests (FilterReplacementReqRequest $request): Renderable
     {
         $request->validated();
-        $data = (new ReplacementRequestInstance())->getInstances(request()->all());
+        $data = $this->replacementService->getInstances(request()->all());
 
         return view("replacement_request.replacement_requests")->with('data', $data);
     }
 
-    public function getMyReplacementRequests (Request $request)
+    /**
+     * Display list of rurrent user replacement requests.
+     */
+    public function getMyReplacementRequests (Request $request): Renderable
     {
- 
-        $data = (new ReplacementRequestInstance())->getMyReplacementRequests(Auth::user()->id);
+        $data = $this->replacementService->getMyReplacementRequests(Auth::user()->id);
         
         return view("replacement_request.my_replacement_requests")->with('data', $data);
     }
 
-    public function addReplacementRequest (Request $request)
+    /**
+     * Add replacement request.
+     */
+    public function addReplacementRequest (Request $request): RedirectResponse
     {
         $validation = ValidationHelpers::addReplacementRequestValidation($request->all());
         if (! $validation['success']) {
@@ -42,7 +66,7 @@ class ReplacementRequestController extends Controller
                              ->withErrors($validation['validator']);
         }
 
-        $new_request = (new ReplacementRequestInstance())->addOrUpdateInstance($validation['validated']);
+        $new_request = $this->replacementService->addOrUpdateInstance($validation['validated']);
 
         $response_content = ResponseHelpers::getContent($new_request, 'replacement_request');
         
@@ -52,9 +76,12 @@ class ReplacementRequestController extends Controller
         ]);
     }
 
-    public function updateReplacementRequest (StoreReplacementReqRequest $request)
+    /**
+     * Update replacement request.
+     */
+    public function updateReplacementRequest (StoreReplacementReqRequest $request): RedirectResponse
     {
-        $replacement_request = (new ReplacementRequestInstance())->addOrUpdateInstance($request->validated());
+        $replacement_request = $this->replacementService->addOrUpdateInstance($request->validated());
 
         $response_content = ResponseHelpers::getContent($replacement_request, 'replacement_request');
         
@@ -64,9 +91,12 @@ class ReplacementRequestController extends Controller
         ]);
     }
 
-    public function deleteReplacementRequest (DeleteReplacementReqRequest $request)
+    /**
+     * Delete replacement request.
+     */
+    public function deleteReplacementRequest (DeleteReplacementReqRequest $request): RedirectResponse
     {
-        $deleted_instance = (new ReplacementRequestInstance())->deleteReplacementRequest($request->validated()['deleting_id']);
+        $deleted_instance = $this->replacementService->deleteReplacementRequest($request->validated()['deleting_id']);
 
         $response_content = ResponseHelpers::getContent($deleted_instance, 'replacement_request');
         
@@ -76,11 +106,14 @@ class ReplacementRequestController extends Controller
         ]);
     }
 
-    public function sendReplacementRequest (SendReplacementReqRequest $request)
+    /**
+     * Send replacement request.
+     */
+    public function sendReplacementRequest (SendReplacementReqRequest $request): RedirectResponse
     {
-        $data = (new TeacherScheduleElement)->getReplacingTeacherSchedule($request->validated());
+        $data = $this->teacherService->getReplacingTeacherSchedule($request->validated());
         MailHelpers::sendReplacementRequest($data);
-        $replacement_request = (new ReplacementRequestInstance())->addOrUpdateInstance($request->validated());
+        $replacement_request = $this->replacementService->addOrUpdateInstance($request->validated());
 
         $response_content = ResponseHelpers::getContent($replacement_request, 'replacement_request');
         
@@ -90,7 +123,10 @@ class ReplacementRequestController extends Controller
         ]);
     }
 
-    public function openReplacementRequestChat (Request $request)
+    /**
+     * Open replacement request chat.
+     */
+    public function openReplacementRequestChat (Request $request): Renderable
     {
         return view("replacement_request.chat")->with('data', $request->all());
     }

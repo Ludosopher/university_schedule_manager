@@ -2,21 +2,27 @@
 
 namespace App\DocExporters\OneTable\WeekSchedule;
 
-use App\Helpers\DateHelpers;
 use App\Setting;
-use Log;
+use PhpOffice\PhpWord\Writer\WriterInterface;
 
 class DocExporterReplacementWeekSchedule extends DocExporterWeekSchedule
 {
     protected $data = [];
     protected $first_column_width = 1300;
         
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
 
-    public function createWriter() 
+    /**
+     * Create and return a configured Word 2007 document writer for the schedule replacement matrix.
+     *
+     * The document structure includes a header section and a matrix with the
+     * provided schedule replacement data.
+     *
+     */
+    public function createWriter(): WriterInterface 
     {
         $settings = Setting::pluck('value', 'name');
         $week_days_limit = $settings['distance_week_days_limit'] ?? config('site.week_days_limits')['distance'];
@@ -36,7 +42,20 @@ class DocExporterReplacementWeekSchedule extends DocExporterWeekSchedule
         ]);
     }
 
-    function getCellAdditional($data, $lesson, $week_day_id, &$lesson_other_participant, &$fontStyle, &$lesson_n, &$lesson_type, &$lesson_room)
+    /**
+     * Get additional cell content.
+     *
+     * @param array|bool $lesson
+     */
+    function getCellAdditional(
+        array $data, 
+        $lesson, 
+        int $week_day_id, 
+        string &$lesson_other_participant, 
+        array &$fontStyle, 
+        string &$lesson_n, 
+        string &$lesson_type, 
+        string &$lesson_room): array
     {
         $week_dates = isset($data['week_dates']) ? json_decode($data['week_dates'], true) : null;
         if (isset($lesson['for_replacement']) && $lesson['for_replacement']) {
@@ -55,7 +74,7 @@ class DocExporterReplacementWeekSchedule extends DocExporterWeekSchedule
             return ['text' => '('.__('title.replaceable_lesson').')', 'font_style' => ['size' => 6, 'shading' => array('fill' => '#DCDCDC')], 'paragraph_style' => ['align' => 'center', 'spaceBefore' => 0, 'spaceAfter' => 0]];
         }
         
-        return '';
+        return [];
     }
 
 }

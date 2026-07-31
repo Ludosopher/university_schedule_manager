@@ -124,7 +124,7 @@ class getLessonsForReplasementTest extends TestCase
             ]
         ];
 
-        //$replacementLessons = (new TeacherScheduleElement())->getLessonsForReplacement($data, $week_number, $week_dates);
+        //$replacementLessons = (new TeacherScheduleService())->getLessonsForReplacement($data, $week_number, $week_dates);
 
         //$this->assertEquals($replacementLessons, $correct_result);
     }

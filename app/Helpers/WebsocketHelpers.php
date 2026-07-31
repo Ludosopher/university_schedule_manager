@@ -2,17 +2,22 @@
 
 namespace App\Helpers;
 
-use App\Instances\Instance;
+use App\Services\Service;
 use App\ReplacementRequestMessage;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Log;
 
 class WebsocketHelpers implements MessageComponentInterface {
+    /** @var \SplObjectStorage $clients */
     protected $clients;
+    /** @var array $rooms */
     protected $rooms;
+    /** @var array $partisipants */
     protected $partisipants;
+    /** @var array $partisipant_names */
     protected $partisipant_names;
+    /** @var array $existing_messages */
     protected $existing_messages;
     
     public function __construct() {
@@ -24,15 +29,37 @@ class WebsocketHelpers implements MessageComponentInterface {
 
     }
 
-    public function onOpen(ConnectionInterface $conn) {
-        
+    /**
+     * Handle a new WebSocket connection.
+     *
+     * This method is called when a new client connects to the WebSocket server.
+     * It attaches the connection to the clients collection and logs the event.
+     *
+     * @param ConnectionInterface $conn The WebSocket connection instance.
+     */
+    public function onOpen(ConnectionInterface $conn): void 
+    {
         $this->clients->attach($conn);
 
         echo "New connection! ({$conn->resourceId})\n";
     }
 
-    public function onMessage(ConnectionInterface $from, $msg) {
-
+    /**
+     * Handle incoming WebSocket messages for the replacement request chat.
+     *
+     * This method processes two types of messages:
+     * 1. Initial connection: When a user opens a replacement request (open_replacement_request_id),
+     *    they are added to the room, and all existing messages are sent to them.
+     * 2. New message: When a user sends a new message, it is saved to the database
+     *    and broadcasted to all participants in the room.
+     *
+     * The method manages room membership, participant tracking, and message history.
+     *
+     * @param ConnectionInterface $from The WebSocket connection of the sender.
+     * @param string $msg The raw JSON message from the client.
+     */
+    public function onMessage(ConnectionInterface $from, $msg): void 
+    {
         $msg = json_decode($msg, true);
 
         if (isset($msg['open_replacement_request_id'])) 
@@ -62,7 +89,7 @@ class WebsocketHelpers implements MessageComponentInterface {
             $from->send(json_encode($this->existing_messages));
         } else {
             $replacement_request_id = $msg['replacement_request_id'];
-            (new Instance)->addOrUpdate($msg, 'App\ReplacementRequestMessage');
+            (new Service)->addOrUpdate($msg, 'App\ReplacementRequestMessage');
             //ModelHelpers::addOrUpdate($msg, 'App\ReplacementRequestMessage');
         }
 
@@ -81,8 +108,19 @@ class WebsocketHelpers implements MessageComponentInterface {
         }
     }
 
-    public function onClose(ConnectionInterface $conn) {
-       
+    /**
+     * Handle a WebSocket connection closure.
+     *
+     * This method is called when a client disconnects. It performs cleanup:
+     * - Removes the client from all rooms they were in
+     * - Notifies remaining participants about the departure
+     * - Removes participant tracking data
+     * - Detaches the connection from the clients collection
+     *
+     * @param ConnectionInterface $conn The WebSocket connection that is closing.
+    */
+    public function onClose(ConnectionInterface $conn): void 
+    {
         $is_obj_delited = false;
         foreach ($this->rooms as &$room) {
             foreach ($room as &$obj) {
@@ -107,7 +145,17 @@ class WebsocketHelpers implements MessageComponentInterface {
         echo "Connection {$conn->resourceId} has disconnected\n";
     }
 
-    public function onError(ConnectionInterface $conn, \Exception $e) {
+    /**
+     * Handle errors that occur on a WebSocket connection.
+     *
+     * This method logs the error, closes the problematic connection,
+     * and prevents further communication with that client.
+     *
+     * @param ConnectionInterface $conn The WebSocket connection where the error occurred.
+     * @param \Exception $e The exception that was thrown.
+     */
+    public function onError(ConnectionInterface $conn, \Exception $e): void 
+    {
         echo "An error has occurred: {$e->getMessage()}\n";
         Log::channel('cron')->error($e->getMessage());
 

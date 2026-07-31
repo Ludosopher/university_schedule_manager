@@ -3,14 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\setting\StoreSettingsRequest;
-use App\Instances\SettingInstance;
+use App\Services\SettingService;
 use App\Setting;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 
 class SettingController extends Controller
 {
-    public function getSettings (Request $request)
+    /** @var SettingService $settingService */
+    private $settingService;
+    
+    public function __construct(
+        SettingService $settingService
+        )
+    {
+        $this->settingService = $settingService;
+    }    
+
+    /**
+     * Display list of schedule manager settings.
+     */    
+    public function getSettings (Request $request): Renderable
     {
         $data = [
             'forms' => config('forms.settings'),
@@ -19,9 +34,12 @@ class SettingController extends Controller
         return view("settings")->with('data', $data);
     }
 
-    public function updateSettings (StoreSettingsRequest $request)
+    /**
+     * Update schedule manager settings.
+     */
+    public function updateSettings (StoreSettingsRequest $request): RedirectResponse
     {
-        (new SettingInstance())->updateSettings($request->validated());
+        $this->settingService->updateSettings($request->validated());
 
         return redirect()->back()->with('response', [
             'success' => true,

@@ -2,46 +2,71 @@
 
 namespace App\Http\Controllers;
 
-use App\DocExporter\DocExporterTable as DocExporterDocExporterTable;
 use App\DocExporters\OneTable\WeekSchedule\DocExporterReplacementWeekSchedule;
 use App\DocExporters\OneTable\DocExporterTable;
+use App\Factories\DocExporterFactory;
 use App\Helpers\ResponseHelpers;
 use App\Helpers\ValidationHelpers;
 use App\Http\Requests\lesson\DeleteLessonRequest;
 use App\Http\Requests\lesson\FilterLessonRequest;
 use App\Http\Requests\lesson\RescheduleLessonRequest;
 use App\Http\Requests\lesson\StoreLessonRequest;
-use App\Instances\LessonInstance;
-use App\Instances\ScheduleElements\ScheduleElement;
-use App\Instances\ScheduleElements\TeacherScheduleElement;
+use App\Services\LessonService;
+use App\Services\ScheduleServices\TeacherScheduleService;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 
 class LessonController extends Controller
 {
-    public function getLessons (FilterLessonRequest $request)
+    /** @var TeacherScheduleService $teacherService */
+    private $teacherService;
+    /** @var LessonService $lessonService */
+    private $lessonService;
+    
+
+    public function __construct(
+        TeacherScheduleService $teacherService,
+        LessonService $lessonService
+        )
+    {
+        $this->teacherService = $teacherService;
+        $this->lessonService = $lessonService;
+    }    
+
+    /**
+     * Get filtered list of lessons and render the lessons index view.
+     */
+    public function getLessons (FilterLessonRequest $request): Renderable
     {
         $request->validated();
-        $data = (new LessonInstance())->getInstances(request()->all());
+        $data = $this->lessonService->getInstances(request()->all());
 
         return view("lesson.lessons")->with('data', $data);
     }
 
-    public function addLessonForm (Request $request)
+    /**
+     * Display the form for adding or updating a lesson.
+     */
+    public function addLessonForm (Request $request): Renderable
     {
-        $data = (new LessonInstance())->getInstanceFormData($request->all());
+        $data = $this->lessonService->getInstanceFormData($request->all());
 
         if (isset($data['updating_instance'])) {
-            $data = (new LessonInstance())->getManyToManyData($data);
+            $data = $this->lessonService->getManyToManyData($data);
         }
         return view("lesson.add_lesson_form")->with('data', $data);
     }
 
-    public function addOrUpdateLesson (StoreLessonRequest $request)
+    /**
+     * Add or update lesson.
+     */
+    public function addOrUpdateLesson (StoreLessonRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        $lesson = (new LessonInstance())->addOrUpdateInstance($validated);
-        (new LessonInstance())->addOrUpdateManyToManyAttributes($validated, $lesson['id']);
+        $lesson = $this->lessonService->addOrUpdateInstance($validated);
+        $this->lessonService->addOrUpdateManyToManyAttributes($validated, $lesson['id']);
 
         $response_content = ResponseHelpers::getContent($lesson, 'lesson');
         
@@ -51,11 +76,14 @@ class LessonController extends Controller
         ]);
     }
 
-    public function deleteLesson (DeleteLessonRequest $request)
+    /**
+     * Delete lesson.
+     */
+    public function deleteLesson (DeleteLessonRequest $request): RedirectResponse
     {
-        (new LessonInstance())->deleteManyToManyAttributes($request->validated()['deleting_id']);
+        $this->lessonService->deleteManyToManyAttributes($request->validated()['deleting_id']);
         
-        $deleted_instance = (new LessonInstance())->deleteInstance($request->validated()['deleting_id']);
+        $deleted_instance = $this->lessonService->deleteInstance($request->validated()['deleting_id']);
         $response_content = ResponseHelpers::getContent($deleted_instance, 'lesson');
         return redirect()->back()->with('response', [
             'success' => $response_content['success'],
@@ -63,6 +91,11 @@ class LessonController extends Controller
         ]);
     }
 
+    /**
+     * Display the lesson week schedule replacement variants.
+     *
+     * @return Renderable|RedirectResponse
+     */
     public function getReplacementVariants (Request $request)
     {
         $validation = ValidationHelpers::getReplacementVariantsValidation($request->all());
@@ -81,20 +114,28 @@ class LessonController extends Controller
             $teacher_id = $request->replace_rules['teacher_id'];
         }
 
-        $data = (new TeacherScheduleElement)->getReplacementData($request->all());
-        $data['in_schedule'] = (new TeacherScheduleElement)->getReplacementSchedule($teacher_id, $data, $request->all());
+        $data = $this->teacherService->getReplacementData($request->all());
+        $data['in_schedule'] = $this->teacherService->getReplacementSchedule($teacher_id, $data, $request->all());
         
         return view("lesson.replacement_lessons")->with('data', $data);
     }
 
-    public function getReschedulingVariants (RescheduleLessonRequest $request)
+    /**
+     * Display the lesson week schedule rescheduling variants.
+     */
+    public function getReschedulingVariants (RescheduleLessonRequest $request): Renderable
     {
         $request->flash();
-        $data = (new LessonInstance)->getReschedulingData($request->validated());
+        $data = $this->lessonService->getReschedulingData($request->validated());
 
         return view("lesson.lesson_reschedule")->with('data', $data);
     }
 
+    /**
+     * Export the lesson week schedule replacement variants table to a Word document.
+     *
+     * @return void|RedirectResponse
+     */
     public function exportReplacementToDoc (Request $request)
     {
         $validation = ValidationHelpers::exportReplacementToDocValidation($request->all());
@@ -107,11 +148,15 @@ class LessonController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        // $objWriter = (new ScheduleElement)->replacementExport($validation['validated']);
-        $objWriter = (new DocExporterTable($validation['validated']))->createWriter();
+        $objWriter = DocExporterFactory::createTableDocExporter($validation['validated'])->createWriter();
         $objWriter->save("php://output");
     }
 
+    /**
+     * Export the lesson week schedule replacement variants matrix to a Word document.
+     *
+     * @return void|RedirectResponse
+     */
     public function exportReplacementScheduleToDoc (Request $request)
     {
         $validation = ValidationHelpers::exportReplacementScheduleToDocValidation($request->all());
@@ -127,8 +172,7 @@ class LessonController extends Controller
         header( "Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document" );
         header( 'Content-Disposition: attachment; filename='.$filename);
 
-        // $objWriter = (new ScheduleElement)->scheduleExport($data);
-        $objWriter = (new DocExporterReplacementWeekSchedule($data))->createWriter();
+        $objWriter = DocExporterFactory::createWeekScheduleReplaceDocExporter($data)->createWriter();
         $objWriter->save("php://output");
     }
 }

@@ -1,19 +1,20 @@
 <?php
 
-namespace App\Instances\ScheduleElements;
+namespace App\Services\ScheduleServices;
 
 use App\ClassPeriod;
 use App\Helpers\DateHelpers;
 use App\Helpers\DictionaryHelpers;
-use App\Instances\ScheduleElements\ScheduleElement;
+use App\Services\ScheduleServices\ScheduleService;
 use App\Lesson;
 use App\Setting;
 use App\Teacher;
 use App\WeekDay;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Collection;
 
-class TeacherScheduleElement extends ScheduleElement
+class TeacherScheduleService extends ScheduleService
 {
     protected $config = [
         'model_name' => 'App\Teacher',
@@ -28,7 +29,10 @@ class TeacherScheduleElement extends ScheduleElement
         'many_to_many_attributes' => [],
     ];
 
-    protected function getLessonsForReplacement($data, $week_number, $week_dates)
+    /**
+     * Get lesson variants for replacement.
+     */
+    protected function getLessonsForReplacement(array $data, string $week_number, array $week_dates): array
     {
         $weekly_period_ids = config('enum.weekly_period_ids');
         $study_seasons = config('enum.study_seasons');
@@ -179,8 +183,18 @@ class TeacherScheduleElement extends ScheduleElement
         return $replacement_lessons;
     }
 
-    protected function getLessonSchedulePosition ($lesson, $teacher) {
-
+    /**
+     * Determine the position of a lesson relative to adjacent lessons for a teacher.
+     *
+     * This method checks if there are lessons before or after the given lesson
+     * on the same weekday, and returns a status indicating the lesson's position:
+     * - between two available pairs (surrounded by lessons)
+     * - next to one available pair (has a neighbor on one side)
+     * - no available pairs nearby (isolated lesson)
+     *
+     */
+    protected function getLessonSchedulePosition (Lesson $lesson, Teacher $teacher): array 
+    {
         $is_prev_lesson = false;
         $is_next_lesson = false;
 
@@ -205,7 +219,10 @@ class TeacherScheduleElement extends ScheduleElement
         return $result;
     }
 
-    public function getReplacementData($incoming_data)
+    /**
+     * Get replacement data.
+     */
+    public function getReplacementData(array $incoming_data): array
     {
         $settings = Setting::pluck('value', 'name');
         $class_periods_limit = $settings['full_time_class_periods_limit'] ?? config('site.class_periods_limits')['full_time'];
@@ -241,6 +258,9 @@ class TeacherScheduleElement extends ScheduleElement
         if (!isset($incoming_data['replace_rules'])) {
             if (isset($incoming_data['prev_replace_rules'])) {
                 $prev_replace_rules = json_decode($incoming_data['prev_replace_rules'], true);
+                if (isset($week_dates)) {
+                    $prev_replace_rules['date'] = $week_dates[(int) $prev_replace_rules['week_day_id']];
+                }
                 //$replacement_lessons = $this->getLessonsForReplacement($prev_replace_rules, $week_number, $week_dates);
                 $replacement_lessons = $this->getReplacementLessons($prev_replace_rules, $week_number, $week_dates);
             }
@@ -298,8 +318,11 @@ class TeacherScheduleElement extends ScheduleElement
         return array_merge($data, DictionaryHelpers::getReplacementProperties());
     }
 
-    public function getReplacementSchedule($teacher_id, $incom_replacement_data, $incom_data) {
-
+    /**
+     * Get replacement schedule data.
+     */
+    public function getReplacementSchedule(int $teacher_id, array $incom_replacement_data, array $incom_data): array 
+    {
         $class_periods = ClassPeriod::get();
         $week_days = WeekDay::get();
         $data_for_schedule["schedule_teacher_id"] = $teacher_id;
@@ -352,8 +375,13 @@ class TeacherScheduleElement extends ScheduleElement
         return $data;
     }
 
-    public function getReplacingTeacherSchedule($data) {
-        
+    /**
+     * Get substitute teacher's schedule data.
+     *
+     * @return array|bool
+     */
+    public function getReplacingTeacherSchedule(array $data)
+    {
         $weekly_period_ids = config('enum.weekly_period_ids');
         $incom_replacing_data = false;
 
@@ -385,11 +413,13 @@ class TeacherScheduleElement extends ScheduleElement
                                    ->where('id', $data['replacing_lesson_id'])
                                    ->first();
 
+        $replacing_lesson_name = __("dictionary.$replacing_lesson->name");
+        $replaceable_lesson_name = __("dictionary.$replaceable_lesson->name");
         if ($data['is_regular']) {
             $replaceable_weekly_period_id = $replaceable_lesson->weekly_period_id;
             $replacing_weekly_period_id = $replacing_lesson->weekly_period_id;
-            $replaceable_lesson_description = __('mail.regular_replaceable_lesson_description').$replacing_lesson->name.'", '.__('dictionary.'.$replaceable_lesson->weekly_period->name).', '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
-            $replacing_lesson_description = __('mail.regular_replacing_lesson_descript').$replaceable_lesson->name.'", '.__('dictionary.'.$replaceable_lesson->weekly_period->name).', '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
+            $replaceable_lesson_description = __('mail.regular_replaceable_lesson_description').$replacing_lesson_name.'", '.__('dictionary.'.$replaceable_lesson->weekly_period->name).', '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
+            $replacing_lesson_description = __('mail.regular_replacing_lesson_descript').$replaceable_lesson_name.'", '.__('dictionary.'.$replaceable_lesson->weekly_period->name).', '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
         } else {
             $replaceable_date = '';
             if (isset($replaceable_schedule_data['week_dates'])) {
@@ -405,8 +435,8 @@ class TeacherScheduleElement extends ScheduleElement
             }
             $replaceable_weekly_period_id = $weekly_period_ids['every_week'];
             $replacing_weekly_period_id = $weekly_period_ids['every_week'];
-            $replaceable_lesson_description = __('mail.dated_replaceable_lesson_description').$replaceable_date.', "'.$replacing_lesson->name.'", '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
-            $replacing_lesson_description = __('mail.dated_replacing_lesson_descript').$replacing_date.', "'.$replaceable_lesson->name.'", '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
+            $replaceable_lesson_description = __('mail.dated_replaceable_lesson_description').$replaceable_date.', "'.$replacing_lesson_name.'", '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
+            $replacing_lesson_description = __('mail.dated_replacing_lesson_descript').$replacing_date.', "'.$replaceable_lesson_name.'", '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
         }
 
         $mails_to = [];
@@ -463,7 +493,13 @@ class TeacherScheduleElement extends ScheduleElement
         return false;
     }
 
-    protected function getGroupsLessons($groups_ids, $replacing_lesson, $preliminary_lessons)
+    /**
+     * Get study groups lessons.
+     *
+     * @param Collection<int, Lesson> $preliminary_lessons 
+     * @return array|bool
+     */
+    protected function getGroupsLessons(array $groups_ids, Lesson $replacing_lesson, $preliminary_lessons): array
     {
         $groups_lessons = [];    
         foreach ($preliminary_lessons as $lesson) {
@@ -480,7 +516,12 @@ class TeacherScheduleElement extends ScheduleElement
         return $groups_lessons;
     }
 
-    protected function getReplacementLessons($data, $week_number, $week_dates)
+    /**
+     * Get replacement lessons.
+     * @param string|null $week_number.
+     * @param array|null $week_dates.
+     */
+    protected function getReplacementLessons(array $data, $week_number, $week_dates): array
     {
         $replacement_lessons = [];
         $weekly_period_ids = config('enum.weekly_period_ids');
@@ -509,13 +550,13 @@ class TeacherScheduleElement extends ScheduleElement
         $is_suitable_less = true;
         foreach($replaceble_groups_lessons as $verified_lesson) {
             $check_lesson = $this->checkLesson($verified_lesson, $week_number, 'additionally', $replaceble_lesson, $week_dates);
-            if (is_object($check_lesson)) {
+            if (!is_bool($check_lesson)) {
                 $verified_lesson = $check_lesson;
             }
             if ($check_lesson) {
                 foreach($replacement_requester->lessons as $verification_lesson) {
                     $check_lesson = $this->checkLesson($verification_lesson, $week_number);
-                    if (is_object($check_lesson)) {
+                    if (!is_bool($check_lesson)) {
                         $verification_lesson = $check_lesson;
                     }
                     if ($check_lesson) {

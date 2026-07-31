@@ -2,21 +2,28 @@
 
 namespace App\DocExporters\OneTable\WeekSchedule;
 
-use App\ClassPeriod;
 use App\Helpers\DateHelpers;
 use App\Setting;
+use PhpOffice\PhpWord\Writer\WriterInterface;
 
 class DocExporterOrdinaryWeekSchedule extends DocExporterWeekSchedule
 {
     protected $data = [];
     protected $first_column_width = 1300;
         
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->data = $data;
     }
 
-    public function createWriter() 
+    /**
+     * Create and return a configured Word 2007 document writer for the schedule.
+     *
+     * The document structure includes a header section and a schedule matrix with the
+     * provided schedule data.
+     *
+     */
+    public function createWriter(): WriterInterface 
     {
         $study_periods_data = DateHelpers::getStudyPeriodsData();
         $required_study_period_id = (int)($this->data['study_period_id'] ?? $study_periods_data['current_period_id']);
@@ -64,9 +71,23 @@ class DocExporterOrdinaryWeekSchedule extends DocExporterWeekSchedule
         ]);
     }
 
-    function getCellAdditional($data, $lesson, $week_day_id, &$lesson_other_participant, &$fontStyle, &$lesson_n, &$lesson_type, &$lesson_room)
+    /**
+     * Get additional cell content.
+     *
+     * @param array|bool $lesson
+     */
+    function getCellAdditional(
+        array $data, 
+        $lesson, 
+        int $week_day_id, 
+        string &$lesson_other_participant, 
+        array &$fontStyle, 
+        string &$lesson_n, 
+        string &$lesson_type, 
+        string &$lesson_room
+        ): array
     {
-        return null;
+        return [];
     }
 
 }

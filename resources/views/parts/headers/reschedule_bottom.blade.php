@@ -6,7 +6,7 @@
         @csrf
             <input type="hidden" name="lesson_id" value="{{ $data['lesson_id'] }}">
             <input type="hidden" name="teacher_id" value="{{ $data['teacher_id'] }}">
-            <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] }}">
+            <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] ?? '' }}">
             <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
             <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
             <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
@@ -20,7 +20,7 @@
                     <input type="hidden" name="lesson_id" value="{{ $data['lesson_id'] }}">
                     <input type="hidden" name="teacher_id" value="{{ $data['teacher_id'] }}">
                     <input type="hidden" name="group_id" value="{{ $group['id']  }}">
-                    <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] }}">
+                    <input type="hidden" name="week_number" value="{{ $data['week_data']['week_number'] ?? '' }}">
                     <input type="hidden" name="prev_data" value="{{ json_encode(old()) }}">
                     <input type="hidden" name="week_dates" value="{{ isset($data['week_dates']) ? json_encode($data['week_dates']) : '' }}">
                     <input type="hidden" name="is_red_week" value="{{ $is_red_week ?? '' }}">
