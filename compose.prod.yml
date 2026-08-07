@@ -57,22 +57,6 @@ services:
     networks:
       - laravel-network-prod
 
-  # PHPMyAdmin service (можно удалить в проде)
-  phpmyadmin:
-    image: phpmyadmin
-    container_name: phpmyadmin-prod
-    restart: unless-stopped
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - "8080:80"
-    networks:
-      - laravel-network-prod
-    depends_on:
-      - db
-
 networks:
   laravel-network-prod:
     driver: bridge
