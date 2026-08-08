@@ -41,53 +41,56 @@ RUN mkdir -p /var/www/.npm /var/www/.composer \
 # Installing the working directory
 WORKDIR /var/www/html
 
-# СОЗДАЕМ ВСЕ НЕОБХОДИМЫЕ ПАПКИ
+# Creating all the necessary folders
 RUN mkdir -p database/seeders database/seeds database/factories
 
-# Копируем ТОЛЬКО файлы зависимостей
+# We copy only the dependency files
 COPY --chown=www-data:www-data composer.json composer.lock package.json package-lock.json ./
 
 # Switching to the www-data user
 USER www-data
 
-# Устанавливаем зависимости БЕЗ автозагрузки
+# Installing dependencies without autoloading
 RUN composer install --no-dev --no-scripts --no-interaction --no-autoloader
 
-# Копируем ВСЁ приложение
+# Copying the entire application
 USER root
 COPY --chown=www-data:www-data . .
 USER www-data
 
-# ТЕПЕРЬ генерируем автозагрузку когда все файлы на месте
+# We generate an auto-upload when all the files are in place
 RUN composer dump-autoload --optimize --no-dev
 
-# Устанавливаем Node зависимости
+# Installing the Dependency Node
 RUN npm ci --no-audit --include=dev
 
-# Собираем ассеты
+# Collecting assets
 RUN npx cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=node_modules/laravel-mix/setup/webpack.config.js
 
-# Чистим node_modules от dev-зависимостей
+# Cleaning node_modules from dev dependencies
 RUN npm ci --production --no-audit
 
-# Безопасное кэширование
+# Secure caching
 RUN php artisan config:clear \
     && php artisan route:clear \
     && php artisan view:clear \
     && php artisan view:cache
 
-# Пытаемся закэшировать конфиги и маршруты
+# Caching configs and routes
 RUN php artisan config:cache || php artisan config:clear
 RUN php artisan route:cache || php artisan route:clear
 
-# Исправляем права
+# Correcting rights
 USER root
 RUN chown -R www-data:www-data /var/www/html/storage \
     && chown -R www-data:www-data /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
-USER www-data
+
+# Production entrypoint
+COPY docker/entrypoint.prod.sh /usr/local/bin/entrypoint.prod.sh
+RUN chmod +x /usr/local/bin/entrypoint.prod.sh
 
 EXPOSE 9000
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.prod.sh"]
