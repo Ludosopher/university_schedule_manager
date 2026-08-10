@@ -70,7 +70,10 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts --no-interactio
     && npm ci --no-audit \
     && npm run dev
 
-# Exposing the port
+# Local development entrypoint
+COPY --chown=www-data:www-data docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 EXPOSE 9000
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
