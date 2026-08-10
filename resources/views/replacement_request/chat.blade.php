@@ -56,7 +56,8 @@
 
             <script>
                 
-                let socket = new WebSocket("ws://localhost:8081");
+                const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'; 
+                const socket = new WebSocket(`${wsProtocol}//${window.location.hostname}:8081`);
                                 
                 var blade_data = @json($data);
 
