@@ -47,10 +47,10 @@ services:
     restart: unless-stopped
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_DATABASE: schedule_manager
+      MYSQL_ROOT_PASSWORD: cS4jT9kDH
+      MYSQL_PASSWORD: cS4jT9kDH
+      MYSQL_USER: scheduler
     volumes:
       - db_data_prod:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
