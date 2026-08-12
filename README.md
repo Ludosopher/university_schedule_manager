@@ -105,7 +105,7 @@ Emails are sent from the "My Replacement Requests" section. See the presentation
 After that, the key will appear in the configuration file .env (APP_KEY)
 
 5. Run Migrations & Seed the Database:
-`php artisan migrate —seed`
+`php artisan migrate --seed`
 
 6. To refresh the database and re-seed:
 `php artisan migrate:fresh --seed` (when restarting).
