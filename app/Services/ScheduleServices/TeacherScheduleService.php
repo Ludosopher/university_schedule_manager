@@ -436,7 +436,7 @@ class TeacherScheduleService extends ScheduleService
             $replaceable_weekly_period_id = $weekly_period_ids['every_week'];
             $replacing_weekly_period_id = $weekly_period_ids['every_week'];
             $replaceable_lesson_description = __('mail.dated_replaceable_lesson_description').$replaceable_date.', "'.$replacing_lesson_name.'", '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
-            $replacing_lesson_description = __('mail.dated_replacing_lesson_descript').$replacing_date.', "'.$replaceable_lesson_name.'", '.__('dictionary.'.$replaceable_lesson->week_day->name).', '.__('dictionary.'.$replaceable_lesson->class_period->name).' '.__('header.class_period');
+            $replacing_lesson_description = __('mail.dated_replacing_lesson_descript').$replacing_date.', "'.$replaceable_lesson_name.'", '.__('dictionary.'.$replacing_lesson->week_day->name).', '.__('dictionary.'.$replacing_lesson->class_period->name).' '.__('header.class_period');
         }
 
         $mails_to = [];
